@@ -1,0 +1,6 @@
+framework module Pods_MySugarHeap {
+  umbrella header "Pods-MySugarHeap-umbrella.h"
+
+  export *
+  module * { export * }
+}

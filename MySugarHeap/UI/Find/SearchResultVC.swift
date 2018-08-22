@@ -1,0 +1,59 @@
+//
+//  SearchResultVC.swift
+//  MySugarHeap
+//
+//  Created by lzw on 2018/8/22.
+//  Copyright © 2018 lizhiwei. All rights reserved.
+//
+
+import UIKit
+
+class SearchResultVC: BaseVC {
+
+    var searchString = ""
+
+    @IBOutlet weak var searchTF: UITextField!
+
+    @IBOutlet weak var titleView: DNSPageTitleView!
+
+    @IBOutlet weak var contentView: DNSPageContentView!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        hideNav = true
+
+        searchTF.text = searchString
+
+        automaticallyAdjustsScrollViewInsets = false
+        // 创建DNSPageStyle，设置样式
+        let style = DNSPageStyle()
+        style.titleViewBackgroundColor = UIColor.white
+        style.isShowCoverView = false
+        style.isShowBottomLine = true
+        style.bottomLineColor = KRed
+
+        titleView.titles = ["堆糖图片", "堆糖文章", "即刻"]
+        titleView.style = style
+        titleView.currentIndex = 0
+        titleView.setupUI()
+
+        // 对contentView进行设置
+        contentView.childViewControllers = [ImageTableVC(),ArticleTableVC(),ImageTableVC()]
+        contentView.startIndex = 0
+        contentView.style = style
+        contentView.setupUI()
+
+        // 让titleView和contentView进行联系起来
+        titleView.delegate = contentView
+        contentView.delegate = titleView
+    }
+
+    @IBAction func back(_ sender: Any) {
+        self.navigationController?.popToRootViewController(animated: NO)
+    }
+
+    @IBAction func backToSearchAction(_ sender: Any) {
+        navigationController?.popViewController(animated: NO)
+    }
+
+}
