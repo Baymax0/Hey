@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		11097ACF0C6B7BE389B8D179 /* Pods_MySugarHeap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC5EA24AC4C117F39B66BE92 /* Pods_MySugarHeap.framework */; };
+		2D22961A212EB2EB00A4D2DE /* ImageDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D229619212EB2EB00A4D2DE /* ImageDetailVC.swift */; };
 		2D350004212CF112003D329A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D350003212CF112003D329A /* AppDelegate.swift */; };
 		2D350006212CF112003D329A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D350005212CF112003D329A /* ViewController.swift */; };
 		2D350009212CF112003D329A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D350007212CF112003D329A /* Main.storyboard */; };
@@ -87,6 +88,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2D229619212EB2EB00A4D2DE /* ImageDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDetailVC.swift; sourceTree = "<group>"; };
 		2D350000212CF112003D329A /* MySugarHeap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MySugarHeap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D350003212CF112003D329A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2D350005212CF112003D329A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -184,6 +186,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2D229618212EB2B300A4D2DE /* 图片详情 */ = {
+			isa = PBXGroup;
+			children = (
+				2D229619212EB2EB00A4D2DE /* ImageDetailVC.swift */,
+			);
+			path = "图片详情";
+			sourceTree = "<group>";
+		};
 		2D350001212CF112003D329A /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -253,6 +263,7 @@
 		2D350024212CFEB7003D329A /* Find */ = {
 			isa = PBXGroup;
 			children = (
+				2D229618212EB2B300A4D2DE /* 图片详情 */,
 				2D5D237E212E7FDF00AE65B2 /* View */,
 				2D350026212CFED1003D329A /* FindVC.swift */,
 				2DD5E86E212D2907003153A9 /* SearchVC.swift */,
@@ -597,6 +608,7 @@
 				2DD5E901212D59A8003153A9 /* ConstraintLayoutGuide+Extensions.swift in Sources */,
 				2DD5E8FB212D59A8003153A9 /* ConstraintItem.swift in Sources */,
 				2DD5E8FC212D59A8003153A9 /* Constraint.swift in Sources */,
+				2D22961A212EB2EB00A4D2DE /* ImageDetailVC.swift in Sources */,
 				2DD5E8B9212D59A1003153A9 /* DNSPageCollectionViewFlowLayout.swift in Sources */,
 				2DD5E8F3212D59A8003153A9 /* Typealiases.swift in Sources */,
 				2DD5E902212D59A8003153A9 /* ConstraintLayoutSupportDSL.swift in Sources */,

@@ -39,11 +39,16 @@ class SearchResultVC: BaseVC {
         // 对contentView进行设置
         let v1 = ImageTableVC()
         v1.keyWords = self.searchString
-        
+
         contentView.childViewControllers = [v1,ArticleTableVC(),ImageTableVC()]
         contentView.startIndex = 0
         contentView.style = style
         contentView.setupUI()
+        contentView.collectionView.delaysContentTouches = NO
+
+        for vc in contentView.childViewControllers{
+            self.addChildViewController(vc)
+        }
 
         // 让titleView和contentView进行联系起来
         titleView.delegate = contentView

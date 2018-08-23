@@ -33,7 +33,7 @@ class BaseVC: UIViewController {
         super.viewWillAppear(animated)
         BaseVC.currentVC = String(describing: self.classForCoder)
         navigationController?.setNavigationBarHidden(hideNav, animated: true)
-        navigationController?.interactivePopGestureRecognizer?.isEnabled = popGestureEnable
+//        navigationController?.interactivePopGestureRecognizer?.isEnabled = popGestureEnable
     }
 
 

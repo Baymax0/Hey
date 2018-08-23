@@ -66,6 +66,7 @@
             </constraints>
             <size key="customSize" width="184" height="257"/>
             <connections>
+                <outlet property="bgView" destination="7FP-uF-Lda" id="vAF-yA-PHe"/>
                 <outlet property="bottomView" destination="bPx-pY-XOr" id="7Oj-5E-jWd"/>
                 <outlet property="imgView" destination="KY7-Fu-GuW" id="iQB-cD-kbr"/>
             </connections>
