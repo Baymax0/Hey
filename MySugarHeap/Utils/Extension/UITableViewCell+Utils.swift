@@ -10,7 +10,6 @@ import UIKit
 
 protocol CustomCellProtocol {
     static func cellFromNib(with table:UITableView) -> Self
-
     static func cell(with table:UITableView) -> Self
 }
 
@@ -40,9 +39,6 @@ extension CustomCellProtocol{
 }
 
 extension UITableViewCell:CustomCellProtocol{}
-
-
-
 
 
 

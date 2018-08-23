@@ -14,7 +14,8 @@ import HandyJSON
 class Network{
     private static func requestBase<T:HandyJSON>(_ api:ApiManager, params:[String:Any], _ model:T.Type, finish: @escaping (_ resp:T?)->()) -> Void{
         let param = params
-        Alamofire.request(api.url, method: .post, parameters: param).responseString { (response) in
+//        param[] = ""
+        Alamofire.request(api.url, method: .get, parameters: param).responseString { (response) in
             switch response.result{
             case .success(let jsonStr):
                 if let resp = JSONDeserializer<T>.deserializeFrom(json: jsonStr){
@@ -61,7 +62,9 @@ class Network{
 extension Network {
     //堆糖 请求
     static func requestDT<T: HandyJSON>(_ api:DTApiManager, params:Dictionary<String,Any>, model:T.Type, finish: @escaping (_ rep:T?)->()) -> Void{
-        Network.requestBase(api, params: params, (DTRespObject<T>).self) { (mod) in finish(mod?.data) }
+        var orignParam = api.orignParam
+        orignParam.merge(params) { (a, b) -> Any in return a}
+        Network.requestBase(api, params: orignParam, (DTRespObject<T>).self) { (mod) in finish(mod?.data) }
     }
 
 }

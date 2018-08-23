@@ -1,29 +1,21 @@
 //
-//  BaseTableVC.swift
-//  wangfuAgent
+//  BaseCollectionView.swift
+//  MySugarHeap
 //
-//  Created by lzw on 2018/7/11.
-//  Copyright © 2018 zhuanbangTec. All rights reserved.
+//  Created by lzw on 2018/8/23.
+//  Copyright © 2018 lizhiwei. All rights reserved.
 //
 
 import UIKit
-
-import NVActivityIndicatorView
-import HandyJSON
 import MJRefresh
+import NVActivityIndicatorView
 
-
-class ListModel: HandyJSON {
-    required init() {}
-}
-
-class BaseTableVC: BaseVC{
-
-    var tableview: UITableView?
-    var pageNo = 1
-    var PageSize = 10
+class BaseCollectionView: BaseVC,MyCollectionViewLayoutDelegate,UICollectionViewDataSource {
     var dataArr:Array<Any>! = []
-    var param = Dictionary<String,Any>()
+
+    var collectionView :UICollectionView!
+    let header = MJRefreshNormalHeader()//顶部刷新
+    let footer = MJRefreshAutoNormalFooter()//底部刷新
 
     private var activityIndicatorView:NVActivityIndicatorView?
     private var activityIndicatorLab:UILabel?
@@ -44,7 +36,7 @@ class BaseTableVC: BaseVC{
         set{
             let w = CGFloat(180)
             self.noDataPlaceView = UIView(frame: CGRect(x: 0, y: 0, width: w, height: w))
-            self.noDataPlaceView?.center = self.tableview!.center
+            self.noDataPlaceView?.center = self.collectionView!.center
 
             self.noDataPlaceImgView = UIImageView.init(frame: CGRect(x: 0, y: 0, width: w, height: w-90))
             self.noDataPlaceImgView?.image = UIImage(named: newValue!)
@@ -52,10 +44,10 @@ class BaseTableVC: BaseVC{
             self.noDataPlaceView?.addSubview(self.noDataPlaceImgView!)
 
             self.noDataPlaceLab = UILabel(frame: CGRect(x: 0, y: w-90, width: w, height: 50))
-            self.noDataPlaceLab?.text = "暂无数据\n快去添加用户吧"
+            self.noDataPlaceLab?.text = "没有搜索结果 o(╥﹏╥)o"
             self.noDataPlaceLab?.numberOfLines = 0
             self.noDataPlaceLab?.textAlignment = .center
-            self.noDataPlaceLab?.font = UIFont.systemFont(ofSize: 17)
+            self.noDataPlaceLab?.font = UIFont.systemFont(ofSize: 16)
             self.noDataPlaceLab?.textColor = KTextLightGray
             self.noDataPlaceView?.addSubview(self.noDataPlaceLab!)
 
@@ -66,30 +58,34 @@ class BaseTableVC: BaseVC{
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
     }
 
-    func initTableView(rect:CGRect ,_ style:UITableViewStyle = .plain) -> Void {
-        tableview = UITableView.init(frame: rect, style: style)
-        tableview?.separatorStyle = .none
-        tableview?.backgroundColor = .white
+    func initCollectionView(rect:CGRect) -> Void {
+        let layout = MyCollectionViewLayout()
+        layout.delegate = self
+        collectionView = UICollectionView(frame:rect, collectionViewLayout: layout)
+        collectionView.dataSource = self
+        collectionView.backgroundColor = KBGGray
+//        collectionView.registerClass(YFWaterFallCollectionViewCell.self, forCellWithReuseIdentifier: cellID)
 
-        if #available(iOS 11.0, *) {
-            tableview?.contentInsetAdjustmentBehavior = .never
-        }else{
-            self.automaticallyAdjustsScrollViewInsets = NO
-        }
-        self.view.addSubview(tableview!)
+        header.setRefreshingTarget(self, refreshingAction:#selector(loadNewData))
+        header.lastUpdatedTimeLabel.isHidden = true
+        header.stateLabel.textColor = KRGB(153, 153, 153)
+        collectionView.mj_header = header
+
+        footer.setRefreshingTarget(self, refreshingAction:#selector(loadMoreData))
+        collectionView.mj_footer = footer
+        view.addSubview(collectionView)
 
         var w = CGFloat(35)
-        var rect = CGRect(x: (KScreenWidth-w)/2, y: (self.tableview!.frame.size.height-w)/2, width: w, height: w)
+        var rect = CGRect(x: (KScreenWidth-w)/2, y: (collectionView!.frame.size.height-w)/2, width: w, height: w)
         activityIndicatorView = NVActivityIndicatorView(frame: rect,
                                                         type: NVActivityIndicatorType(rawValue: 17)!)
         activityIndicatorView?.color = KTextLightGray
         view.addSubview(activityIndicatorView!)
 
         w = CGFloat(70)
-        rect = CGRect(x: (KScreenWidth-w)/2, y: (self.tableview!.frame.size.height+w)/2+4, width: w, height: 20)
+        rect = CGRect(x: (KScreenWidth-w)/2, y: (collectionView!.frame.size.height+w)/2+4, width: w, height: 20)
         activityIndicatorLab = UILabel(frame: rect)
         activityIndicatorLab?.text = "加载中.."
         activityIndicatorLab?.textAlignment = .center
@@ -97,62 +93,74 @@ class BaseTableVC: BaseVC{
         activityIndicatorLab?.textColor = KTextLightGray
         activityIndicatorLab?.isHidden = YES
         view.addSubview(activityIndicatorLab!)
-
     }
-
-    func initMJHeadView() -> Void {
-        let header = MJRefreshNormalHeader()
-        header.setRefreshingTarget(self, refreshingAction: #selector(BaseTableVC.loadNewData))
-        header.lastUpdatedTimeLabel.isHidden = YES
-        header.stateLabel.isHidden = YES
-        tableview?.mj_header = header
-    }
-
-    func initMJFootView() -> Void {
-        let foot = MJRefreshAutoNormalFooter()
-        foot.setRefreshingTarget(self, refreshingAction: #selector(BaseTableVC.loadMoreData))
-        tableview?.mj_footer = foot
-    }
-
+    //第一次请求数据调用
     func loadNewDataWithIndicator() -> Void {
         showLoadingView()
         loadNewData()
     }
-
     @objc func loadNewData() -> Void {
-        loadData(1)
+        loadData(0)
     }
     @objc func loadMoreData() -> Void {
-        loadData(pageNo+1)
+        loadData(2)
     }
-
     //请求数据
     func loadData(_ index:Int) -> Void {
         return
     }
 
+    func getHeight(_ index:Int) -> CGFloat {
+        return 0
+    }
+
+    //collectionView数据源设置
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.dataArr.count
+    }
+    //给layout高度，根据比例计算
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        return UICollectionViewCell()
+    }
+    //layout代理
+    func waterFallLayout(layout:UICollectionViewFlowLayout, index:NSInteger, width: CGFloat) -> CGFloat {
+        return getHeight(index)
+    }
+
+    func columnCountOfWaterFallLayout(layout:UICollectionViewFlowLayout) ->NSInteger {
+        return 2
+    }
+
+
+    //////////////////
+
     func showLoadingView() -> Void {
-        self.tableview?.isHidden = YES
+        self.collectionView?.isHidden = YES
         self.noDataPlaceView?.isHidden = YES
         //显示加载数据 等待框
         self.activityIndicatorView?.startAnimating()
         self.activityIndicatorLab?.isHidden = NO
     }
 
-    //刷新数据
     func reloadData() -> Void {
-        self.tableview?.isHidden = NO;
+        self.collectionView?.isHidden = NO;
         self.activityIndicatorView?.stopAnimating()
         self.activityIndicatorLab?.isHidden = YES
 
+        if collectionView.mj_header != nil {
+            collectionView.mj_header.endRefreshing()
+        }
+        if collectionView.mj_footer != nil {
+            collectionView.mj_footer.endRefreshing()
+        }
         if self.dataArr.count == 0, noDataPlaceImage != nil{
             self.noDataPlaceView?.isHidden = NO
         }else{
             self.noDataPlaceView?.isHidden = YES
         }
-        self.tableview?.reloadData()
+        self.collectionView.reloadData()
     }
-}
 
+}
 
 

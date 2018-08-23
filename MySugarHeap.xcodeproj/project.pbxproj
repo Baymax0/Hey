@@ -21,6 +21,12 @@
 		2D350027212CFED1003D329A /* FindVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D350026212CFED1003D329A /* FindVC.swift */; };
 		2D350029212CFEE0003D329A /* MeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D350028212CFEE0003D329A /* MeVC.swift */; };
 		2D35002B212CFFD0003D329A /* DOFavoriteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D35002A212CFFD0003D329A /* DOFavoriteButton.swift */; };
+		2D5D2377212E630700AE65B2 /* DTListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D2376212E630700AE65B2 /* DTListModel.swift */; };
+		2D5D2379212E65F800AE65B2 /* DTBaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D2378212E65F800AE65B2 /* DTBaseModel.swift */; };
+		2D5D237B212E798300AE65B2 /* BaseCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D237A212E798300AE65B2 /* BaseCollectionView.swift */; };
+		2D5D237D212E7A4900AE65B2 /* MyCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D237C212E7A4900AE65B2 /* MyCollectionViewLayout.swift */; };
+		2D5D2381212E801F00AE65B2 /* ImageFlowCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D237F212E801F00AE65B2 /* ImageFlowCollectionCell.swift */; };
+		2D5D2382212E801F00AE65B2 /* ImageFlowCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D2380212E801F00AE65B2 /* ImageFlowCollectionCell.xib */; };
 		2DD5E867212D0CF3003153A9 /* Sting+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD5E866212D0CF2003153A9 /* Sting+Utils.swift */; };
 		2DD5E869212D0D03003153A9 /* UITableViewCell+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD5E868212D0D03003153A9 /* UITableViewCell+Utils.swift */; };
 		2DD5E86B212D0D27003153A9 /* UIView+IBInspectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD5E86A212D0D27003153A9 /* UIView+IBInspectable.swift */; };
@@ -96,6 +102,12 @@
 		2D350026212CFED1003D329A /* FindVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindVC.swift; sourceTree = "<group>"; };
 		2D350028212CFEE0003D329A /* MeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeVC.swift; sourceTree = "<group>"; };
 		2D35002A212CFFD0003D329A /* DOFavoriteButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DOFavoriteButton.swift; sourceTree = "<group>"; };
+		2D5D2376212E630700AE65B2 /* DTListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTListModel.swift; sourceTree = "<group>"; };
+		2D5D2378212E65F800AE65B2 /* DTBaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTBaseModel.swift; sourceTree = "<group>"; };
+		2D5D237A212E798300AE65B2 /* BaseCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionView.swift; sourceTree = "<group>"; };
+		2D5D237C212E7A4900AE65B2 /* MyCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCollectionViewLayout.swift; sourceTree = "<group>"; };
+		2D5D237F212E801F00AE65B2 /* ImageFlowCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFlowCollectionCell.swift; sourceTree = "<group>"; };
+		2D5D2380212E801F00AE65B2 /* ImageFlowCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImageFlowCollectionCell.xib; sourceTree = "<group>"; };
 		2DD5E866212D0CF2003153A9 /* Sting+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sting+Utils.swift"; sourceTree = "<group>"; };
 		2DD5E868212D0D03003153A9 /* UITableViewCell+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Utils.swift"; sourceTree = "<group>"; };
 		2DD5E86A212D0D27003153A9 /* UIView+IBInspectable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+IBInspectable.swift"; sourceTree = "<group>"; };
@@ -209,7 +221,6 @@
 			isa = PBXGroup;
 			children = (
 				2D350024212CFEB7003D329A /* Find */,
-				2D350025212CFEBC003D329A /* Me */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -230,9 +241,11 @@
 				2D35002A212CFFD0003D329A /* DOFavoriteButton.swift */,
 				2D350019212CF285003D329A /* BaseVC.swift */,
 				2DD5E897212D3E47003153A9 /* BaseTableVC.swift */,
+				2D5D237A212E798300AE65B2 /* BaseCollectionView.swift */,
 				2D35001B212CF2B5003D329A /* MyNavigationVC.swift */,
 				2D35001E212CF649003D329A /* MyTabbarVC.swift */,
 				2D350020212CF806003D329A /* MyTabbar.swift */,
+				2D5D237C212E7A4900AE65B2 /* MyCollectionViewLayout.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -240,11 +253,13 @@
 		2D350024212CFEB7003D329A /* Find */ = {
 			isa = PBXGroup;
 			children = (
+				2D5D237E212E7FDF00AE65B2 /* View */,
 				2D350026212CFED1003D329A /* FindVC.swift */,
 				2DD5E86E212D2907003153A9 /* SearchVC.swift */,
 				2DD5E8A6212D58D1003153A9 /* SearchResultVC.swift */,
 				2DD5E904212D5A54003153A9 /* ImageTableVC.swift */,
 				2DD5E906212D5A6C003153A9 /* ArticleTableVC.swift */,
+				2D350025212CFEBC003D329A /* Me */,
 			);
 			path = Find;
 			sourceTree = "<group>";
@@ -265,6 +280,15 @@
 				76E0E967691FF8761A5ADF97 /* Pods */,
 				D67386C8E1A4777D7D61C636 /* Frameworks */,
 			);
+			sourceTree = "<group>";
+		};
+		2D5D237E212E7FDF00AE65B2 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				2D5D237F212E801F00AE65B2 /* ImageFlowCollectionCell.swift */,
+				2D5D2380212E801F00AE65B2 /* ImageFlowCollectionCell.xib */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		2DD5E863212D0CD8003153A9 /* Extension */ = {
@@ -311,6 +335,8 @@
 		2DD5E8A1212D4855003153A9 /* 堆糖 */ = {
 			isa = PBXGroup;
 			children = (
+				2D5D2378212E65F800AE65B2 /* DTBaseModel.swift */,
+				2D5D2376212E630700AE65B2 /* DTListModel.swift */,
 			);
 			path = "堆糖";
 			sourceTree = "<group>";
@@ -456,6 +482,7 @@
 				2D35000B212CF115003D329A /* Assets.xcassets in Resources */,
 				2DD5E8FF212D59A8003153A9 /* Info.plist in Resources */,
 				2D350009212CF112003D329A /* Main.storyboard in Resources */,
+				2D5D2382212E801F00AE65B2 /* ImageFlowCollectionCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -538,6 +565,7 @@
 				2DD5E869212D0D03003153A9 /* UITableViewCell+Utils.swift in Sources */,
 				2DD5E903212D59A8003153A9 /* ConstraintMakerRelatable.swift in Sources */,
 				2DD5E8E6212D59A8003153A9 /* ConstraintViewDSL.swift in Sources */,
+				2D5D237D212E7A4900AE65B2 /* MyCollectionViewLayout.swift in Sources */,
 				2DD5E8E7212D59A8003153A9 /* ConstraintPriorityTarget.swift in Sources */,
 				2D350027212CFED1003D329A /* FindVC.swift in Sources */,
 				2DD5E8A8212D58D1003153A9 /* SearchResultVC.swift in Sources */,
@@ -546,6 +574,7 @@
 				2DD5E8ED212D59A8003153A9 /* ConstraintInsetTarget.swift in Sources */,
 				2D35001F212CF649003D329A /* MyTabbarVC.swift in Sources */,
 				2DD5E8F2212D59A8003153A9 /* ConstraintLayoutSupport.swift in Sources */,
+				2D5D2379212E65F800AE65B2 /* DTBaseModel.swift in Sources */,
 				2DD5E8EE212D59A8003153A9 /* ConstraintConfig.swift in Sources */,
 				2DD5E900212D59A8003153A9 /* LayoutConstraint.swift in Sources */,
 				2DD5E8F8212D59A8003153A9 /* ConstraintRelation.swift in Sources */,
@@ -557,6 +586,7 @@
 				2DD5E8E9212D59A8003153A9 /* ConstraintMakerFinalizable.swift in Sources */,
 				2DD5E898212D3E48003153A9 /* BaseTableVC.swift in Sources */,
 				2D35001A212CF285003D329A /* BaseVC.swift in Sources */,
+				2D5D237B212E798300AE65B2 /* BaseCollectionView.swift in Sources */,
 				2DD5E89D212D4170003153A9 /* ResponseModel.swift in Sources */,
 				2D350029212CFEE0003D329A /* MeVC.swift in Sources */,
 				2DD5E89F212D4170003153A9 /* ApiManager.swift in Sources */,
@@ -577,6 +607,7 @@
 				2DD5E8B4212D59A1003153A9 /* DNSPageContentView.swift in Sources */,
 				2DD5E8E4212D59A8003153A9 /* ConstraintMakerPriortizable.swift in Sources */,
 				2DD5E8A5212D4A7E003153A9 /* Hud.swift in Sources */,
+				2D5D2381212E801F00AE65B2 /* ImageFlowCollectionCell.swift in Sources */,
 				2DD5E907212D5A6C003153A9 /* ArticleTableVC.swift in Sources */,
 				2D350021212CF806003D329A /* MyTabbar.swift in Sources */,
 				2DD5E8FA212D59A8003153A9 /* ConstraintView+Extensions.swift in Sources */,
@@ -586,6 +617,7 @@
 				2DD5E8EA212D59A8003153A9 /* ConstraintDSL.swift in Sources */,
 				2D350023212CF9B3003D329A /* Const.swift in Sources */,
 				2DD5E8F7212D59A8003153A9 /* ConstraintMaker.swift in Sources */,
+				2D5D2377212E630700AE65B2 /* DTListModel.swift in Sources */,
 				2DD5E8E8212D59A8003153A9 /* ConstraintInsets.swift in Sources */,
 				2DD5E8E3212D59A8003153A9 /* ConstraintDescription.swift in Sources */,
 				2DD5E8F9212D59A8003153A9 /* ConstraintLayoutGuideDSL.swift in Sources */,

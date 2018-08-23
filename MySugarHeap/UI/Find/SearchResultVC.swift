@@ -24,7 +24,6 @@ class SearchResultVC: BaseVC {
 
         searchTF.text = searchString
 
-        automaticallyAdjustsScrollViewInsets = false
         // 创建DNSPageStyle，设置样式
         let style = DNSPageStyle()
         style.titleViewBackgroundColor = UIColor.white
@@ -38,7 +37,10 @@ class SearchResultVC: BaseVC {
         titleView.setupUI()
 
         // 对contentView进行设置
-        contentView.childViewControllers = [ImageTableVC(),ArticleTableVC(),ImageTableVC()]
+        let v1 = ImageTableVC()
+        v1.keyWords = self.searchString
+        
+        contentView.childViewControllers = [v1,ArticleTableVC(),ImageTableVC()]
         contentView.startIndex = 0
         contentView.style = style
         contentView.setupUI()
@@ -46,6 +48,7 @@ class SearchResultVC: BaseVC {
         // 让titleView和contentView进行联系起来
         titleView.delegate = contentView
         contentView.delegate = titleView
+
     }
 
     @IBAction func back(_ sender: Any) {
