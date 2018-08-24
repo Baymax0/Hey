@@ -38,16 +38,19 @@ let KBlue = KRGB(36,141,245)
 
 let KRed = KRGB(254,110,111)
 
+
 let KOrange = KRGB(255,98,59)
 
 let KTextBlack = KRGB(66,66,66)
 
 let KTextGray = KRGB(153,153,153)
 
+let KUnselectedGray = KRGB(178, 178, 178)
+
 let KTextLightGray = KRGB(183,183,183)
 
 //背景视图灰色
-let KBGGray = KRGB(247,247,247)
+let KBGGray = KRGB(242,242,242)
 
 //背景视图灰色 中的  分割线
 let KBGGrayLine = KRGB(230,230,230)
@@ -55,7 +58,8 @@ let KBGGrayLine = KRGB(230,230,230)
 
 let KPageSize:Int = 10
 
-
+let KDefaultAvatar = "default-avatar"
+let KDefaultImg = "default-img"
 
 
 

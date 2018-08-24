@@ -2,6 +2,7 @@ PODS:
   - Alamofire (4.7.3)
   - CLImagePickerTool (2.3.1)
   - HandyJSON (4.1.1)
+  - Hero (1.2.0)
   - IQKeyboardManagerSwift (5.0.0)
   - Kingfisher (4.8.0)
   - LTMorphingLabel (0.5.6)
@@ -19,6 +20,7 @@ DEPENDENCIES:
   - Alamofire
   - CLImagePickerTool
   - HandyJSON (~> 4.1.1)
+  - Hero
   - IQKeyboardManagerSwift (= 5.0.0)
   - Kingfisher
   - LTMorphingLabel
@@ -33,6 +35,7 @@ SPEC REPOS:
     - Alamofire
     - CLImagePickerTool
     - HandyJSON
+    - Hero
     - IQKeyboardManagerSwift
     - Kingfisher
     - LTMorphingLabel
@@ -46,6 +49,7 @@ SPEC CHECKSUMS:
   Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
   CLImagePickerTool: cb3bda742d5125943190523edeb3d4751e84cde3
   HandyJSON: 3a3de917c4118767ffe41c29b5acba23409649f4
+  Hero: 33dadf2cd1c98af71e213dcbc2902e6e03622a4e
   IQKeyboardManagerSwift: 3f340202ebe1a7076279b9b9b3c817243ddb3aab
   Kingfisher: 976d828df2b24834c6a3f2fc4d82cdbd26552be1
   LTMorphingLabel: bdb51d4682e9822da89da6f567bd8aa456fd6650
@@ -55,6 +59,6 @@ SPEC CHECKSUMS:
   SwiftyUserDefaults: 3d273b1739b68ada3145dc754a70ec775bc5c8be
   TextFieldEffects: 4ee41b5216e674d55fb6ac25107bf1af7629176f
 
-PODFILE CHECKSUM: 9a97c628a0bce5203a4b6dcaf081d715d57a851a
+PODFILE CHECKSUM: 992d3f1eb2a1b36d5e677e0e7136c1613822ac38
 
 COCOAPODS: 1.5.3

@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Kingfisher
 
 extension String  {
     //判断 是否 是 数字
@@ -16,6 +17,15 @@ extension String  {
         var val:Int = 0
         return scan.scanInt(&val) && scan.isAtEnd
     }
+
+    var resource:ImageResource {
+        return ImageResource(downloadURL: URL(string: self)!)
+    }
+
+    var image:Image?{
+        return Image(named: self)
+    }
+
 
     var md5: String {
         if let data = self.data(using: .utf8, allowLossyConversion: true) {

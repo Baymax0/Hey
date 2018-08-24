@@ -28,6 +28,8 @@
 		2D5D237D212E7A4900AE65B2 /* MyCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D237C212E7A4900AE65B2 /* MyCollectionViewLayout.swift */; };
 		2D5D2381212E801F00AE65B2 /* ImageFlowCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5D237F212E801F00AE65B2 /* ImageFlowCollectionCell.swift */; };
 		2D5D2382212E801F00AE65B2 /* ImageFlowCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D2380212E801F00AE65B2 /* ImageFlowCollectionCell.xib */; };
+		2D61E5F7212FD9C2005B1553 /* BMTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D61E5F6212FD9C2005B1553 /* BMTag.swift */; };
+		2D61E5FA212FF3D6005B1553 /* BMTagChooseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D61E5F9212FF3D6005B1553 /* BMTagChooseView.swift */; };
 		2DD5E867212D0CF3003153A9 /* Sting+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD5E866212D0CF2003153A9 /* Sting+Utils.swift */; };
 		2DD5E869212D0D03003153A9 /* UITableViewCell+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD5E868212D0D03003153A9 /* UITableViewCell+Utils.swift */; };
 		2DD5E86B212D0D27003153A9 /* UIView+IBInspectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD5E86A212D0D27003153A9 /* UIView+IBInspectable.swift */; };
@@ -110,6 +112,9 @@
 		2D5D237C212E7A4900AE65B2 /* MyCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCollectionViewLayout.swift; sourceTree = "<group>"; };
 		2D5D237F212E801F00AE65B2 /* ImageFlowCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFlowCollectionCell.swift; sourceTree = "<group>"; };
 		2D5D2380212E801F00AE65B2 /* ImageFlowCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImageFlowCollectionCell.xib; sourceTree = "<group>"; };
+		2D61E5F3212FD318005B1553 /* MySugarHeap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MySugarHeap.entitlements; sourceTree = "<group>"; };
+		2D61E5F6212FD9C2005B1553 /* BMTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMTag.swift; sourceTree = "<group>"; };
+		2D61E5F9212FF3D6005B1553 /* BMTagChooseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMTagChooseView.swift; sourceTree = "<group>"; };
 		2DD5E866212D0CF2003153A9 /* Sting+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sting+Utils.swift"; sourceTree = "<group>"; };
 		2DD5E868212D0D03003153A9 /* UITableViewCell+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Utils.swift"; sourceTree = "<group>"; };
 		2DD5E86A212D0D27003153A9 /* UIView+IBInspectable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+IBInspectable.swift"; sourceTree = "<group>"; };
@@ -186,12 +191,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2D229618212EB2B300A4D2DE /* 图片详情 */ = {
+		2D229618212EB2B300A4D2DE /* 图片 */ = {
 			isa = PBXGroup;
 			children = (
+				2DD5E904212D5A54003153A9 /* ImageTableVC.swift */,
 				2D229619212EB2EB00A4D2DE /* ImageDetailVC.swift */,
+				2D5D237F212E801F00AE65B2 /* ImageFlowCollectionCell.swift */,
+				2D5D2380212E801F00AE65B2 /* ImageFlowCollectionCell.xib */,
 			);
-			path = "图片详情";
+			path = "图片";
 			sourceTree = "<group>";
 		};
 		2D350001212CF112003D329A /* Products */ = {
@@ -205,9 +213,10 @@
 		2D350002212CF112003D329A /* MySugarHeap */ = {
 			isa = PBXGroup;
 			children = (
+				2D61E5F3212FD318005B1553 /* MySugarHeap.entitlements */,
 				2D350016212CF15B003D329A /* UI */,
-				2DD5E8A0212D484A003153A9 /* Model */,
 				2D350017212CF168003D329A /* Utils */,
+				2DD5E8A0212D484A003153A9 /* Model */,
 				2D350015212CF127003D329A /* support */,
 			);
 			path = MySugarHeap;
@@ -248,6 +257,7 @@
 		2D350018212CF261003D329A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				2D61E5F8212FF3AC005B1553 /* 选择标签 */,
 				2D35002A212CFFD0003D329A /* DOFavoriteButton.swift */,
 				2D350019212CF285003D329A /* BaseVC.swift */,
 				2DD5E897212D3E47003153A9 /* BaseTableVC.swift */,
@@ -263,12 +273,11 @@
 		2D350024212CFEB7003D329A /* Find */ = {
 			isa = PBXGroup;
 			children = (
-				2D229618212EB2B300A4D2DE /* 图片详情 */,
+				2D229618212EB2B300A4D2DE /* 图片 */,
 				2D5D237E212E7FDF00AE65B2 /* View */,
 				2D350026212CFED1003D329A /* FindVC.swift */,
 				2DD5E86E212D2907003153A9 /* SearchVC.swift */,
 				2DD5E8A6212D58D1003153A9 /* SearchResultVC.swift */,
-				2DD5E904212D5A54003153A9 /* ImageTableVC.swift */,
 				2DD5E906212D5A6C003153A9 /* ArticleTableVC.swift */,
 				2D350025212CFEBC003D329A /* Me */,
 			);
@@ -296,10 +305,32 @@
 		2D5D237E212E7FDF00AE65B2 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				2D5D237F212E801F00AE65B2 /* ImageFlowCollectionCell.swift */,
-				2D5D2380212E801F00AE65B2 /* ImageFlowCollectionCell.xib */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		2D61E5F4212FD978005B1553 /* Cache */ = {
+			isa = PBXGroup;
+			children = (
+				2DD5E871212D3242003153A9 /* CacheManager.swift */,
+			);
+			path = Cache;
+			sourceTree = "<group>";
+		};
+		2D61E5F5212FD99B005B1553 /* custom */ = {
+			isa = PBXGroup;
+			children = (
+				2D61E5F6212FD9C2005B1553 /* BMTag.swift */,
+			);
+			path = custom;
+			sourceTree = "<group>";
+		};
+		2D61E5F8212FF3AC005B1553 /* 选择标签 */ = {
+			isa = PBXGroup;
+			children = (
+				2D61E5F9212FF3D6005B1553 /* BMTagChooseView.swift */,
+			);
+			path = "选择标签";
 			sourceTree = "<group>";
 		};
 		2DD5E863212D0CD8003153A9 /* Extension */ = {
@@ -316,10 +347,10 @@
 		2DD5E870212D3234003153A9 /* Tools */ = {
 			isa = PBXGroup;
 			children = (
+				2D61E5F4212FD978005B1553 /* Cache */,
 				2DD5E8BC212D59A8003153A9 /* SnapKit */,
 				2DD5E8AA212D59A0003153A9 /* DNSPageView */,
 				2DD5E899212D416F003153A9 /* Network */,
-				2DD5E871212D3242003153A9 /* CacheManager.swift */,
 				2DD5E8A4212D4A7D003153A9 /* Hud.swift */,
 			);
 			path = Tools;
@@ -338,6 +369,7 @@
 		2DD5E8A0212D484A003153A9 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				2D61E5F5212FD99B005B1553 /* custom */,
 				2DD5E8A1212D4855003153A9 /* 堆糖 */,
 			);
 			path = Model;
@@ -462,6 +494,11 @@
 				TargetAttributes = {
 					2D35FFFF212CF112003D329A = {
 						CreatedOnToolsVersion = 9.4.1;
+						SystemCapabilities = {
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -510,6 +547,7 @@
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/CLImagePickerTool/CLImagePickerTool.framework",
 				"${BUILT_PRODUCTS_DIR}/HandyJSON/HandyJSON.framework",
+				"${BUILT_PRODUCTS_DIR}/Hero/Hero.framework",
 				"${BUILT_PRODUCTS_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/LTMorphingLabel/LTMorphingLabel.framework",
@@ -524,6 +562,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CLImagePickerTool.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HandyJSON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Hero.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IQKeyboardManagerSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LTMorphingLabel.framework",
@@ -590,12 +629,14 @@
 				2DD5E900212D59A8003153A9 /* LayoutConstraint.swift in Sources */,
 				2DD5E8F8212D59A8003153A9 /* ConstraintRelation.swift in Sources */,
 				2DD5E86F212D2907003153A9 /* SearchVC.swift in Sources */,
+				2D61E5FA212FF3D6005B1553 /* BMTagChooseView.swift in Sources */,
 				2DD5E8FD212D59A8003153A9 /* Debugging.swift in Sources */,
 				2DD5E8B5212D59A1003153A9 /* DNSPageHelper.swift in Sources */,
 				2DD5E8B8212D59A1003153A9 /* DNSPageViewManager.swift in Sources */,
 				2DD5E86B212D0D27003153A9 /* UIView+IBInspectable.swift in Sources */,
 				2DD5E8E9212D59A8003153A9 /* ConstraintMakerFinalizable.swift in Sources */,
 				2DD5E898212D3E48003153A9 /* BaseTableVC.swift in Sources */,
+				2D61E5F7212FD9C2005B1553 /* BMTag.swift in Sources */,
 				2D35001A212CF285003D329A /* BaseVC.swift in Sources */,
 				2D5D237B212E798300AE65B2 /* BaseCollectionView.swift in Sources */,
 				2DD5E89D212D4170003153A9 /* ResponseModel.swift in Sources */,
@@ -778,6 +819,7 @@
 			baseConfigurationReference = 63495EC1167FE3679774508B /* Pods-MySugarHeap.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MySugarHeap/MySugarHeap.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 34BD4U8K6Y;
 				INFOPLIST_FILE = "$(SRCROOT)/MySugarHeap/support/Info.plist";
@@ -798,6 +840,7 @@
 			baseConfigurationReference = C7C81191F70D8DDB48353461 /* Pods-MySugarHeap.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MySugarHeap/MySugarHeap.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 34BD4U8K6Y;
 				INFOPLIST_FILE = "$(SRCROOT)/MySugarHeap/support/Info.plist";

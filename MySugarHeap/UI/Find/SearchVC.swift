@@ -21,9 +21,16 @@ class SearchVC: BaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         hideNav = true
-        searchTF.becomeFirstResponder()
-        historySearch = Cache.getList(.merchant_Search_History) as! Array<String>
+        historySearch = Array<String>()
+        historySearch = BMCache.getStringList(.FindSearchHistory)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         showHistorySearchBtn()
+        searchTF.text = ""
+        searchTF.becomeFirstResponder()
+
     }
 
     @IBAction func back(_ sender: Any) {
@@ -82,8 +89,7 @@ extension SearchVC{
 
     @IBAction func deleteHistoryAction(_ sender: Any) {
         historySearch = Array<String>()
-        //去重
-        Cache.setList(key: .merchant_Search_History, cache: historySearch)
+        BMCache.set(.FindSearchHistory, value: historySearch)
         showHistorySearchBtn()
     }
 
@@ -94,6 +100,9 @@ extension SearchVC{
     }
 
     func gotoSearch() -> Void {
+        if searchTF.text?.count == 0{
+            return
+        }
         let vc = SearchResultVC.fromStoryboard() as! SearchResultVC
         vc.searchString = searchTF.text!
         self.navigationController?.pushViewController(vc, animated: NO)
@@ -124,7 +133,7 @@ extension SearchVC:UITextFieldDelegate{
         }
         historySearch.insert(text!, at: 0)
         //去重
-        Cache.setList(key: .merchant_Search_History, cache: historySearch)
+        BMCache.set(.FindSearchHistory, value: historySearch)
 
         //收键盘
         textField.resignFirstResponder()

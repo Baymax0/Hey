@@ -8,6 +8,7 @@
 
 import UIKit
 import Kingfisher
+import Hero
 
 class ImageTableVC: BaseCollectionView {
 
@@ -51,11 +52,17 @@ class ImageTableVC: BaseCollectionView {
         param["include_fields"] = "sender,favroite_count,album,reply_count,like_count"
         Network.requestDT(DTApiManager.imageSearch, params: param, model: DTList<DTImgListModel>.self) { (resp) in
             if resp != nil{
-                self.start = (resp?.next_start)!
-                if index != 0 {
-                    self.dataArr.append(contentsOf: resp?.object_list ?? [])
+                let arr = resp?.object_list ?? []
+                if let next = (resp?.next_start) {
+                    self.start = next
+                    self.haveMoreData(true)
                 }else{
-                    self.dataArr = resp?.object_list ?? []
+                    self.haveMoreData(false)
+                }
+                if index != 0 {
+                    self.dataArr.append(contentsOf: arr )
+                }else{
+                    self.dataArr = arr
                 }
             }
             self.reloadData();
@@ -69,7 +76,11 @@ class ImageTableVC: BaseCollectionView {
         cell.indexPath = indexPath
         let mod = self.dataArr[indexPath.item] as! DTImgListModel
         let imgStr = mod.photo.path.replacingOccurrences(of: "_webp", with: "")
-        cell.imgView.kf.setImage(with: ImageResource(downloadURL: URL(string: imgStr)!), placeholder: nil, options: [.transition(ImageTransition.fade(1))], progressBlock: nil, completionHandler: nil)
+        cell.imgView.kf.setImage(with: imgStr.resource, placeholder: KDefaultImg.image, options: [.transition(ImageTransition.fade(1))])
+        cell.titleLab.text = mod.msg
+        let userImgStr = mod.sender.avatar.replacingOccurrences(of: "_webp", with: "")
+        cell.userImg.kf.setImage(with: userImgStr.resource, placeholder: KDefaultAvatar.image, options: [.transition(ImageTransition.fade(1))])
+        cell.userNameLab.text = mod.sender.username
         return cell
     }
     override func waterFallLayout(layout:UICollectionViewFlowLayout, index:NSInteger, width: CGFloat) -> CGFloat {
@@ -85,11 +96,26 @@ extension ImageTableVC:UIScrollViewDelegate,UICollectionViewDelegate , CustomeCe
     }
 
     func didSelectedItems(_ index: IndexPath) {
-        print(index.item)
+        let imgHeroId   = "imgHeroId \(index.item)"
+        let bottomId    = "bottom \(index.item)"
+        let titleId     = "title \(index.item)"
+        let userNameId  = "userName \(index.item)"
+        let avatarId    = "avatar \(index.item)"
+
+        weak var cell = collectionView.cellForItem(at: index) as! ImageFlowCollectionCell
+
+        cell?.imgView.hero.id = imgHeroId
+        cell?.bottomView.hero.id = bottomId
+        cell?.titleLab.hero.id = titleId
+        cell?.userNameLab.hero.id = userNameId
+        cell?.userImg.hero.id = avatarId
+
         let vc = ImageDetailVC.fromStoryboard() as! ImageDetailVC
-        let mod = self.dataArr[index.item] as! DTImgListModel
-        vc.model = mod
-        self.navigationController?.pushViewController(vc, animated: YES)
+        vc.model = self.dataArr[index.item] as! DTImgListModel
+
+        vc.hero.isEnabled = true
+        vc.heroId = index.item
+        present(vc, animated: true, completion: nil)
     }
 
 }

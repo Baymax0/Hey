@@ -8,14 +8,13 @@
 
 import UIKit
 
-
 class MyTabbarVC: BaseVC {
 
     @IBOutlet weak var tabBar: UIView!
     @IBOutlet weak var tabbarH: NSLayoutConstraint!
 
     let selectedColor = KRed
-    let unSelectedColor = KRGB(178, 178, 178)
+    let unSelectedColor = KUnselectedGray
 
 
     var tabBarNums = 0

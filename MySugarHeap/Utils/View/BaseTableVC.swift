@@ -52,7 +52,7 @@ class BaseTableVC: BaseVC{
             self.noDataPlaceView?.addSubview(self.noDataPlaceImgView!)
 
             self.noDataPlaceLab = UILabel(frame: CGRect(x: 0, y: w-90, width: w, height: 50))
-            self.noDataPlaceLab?.text = "暂无数据\n快去添加用户吧"
+            self.noDataPlaceLab?.text = ""
             self.noDataPlaceLab?.numberOfLines = 0
             self.noDataPlaceLab?.textAlignment = .center
             self.noDataPlaceLab?.font = UIFont.systemFont(ofSize: 17)
@@ -91,7 +91,7 @@ class BaseTableVC: BaseVC{
         w = CGFloat(70)
         rect = CGRect(x: (KScreenWidth-w)/2, y: (self.tableview!.frame.size.height+w)/2+4, width: w, height: 20)
         activityIndicatorLab = UILabel(frame: rect)
-        activityIndicatorLab?.text = "加载中.."
+        activityIndicatorLab?.text = ""
         activityIndicatorLab?.textAlignment = .center
         activityIndicatorLab?.font = UIFont.systemFont(ofSize: 15)
         activityIndicatorLab?.textColor = KTextLightGray

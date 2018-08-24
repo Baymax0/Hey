@@ -19,6 +19,10 @@ class ImageFlowCollectionCell: UICollectionViewCell {
     @IBOutlet weak var imgView: UIImageView!
 
     @IBOutlet weak var bottomView: UIView!
+    @IBOutlet weak var titleLab: UILabel!
+    @IBOutlet weak var userImg: UIImageView!
+    @IBOutlet weak var userNameLab: UILabel!
+
 
     weak var delegate : CustomeCellProtocol?
 

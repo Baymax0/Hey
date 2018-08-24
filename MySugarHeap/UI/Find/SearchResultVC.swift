@@ -45,6 +45,7 @@ class SearchResultVC: BaseVC {
         contentView.style = style
         contentView.setupUI()
         contentView.collectionView.delaysContentTouches = NO
+        contentView.collectionView.isScrollEnabled = false
 
         for vc in contentView.childViewControllers{
             self.addChildViewController(vc)

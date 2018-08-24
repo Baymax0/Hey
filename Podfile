@@ -11,6 +11,7 @@ pod 'MJRefresh'
 pod 'SwiftyUserDefaults'
 pod 'IQKeyboardManagerSwift', '5.0.0'
 pod 'SQLite.swift'
+pod 'Hero'
 
 #custom view
 pod 'NVActivityIndicatorView'

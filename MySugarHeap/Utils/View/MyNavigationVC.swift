@@ -12,8 +12,13 @@ class MyNavigationVC: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.interactivePopGestureRecognizer?.delegate = self
 
     }
+}
 
-
+extension MyNavigationVC:UIGestureRecognizerDelegate{
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
 }

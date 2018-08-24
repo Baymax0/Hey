@@ -74,7 +74,6 @@ class BaseCollectionView: BaseVC,MyCollectionViewLayoutDelegate,UICollectionView
         collectionView.mj_header = header
 
         footer.setRefreshingTarget(self, refreshingAction:#selector(loadMoreData))
-        collectionView.mj_footer = footer
         view.addSubview(collectionView)
 
         var w = CGFloat(35)
@@ -94,6 +93,15 @@ class BaseCollectionView: BaseVC,MyCollectionViewLayoutDelegate,UICollectionView
         activityIndicatorLab?.isHidden = YES
         view.addSubview(activityIndicatorLab!)
     }
+
+    func haveMoreData(_ have:Bool){
+        if have {
+            collectionView.mj_footer = footer
+        }else{
+            collectionView.mj_footer = nil
+        }
+    }
+
     //第一次请求数据调用
     func loadNewDataWithIndicator() -> Void {
         showLoadingView()
