@@ -28,6 +28,7 @@ class ImageDetailVC: BaseVC {
     
     var heroId:Int = 0
     
+    var chooseTagView:BMTagChooseView?
 
     var model:DTImgListModel!
 
@@ -41,7 +42,7 @@ class ImageDetailVC: BaseVC {
         userNameLab.hero.id =  "userName \(heroId)"
         userImgView.hero.id =  "avatar \(heroId)"
 
-        favoriteBtn.imageColorOff = KUnselectedGray
+        favoriteBtn.imageColorOff = KBlack_178
         favoriteBtn.imageColorOn = KRed
         favoriteBtn.circleColor = KRed
         favoriteBtn.lineColor = KOrange
