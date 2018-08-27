@@ -12,4 +12,11 @@ import HandyJSON
 struct BMTag: HandyJSON {
     var tagId:Int!
     var tagName:String!
+
+    static func == (lhs: BMTag, rhs: BMTag) -> Bool {
+        return lhs.tagId == rhs.tagId
+    }
 }
+
+//全部
+let AllItemTag = BMTag(tagId: -1, tagName: "全部")

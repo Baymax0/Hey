@@ -1,5 +1,5 @@
 //
-//  BaseCollectionView.swift
+//  BaseCollectionVC.swift
 //  MySugarHeap
 //
 //  Created by lzw on 2018/8/23.
@@ -10,7 +10,7 @@ import UIKit
 import MJRefresh
 import NVActivityIndicatorView
 
-class BaseCollectionView: BaseVC,MyCollectionViewLayoutDelegate,UICollectionViewDataSource {
+class BaseCollectionVC: BaseVC,MyCollectionViewLayoutDelegate,UICollectionViewDataSource {
     var dataArr:Array<Any>! = []
 
     var collectionView :UICollectionView!

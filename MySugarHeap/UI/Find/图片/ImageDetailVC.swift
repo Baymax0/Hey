@@ -20,9 +20,6 @@ class ImageDetailVC: BaseVC {
     @IBOutlet weak var bottomView: UIView!
 
     @IBOutlet weak var imgTitleLab: UILabel!
-    @IBOutlet weak var userImgView: UIImageView!
-    @IBOutlet weak var userNameLab: UILabel!
-    @IBOutlet weak var detailLab: UILabel!
 
     @IBOutlet weak var favoriteBtn: DOFavoriteButton!
     
@@ -39,33 +36,21 @@ class ImageDetailVC: BaseVC {
         imageView.hero.id = "imgHeroId \(heroId)"
         bottomView.hero.id =  "bottom \(heroId)"
         imgTitleLab.hero.id =  "title \(heroId)"
-        userNameLab.hero.id =  "userName \(heroId)"
-        userImgView.hero.id =  "avatar \(heroId)"
-
         favoriteBtn.imageColorOff = KBlack_178
         favoriteBtn.imageColorOn = KRed
         favoriteBtn.circleColor = KRed
         favoriteBtn.lineColor = KOrange
-
         bgSC.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(back)))
         view.insertSubview(visualEffectView, at: 0)
-
         loadData()
     }
 
     func loadData(){
-
         imgTitleLab.text = model.msg
-        userNameLab.text = model.sender.username
-        detailLab.text = String(format: "id:%d", model.sender.id ?? -1)
-
         let imgW = KScreenWidth - 10*2
         let imgStr = model.photo.path.replacingOccurrences(of: "_webp", with: "")
         imageViewH.constant = CGFloat(model.photo.height)*(imgW/CGFloat(model.photo.width))
         imageView.kf.setImage(with: ImageResource(downloadURL: URL(string: imgStr)!), placeholder: KDefaultImg.image, options: [.transition(ImageTransition.fade(1))])
-
-        let userImgStr = model.sender.avatar.replacingOccurrences(of: "_webp", with: "")
-        userImgView.kf.setImage(with: userImgStr.resource, placeholder: KDefaultAvatar.image, options: [.transition(ImageTransition.fade(1))])
     }
 
     @objc func back() {
@@ -73,12 +58,19 @@ class ImageDetailVC: BaseVC {
     }
 
     @IBAction func likeAction(_ sender: DOFavoriteButton) {
-        if sender.isSelected{
-            sender.deselect()
-        }else{
+        if !sender.isSelected{
+//            sender.deselect()
+//        }else{
             sender.select()
             chooseTagView = BMTagChooseView(.ImgTag) { (arr) in
-                print(arr?.count ?? 0)
+                let mod = BMFavorite<DTImgListModel>()
+                mod.model = self.model
+                var dic = Dictionary<String,String>()
+                for tag in arr{
+                    dic[String(tag.tagId)] = "1"
+                }
+                mod.tags = dic
+                BMCache.addFavorite(mod)
             }
             chooseTagView!.show()
         }

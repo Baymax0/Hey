@@ -10,7 +10,7 @@ import UIKit
 import Kingfisher
 import Hero
 
-class ImageTableVC: BaseCollectionView {
+class ImageTableVC: BaseCollectionVC {
 
     var start:Int = 0
     var keyWords:String = ""
@@ -78,9 +78,9 @@ class ImageTableVC: BaseCollectionView {
         let imgStr = mod.photo.path.replacingOccurrences(of: "_webp", with: "")
         cell.imgView.kf.setImage(with: imgStr.resource, placeholder: KDefaultImg.image, options: [.transition(ImageTransition.fade(1))])
         cell.titleLab.text = mod.msg
-        let userImgStr = mod.sender.avatar.replacingOccurrences(of: "_webp", with: "")
-        cell.userImg.kf.setImage(with: userImgStr.resource, placeholder: KDefaultAvatar.image, options: [.transition(ImageTransition.fade(1))])
-        cell.userNameLab.text = mod.sender.username
+//        let userImgStr = mod.sender.avatar.replacingOccurrences(of: "_webp", with: "")
+//        cell.userImg.kf.setImage(with: userImgStr.resource, placeholder: KDefaultAvatar.image, options: [.transition(ImageTransition.fade(1))])
+//        cell.userNameLab.text = mod.sender.username
         return cell
     }
     override func waterFallLayout(layout:UICollectionViewFlowLayout, index:NSInteger, width: CGFloat) -> CGFloat {
@@ -99,16 +99,12 @@ extension ImageTableVC:UIScrollViewDelegate,UICollectionViewDelegate , CustomeCe
         let imgHeroId   = "imgHeroId \(index.item)"
         let bottomId    = "bottom \(index.item)"
         let titleId     = "title \(index.item)"
-        let userNameId  = "userName \(index.item)"
-        let avatarId    = "avatar \(index.item)"
 
         weak var cell = collectionView.cellForItem(at: index) as! ImageFlowCollectionCell
 
         cell?.imgView.hero.id = imgHeroId
         cell?.bottomView.hero.id = bottomId
         cell?.titleLab.hero.id = titleId
-        cell?.userNameLab.hero.id = userNameId
-        cell?.userImg.hero.id = avatarId
 
         let vc = ImageDetailVC.fromStoryboard() as! ImageDetailVC
         vc.model = self.dataArr[index.item] as! DTImgListModel

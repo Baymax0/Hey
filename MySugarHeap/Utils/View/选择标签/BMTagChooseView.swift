@@ -17,7 +17,7 @@ class BMTagChooseView: UIView {
 
     var tagsArr : Array<BMTag>
     
-    var selArr : Array<BMTag>?
+    var selArr : Array<BMTag> = Array<BMTag>()
 
     lazy var bgView:UIButton = {
         let view = UIButton(frame: CGRect(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight))
@@ -65,10 +65,10 @@ class BMTagChooseView: UIView {
         return view
     }()
 
-    var selected : ((_:[BMTag]?)->())
+    var finish : ((_:[BMTag])->())
 
-    init(_ tag:BMTagType,selected:@escaping (_:[BMTag]?)->()){
-        self.selected = selected
+    init(_ tag:BMTagType,finish:@escaping (_:[BMTag])->() ){
+        self.finish = finish
         tagsArr = Array<BMTag>()
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         contenView.addSubview(tagBgView)
@@ -113,20 +113,19 @@ class BMTagChooseView: UIView {
             x = x + blank
             let btn = UIButton.init(frame: CGRect(x: x, y: row*(h+blank) + 8, width: w, height: h))
             x = x + w
-            btn.backgroundColor = KRGB(235, 235, 235)
-            btn.setTitle(tag.tagName, for: .normal)
             btn.tag = i
-            btn.setTitleColor(KBlack_87, for: .normal)
+            btn.layer.borderWidth = 1
+            btn.layer.cornerRadius = 6
+            btn.layer.masksToBounds = true
             btn.backgroundColor = .clear
+
+            btn.setTitle(tag.tagName, for: .normal)
+            btn.setTitleColor(KBlack_153, for: .normal)
+            btn.setTitleColor(KRed, for: .selected)
             btn.titleLabel?.font = UIFont.systemFont(ofSize: fontSize)
             btn.titleLabel?.lineBreakMode = .byTruncatingTail
             btn.addTarget(self, action: #selector(choose), for: .touchUpInside)
 
-            btn.layer.borderWidth = 1
-            btn.layer.cornerRadius = 6
-            btn.layer.masksToBounds = true
-            btn.setTitleColor(KBlack_153, for: .normal)
-            btn.setTitleColor(KRed, for: .selected)
 
             maxY = btn.maxY
             
@@ -144,7 +143,7 @@ class BMTagChooseView: UIView {
         let _ = tagBgView.subviews.map { [weak self] v -> Void in
             let btn = v as! UIButton
             if btn.isSelected{
-                self?.selArr?.append(tagsArr[btn.tag])
+                self?.selArr.append(tagsArr[btn.tag])
             }
             return
         }
@@ -165,7 +164,7 @@ class BMTagChooseView: UIView {
     }
 
     @objc func close() -> Void{
-        selected(selArr)
+        finish(selArr)
         
         UIView.animate(withDuration: 0.25, animations: {
             self.bgView.alpha = 0

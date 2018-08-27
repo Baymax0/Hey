@@ -52,7 +52,7 @@ class ImageFlowCollectionCell: UICollectionViewCell {
         let imgW = mod.photo.width ?? 1
         let imgH = mod.photo.height ?? 1
         let h = (w / CGFloat(imgW) * CGFloat(imgH))
-        return h + 50
+        return h + 30
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

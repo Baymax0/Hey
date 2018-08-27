@@ -13,8 +13,10 @@ let BMCache = CacheManager.share
 
 /// 缓存Key
 enum CacheKey_String:String {
-    case ImgTags
-    case FindSearchHistory
+    case ImgTags //图片的所有tags
+    case ImageFavoriteList //所有收藏的图片
+    case FindSearchHistory //搜索历史记录
+
 }
 
 class CacheManager: NSObject {
@@ -55,19 +57,28 @@ class CacheManager: NSObject {
 }
 
 protocol CustomCacheProtocol {
+
+    // ------------  基础方法  -----------------
+    //存储字符串对象
     func set(_ Key:CacheKey_String, value: String?)
     func getString(_ Key:CacheKey_String) -> String?
-
+    //存储字符串数组对象
     func set(_ Key:CacheKey_String, value:Array<String>?)
     func getStringList(_ Key:CacheKey_String) -> Array<String>
-
+    //存储自定义对象
     func set(_ Key:CacheKey_String, value: HandyJSON?)
     func getModel<T:HandyJSON>(_ Key:CacheKey_String, type:T.Type?) -> T?
-
+    //自定义对象 数组
     func set<T:HandyJSON>(_ Key:CacheKey_String, value: Array<T>?)
     func getModelList<T:HandyJSON>(_ Key:CacheKey_String, type:T.Type?) -> Array<T>
 
+    // ------------  具体方法  -----------------
+    //获得图片所有Tag
     func getImageTags() -> Array<BMTag>
+    //获得所有收藏的图片
+    func getFavoriteImgList() -> Array<BMFavorite<DTImgListModel>>
+    //添加收藏
+    func addFavorite(_ model:BMFavorite<DTImgListModel>) ->Void
 }
 
 private let separator = ";"
@@ -80,7 +91,6 @@ extension CacheManager : CustomCacheProtocol{
     func getString(_ Key:CacheKey_String) -> String?{
         return allData[Key.rawValue]
     }
-    
     //存储字符串数组对象
     func set(_ Key:CacheKey_String, value:Array<String>?){
         var res:String?
@@ -97,7 +107,6 @@ extension CacheManager : CustomCacheProtocol{
             return str.components(separatedBy: separator)
         }
     }
-
     //存储自定义对象
     func set(_ Key:CacheKey_String, value: HandyJSON?){
         let jsonStr = value?.toJSONString(prettyPrint: false)
@@ -106,7 +115,6 @@ extension CacheManager : CustomCacheProtocol{
     func getModel<T:HandyJSON>(_ Key:CacheKey_String, type:T.Type?) -> T?{
         return T.deserialize(from: getString(Key))
     }
-
     //自定义对象 数组
     func set<T:HandyJSON>(_ Key:CacheKey_String, value: Array<T>?){
         let jsonStr = value?.toJSONString(prettyPrint: false)
@@ -120,17 +128,20 @@ extension CacheManager : CustomCacheProtocol{
         }
     }
 
-
-
-    //封装方法
+    // ------------  具体方法  -----------------
     func getImageTags() -> Array<BMTag>{
         return getModelList(.ImgTags, type: BMTag.self)
     }
-
-
+    func getFavoriteImgList() -> Array<BMFavorite<DTImgListModel>>{
+        return getModelList(.ImageFavoriteList, type: BMFavorite<DTImgListModel>.self)
+    }
+    func addFavorite(_ model:BMFavorite<DTImgListModel>) ->Void{
+        var arr = getModelList(.ImageFavoriteList, type: BMFavorite<DTImgListModel>.self)
+        arr.append(model)
+        set(.ImageFavoriteList, value: arr)
+    }
 
 }
-
 
 
 

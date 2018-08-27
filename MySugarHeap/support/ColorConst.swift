@@ -30,7 +30,8 @@ let KBlack_0    = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
 let KBlack_87   = #colorLiteral(red: 0.3254901961, green: 0.3254901961, blue: 0.3254901961, alpha: 1)
 let KBlack_153  = #colorLiteral(red: 0.6, green: 0.6, blue: 0.6, alpha: 1)
 let KBlack_178  = #colorLiteral(red: 0.7176470588, green: 0.7176470588, blue: 0.7176470588, alpha: 1)
-let KBGGray     = #colorLiteral(red: 0.9490196078, green: 0.9490196078, blue: 0.9490196078, alpha: 1) //背景视图灰色
+let KBGGray     = #colorLiteral(red: 0.9490196078, green: 0.9490196078, blue: 0.9490196078, alpha: 1) //背景视图灰色 242
+let KBGGray_250 = #colorLiteral(red: 0.9803921569, green: 0.9803921569, blue: 0.9803921569, alpha: 1) //背景视图灰色 242
 let KBGGrayLine = #colorLiteral(red: 0.8705882353, green: 0.8705882353, blue: 0.8705882353, alpha: 1)
 
 

@@ -16,6 +16,8 @@ class MeVC: BaseVC {
 
     }
 
-
+    @IBAction func faviriteImgAction(_ sender: UIButton) {
+        navigationController?.pushViewController(FavoriteImgVC.fromStoryboard(), animated: YES)
+    }
 
 }
