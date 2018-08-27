@@ -14,7 +14,7 @@ class MyTabbarVC: BaseVC {
     @IBOutlet weak var tabbarH: NSLayoutConstraint!
 
     let selectedColor = KRed
-    let unSelectedColor = KUnselectedGray
+    let unSelectedColor = KBlack_178
 
 
     var tabBarNums = 0

@@ -48,7 +48,7 @@ class BaseCollectionView: BaseVC,MyCollectionViewLayoutDelegate,UICollectionView
             self.noDataPlaceLab?.numberOfLines = 0
             self.noDataPlaceLab?.textAlignment = .center
             self.noDataPlaceLab?.font = UIFont.systemFont(ofSize: 16)
-            self.noDataPlaceLab?.textColor = KTextLightGray
+            self.noDataPlaceLab?.textColor = KBlack_178
             self.noDataPlaceView?.addSubview(self.noDataPlaceLab!)
 
             self.noDataPlaceView!.isHidden = YES
@@ -80,7 +80,7 @@ class BaseCollectionView: BaseVC,MyCollectionViewLayoutDelegate,UICollectionView
         var rect = CGRect(x: (KScreenWidth-w)/2, y: (collectionView!.frame.size.height-w)/2, width: w, height: w)
         activityIndicatorView = NVActivityIndicatorView(frame: rect,
                                                         type: NVActivityIndicatorType(rawValue: 17)!)
-        activityIndicatorView?.color = KTextLightGray
+        activityIndicatorView?.color = KBlack_178
         view.addSubview(activityIndicatorView!)
 
         w = CGFloat(70)
@@ -89,7 +89,7 @@ class BaseCollectionView: BaseVC,MyCollectionViewLayoutDelegate,UICollectionView
         activityIndicatorLab?.text = "加载中.."
         activityIndicatorLab?.textAlignment = .center
         activityIndicatorLab?.font = UIFont.systemFont(ofSize: 15)
-        activityIndicatorLab?.textColor = KTextLightGray
+        activityIndicatorLab?.textColor = KBlack_178
         activityIndicatorLab?.isHidden = YES
         view.addSubview(activityIndicatorLab!)
     }

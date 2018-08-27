@@ -79,7 +79,7 @@ extension SearchVC{
             btn.layer.cornerRadius = 3
             btn.layer.masksToBounds = YES
             btn.setTitle(str, for: .normal)
-            btn.setTitleColor(KTextBlack, for: .normal)
+            btn.setTitleColor(KBlack_87, for: .normal)
             btn.titleLabel?.font = UIFont.systemFont(ofSize: fontSize)
             btn.titleLabel?.lineBreakMode = .byTruncatingTail
             btn.addTarget(self, action: #selector(chooseHistoryBtn(_:)), for: .touchUpInside)

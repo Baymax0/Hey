@@ -56,7 +56,7 @@ class BaseTableVC: BaseVC{
             self.noDataPlaceLab?.numberOfLines = 0
             self.noDataPlaceLab?.textAlignment = .center
             self.noDataPlaceLab?.font = UIFont.systemFont(ofSize: 17)
-            self.noDataPlaceLab?.textColor = KTextLightGray
+            self.noDataPlaceLab?.textColor = KBlack_178
             self.noDataPlaceView?.addSubview(self.noDataPlaceLab!)
 
             self.noDataPlaceView!.isHidden = YES
@@ -85,7 +85,7 @@ class BaseTableVC: BaseVC{
         var rect = CGRect(x: (KScreenWidth-w)/2, y: (self.tableview!.frame.size.height-w)/2, width: w, height: w)
         activityIndicatorView = NVActivityIndicatorView(frame: rect,
                                                         type: NVActivityIndicatorType(rawValue: 17)!)
-        activityIndicatorView?.color = KTextLightGray
+        activityIndicatorView?.color = KBlack_178
         view.addSubview(activityIndicatorView!)
 
         w = CGFloat(70)
@@ -94,7 +94,7 @@ class BaseTableVC: BaseVC{
         activityIndicatorLab?.text = ""
         activityIndicatorLab?.textAlignment = .center
         activityIndicatorLab?.font = UIFont.systemFont(ofSize: 15)
-        activityIndicatorLab?.textColor = KTextLightGray
+        activityIndicatorLab?.textColor = KBlack_178
         activityIndicatorLab?.isHidden = YES
         view.addSubview(activityIndicatorLab!)
 

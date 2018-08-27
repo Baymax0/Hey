@@ -22,11 +22,11 @@ struct DTSender : HandyJSON{
 }
 
 struct DTAlbum : HandyJSON{
-    var id:Int!             //宽
-    var name:String!        //高
-    var count:Int!          //高
-    var covers:Array<String>!   //高
-    var like_count:Int!         //高
-    var favorite_count:Int!     //高
+    var id:Int!             //id
+    var name:String!        //名称
+    var count:Int!          //内容数
+    var covers:Array<String>!   //图标
+    var like_count:Int!         //like数目
+    var favorite_count:Int!     //收藏数目
 }
 

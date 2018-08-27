@@ -11,7 +11,7 @@ import HandyJSON
 
 let BMCache = CacheManager.share
 
-/// 缓存Key 通过 Cache[.account] 设置 获取
+/// 缓存Key
 enum CacheKey_String:String {
     case ImgTags
     case FindSearchHistory

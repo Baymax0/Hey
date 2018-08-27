@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A4021652131B7FA00B84900 /* ColorConst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4021642131B7FA00B84900 /* ColorConst.swift */; };
 		11097ACF0C6B7BE389B8D179 /* Pods_MySugarHeap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC5EA24AC4C117F39B66BE92 /* Pods_MySugarHeap.framework */; };
 		2D22961A212EB2EB00A4D2DE /* ImageDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D229619212EB2EB00A4D2DE /* ImageDetailVC.swift */; };
 		2D350004212CF112003D329A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D350003212CF112003D329A /* AppDelegate.swift */; };
@@ -90,6 +91,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A4021642131B7FA00B84900 /* ColorConst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorConst.swift; sourceTree = "<group>"; };
 		2D229619212EB2EB00A4D2DE /* ImageDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDetailVC.swift; sourceTree = "<group>"; };
 		2D350000212CF112003D329A /* MySugarHeap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MySugarHeap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D350003212CF112003D329A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 				2D350022212CF9B3003D329A /* Const.swift */,
 				2D350005212CF112003D329A /* ViewController.swift */,
 				2D350003212CF112003D329A /* AppDelegate.swift */,
+				0A4021642131B7FA00B84900 /* ColorConst.swift */,
 			);
 			path = support;
 			sourceTree = "<group>";
@@ -274,7 +277,6 @@
 			isa = PBXGroup;
 			children = (
 				2D229618212EB2B300A4D2DE /* 图片 */,
-				2D5D237E212E7FDF00AE65B2 /* View */,
 				2D350026212CFED1003D329A /* FindVC.swift */,
 				2DD5E86E212D2907003153A9 /* SearchVC.swift */,
 				2DD5E8A6212D58D1003153A9 /* SearchResultVC.swift */,
@@ -300,13 +302,6 @@
 				76E0E967691FF8761A5ADF97 /* Pods */,
 				D67386C8E1A4777D7D61C636 /* Frameworks */,
 			);
-			sourceTree = "<group>";
-		};
-		2D5D237E212E7FDF00AE65B2 /* View */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		2D61E5F4212FD978005B1553 /* Cache */ = {
@@ -661,6 +656,7 @@
 				2DD5E8E4212D59A8003153A9 /* ConstraintMakerPriortizable.swift in Sources */,
 				2DD5E8A5212D4A7E003153A9 /* Hud.swift in Sources */,
 				2D5D2381212E801F00AE65B2 /* ImageFlowCollectionCell.swift in Sources */,
+				0A4021652131B7FA00B84900 /* ColorConst.swift in Sources */,
 				2DD5E907212D5A6C003153A9 /* ArticleTableVC.swift in Sources */,
 				2D350021212CF806003D329A /* MyTabbar.swift in Sources */,
 				2DD5E8FA212D59A8003153A9 /* ConstraintView+Extensions.swift in Sources */,

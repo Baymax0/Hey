@@ -27,6 +27,7 @@ class ImageDetailVC: BaseVC {
     @IBOutlet weak var favoriteBtn: DOFavoriteButton!
     
     var heroId:Int = 0
+    
 
     var model:DTImgListModel!
 
@@ -75,10 +76,10 @@ class ImageDetailVC: BaseVC {
             sender.deselect()
         }else{
             sender.select()
-            let v = BMTagChooseView(.ImgTag) { (arr) in
+            chooseTagView = BMTagChooseView(.ImgTag) { (arr) in
                 print(arr?.count ?? 0)
             }
-            v.show()
+            chooseTagView!.show()
         }
     }
 
