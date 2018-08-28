@@ -29,7 +29,7 @@ class MyTabbarVC: BaseVC {
         tabbarH.constant = KTabBarH
 
         tabBarNums = 2
-        addTabbarItem("发现", "tabbar-find", FindVC.fromStoryboard())
+        addTabbarItem("发现", "tabbar-find", FindImageVC.fromStoryboard())
         addTabbarItem("我的", "tabbar-me", MeVC.fromStoryboard())
 
         pushVC(lastBtn!)

@@ -23,6 +23,8 @@ extension ApiManager{
 //堆糖接口
 enum DTApiManager : ApiManager{
     case imageSearch
+    case hotImg
+    case groups
 }
 extension DTApiManager{
     var host: String {
@@ -33,6 +35,10 @@ extension DTApiManager{
         switch self {
         case .imageSearch:
             return "/napi/blog/list/by_search/"
+        case .hotImg:
+            return "/napi/index/hot/"
+        case .groups:
+            return "/napi/index/groups/"
         }
     }
     var orignParam:Dictionary<String,Any>{

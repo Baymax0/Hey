@@ -23,14 +23,14 @@ open class DOFavoriteButton: UIButton {
     @IBInspectable open var imageColorOn: UIColor! = UIColor(red: 255/255, green: 172/255, blue: 51/255, alpha: 1.0) {
         didSet {
             if (isSelected) {
-                imageShape.fillColor = imageColorOn.cgColor
+                imageShape.fillColor = imageColorOn == nil ? nil:imageColorOn.cgColor
             }
         }
     }
     @IBInspectable open var imageColorOff: UIColor! = UIColor(red: 136/255, green: 153/255, blue: 166/255, alpha: 1.0) {
         didSet {
             if (!isSelected) {
-                imageShape.fillColor = imageColorOff.cgColor
+                imageShape.fillColor = imageColorOff == nil ? nil:imageColorOff.cgColor
             }
         }
     }
@@ -39,7 +39,7 @@ open class DOFavoriteButton: UIButton {
     fileprivate var circleMask: CAShapeLayer!
     @IBInspectable open var circleColor: UIColor! = UIColor(red: 255/255, green: 172/255, blue: 51/255, alpha: 1.0) {
         didSet {
-            circleShape.fillColor = circleColor.cgColor
+            circleShape.fillColor = circleColor == nil ? nil:circleColor.cgColor
         }
     }
 
@@ -47,7 +47,7 @@ open class DOFavoriteButton: UIButton {
     @IBInspectable open var lineColor: UIColor! = UIColor(red: 250/255, green: 120/255, blue: 68/255, alpha: 1.0) {
         didSet {
             for line in lines {
-                line.strokeColor = lineColor.cgColor
+                line.strokeColor = lineColor == nil ? nil:lineColor.cgColor
             }
         }
     }
@@ -74,7 +74,7 @@ open class DOFavoriteButton: UIButton {
         didSet {
             if (isSelected != oldValue) {
                 if isSelected {
-                    imageShape.fillColor = imageColorOn.cgColor
+                    imageShape.fillColor = imageColorOn == nil ? nil:imageColorOn.cgColor
                 } else {
                     deselect()
                 }
@@ -117,7 +117,7 @@ open class DOFavoriteButton: UIButton {
         circleShape.bounds = imageFrame
         circleShape.position = imgCenterPoint
         circleShape.path = UIBezierPath(ovalIn: imageFrame).cgPath
-        circleShape.fillColor = circleColor.cgColor
+        circleShape.fillColor = circleColor == nil ? nil:circleColor.cgColor
         circleShape.transform = CATransform3DMakeScale(0.0, 0.0, 1.0)
         self.layer.addSublayer(circleShape)
 
@@ -141,7 +141,7 @@ open class DOFavoriteButton: UIButton {
             line.position = imgCenterPoint
             line.masksToBounds = true
             line.actions = ["strokeStart": NSNull(), "strokeEnd": NSNull()]
-            line.strokeColor = lineColor.cgColor
+            line.strokeColor = lineColor == nil ? nil:lineColor.cgColor
             line.lineWidth = 1.25
             line.miterLimit = 1.25
             line.path = {
@@ -167,7 +167,7 @@ open class DOFavoriteButton: UIButton {
         imageShape.bounds = imageFrame
         imageShape.position = imgCenterPoint
         imageShape.path = UIBezierPath(rect: imageFrame).cgPath
-        imageShape.fillColor = imageColorOff.cgColor
+        imageShape.fillColor = imageColorOff == nil ? nil:imageColorOff.cgColor
         imageShape.actions = ["fillColor": NSNull()]
         self.layer.addSublayer(imageShape)
 
@@ -363,7 +363,7 @@ open class DOFavoriteButton: UIButton {
 
     open func select() {
         isSelected = true
-        imageShape.fillColor = imageColorOn.cgColor
+        imageShape.fillColor = imageColorOn == nil ? nil:imageColorOn.cgColor
 
         CATransaction.begin()
 
@@ -382,7 +382,7 @@ open class DOFavoriteButton: UIButton {
 
     open func deselect() {
         isSelected = false
-        imageShape.fillColor = imageColorOff.cgColor
+        imageShape.fillColor = imageColorOff == nil ? nil:imageColorOff.cgColor
 
         // remove all animations
         circleShape.removeAllAnimations()

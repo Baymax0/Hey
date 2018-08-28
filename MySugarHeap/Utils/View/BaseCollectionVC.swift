@@ -11,7 +11,7 @@ import MJRefresh
 import NVActivityIndicatorView
 
 class BaseCollectionVC: BaseVC,MyCollectionViewLayoutDelegate,UICollectionViewDataSource {
-    var dataArr:Array<Any>! = []
+    var dataArr:Array<BMImage>! = []
 
     var collectionView :UICollectionView!
     let header = MJRefreshNormalHeader()//顶部刷新
@@ -24,6 +24,7 @@ class BaseCollectionVC: BaseVC,MyCollectionViewLayoutDelegate,UICollectionViewDa
     private var noDataPlaceImgView:UIImageView?
     private var noDataPlaceLab:UILabel?
 
+    let cellID = "cellID"
     //设置 即 启用
     var noDataPlaceImage:String?{
         get{
@@ -65,11 +66,14 @@ class BaseCollectionVC: BaseVC,MyCollectionViewLayoutDelegate,UICollectionViewDa
         layout.delegate = self
         collectionView = UICollectionView(frame:rect, collectionViewLayout: layout)
         collectionView.dataSource = self
+        collectionView.delegate = self
         collectionView.backgroundColor = KBGGray
-//        collectionView.registerClass(YFWaterFallCollectionViewCell.self, forCellWithReuseIdentifier: cellID)
+        collectionView.register(UINib(nibName: "ImageFlowCollectionCell", bundle: nil), forCellWithReuseIdentifier: cellID)
+        collectionView.delaysContentTouches = false
 
         header.setRefreshingTarget(self, refreshingAction:#selector(loadNewData))
         header.lastUpdatedTimeLabel.isHidden = true
+        header.stateLabel.isHidden = true
         header.stateLabel.textColor = KRGB(153, 153, 153)
         collectionView.mj_header = header
 
@@ -118,21 +122,21 @@ class BaseCollectionVC: BaseVC,MyCollectionViewLayoutDelegate,UICollectionViewDa
         return
     }
 
-    func getHeight(_ index:Int) -> CGFloat {
-        return 0
-    }
-
     //collectionView数据源设置
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.dataArr.count
     }
     //给layout高度，根据比例计算
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return UICollectionViewCell()
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ImageFlowCollectionCell
+        cell.indexPath = indexPath
+        let mod = self.dataArr[indexPath.item]
+        cell.setData(mod)
+        return cell
     }
     //layout代理
     func waterFallLayout(layout:UICollectionViewFlowLayout, index:NSInteger, width: CGFloat) -> CGFloat {
-        return getHeight(index)
+        return ImageFlowCollectionCell.getHeight(self.dataArr[index])
     }
 
     func columnCountOfWaterFallLayout(layout:UICollectionViewFlowLayout) ->NSInteger {
@@ -170,5 +174,11 @@ class BaseCollectionVC: BaseVC,MyCollectionViewLayoutDelegate,UICollectionViewDa
     }
 
 }
-
+extension BaseCollectionVC:UIScrollViewDelegate,UICollectionViewDelegate{
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        for cell in collectionView.visibleCells{
+            (cell as! ImageFlowCollectionCell).select = false
+        }
+    }
+}
 

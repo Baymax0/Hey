@@ -7,13 +7,21 @@
 //
 
 import UIKit
+import Hero
 
 class MyNavigationVC: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.interactivePopGestureRecognizer?.delegate = self
+        self.navigationBar.isHidden = true
+        self.hero.navigationAnimationType = .fade
 
+    }
+
+    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
+        viewController.hero.isEnabled = true
+        super.pushViewController(viewController, animated: animated)
     }
 }
 

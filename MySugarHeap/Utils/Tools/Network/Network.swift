@@ -66,6 +66,12 @@ extension Network {
         orignParam.merge(params) { (a, b) -> Any in return a}
         Network.requestBase(api, params: orignParam, (DTRespObject<T>).self) { (mod) in finish(mod?.data) }
     }
+    //堆糖 请求
+    static func requestDTList<T: HandyJSON>(_ api:DTApiManager, params:Dictionary<String,Any>, model:T.Type, finish: @escaping (_ rep:[T]?)->()) -> Void{
+        var orignParam = api.orignParam
+        orignParam.merge(params) { (a, b) -> Any in return a}
+        Network.requestBase(api, params: orignParam, (DTRespArrayObject<T>).self) { (mod) in finish(mod?.data) }
+    }
 
 }
 

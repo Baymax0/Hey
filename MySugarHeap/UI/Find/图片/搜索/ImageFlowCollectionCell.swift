@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 protocol CustomeCellProtocol:NSObjectProtocol{
     func didSelectedItems(_ index:IndexPath) -> Void
@@ -20,8 +21,6 @@ class ImageFlowCollectionCell: UICollectionViewCell {
 
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var titleLab: UILabel!
-    @IBOutlet weak var userImg: UIImageView!
-    @IBOutlet weak var userNameLab: UILabel!
 
 
     weak var delegate : CustomeCellProtocol?
@@ -43,14 +42,16 @@ class ImageFlowCollectionCell: UICollectionViewCell {
         }
     }
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    func setData(_ mod:BMImage) -> Void {
+        let imgStr = mod.imgUrl.replacingOccurrences(of: "_webp", with: "")
+        self.imgView.kf.setImage(with: imgStr.resource, placeholder: KDefaultImg.image, options: [.transition(ImageTransition.fade(1))])
+        self.titleLab.text = mod.title
     }
 
-    static func getHeight(_ mod:DTImgListModel) -> CGFloat {
+    static func getHeight(_ mod:BMImage) -> CGFloat {
         let w = (KScreenWidth-MyCollectionViewLayout().columnMargin*3)/2
-        let imgW = mod.photo.width ?? 1
-        let imgH = mod.photo.height ?? 1
+        let imgW = mod.width ?? 1
+        let imgH = mod.height ?? 1
         let h = (w / CGFloat(imgW) * CGFloat(imgH))
         return h + 30
     }

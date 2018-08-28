@@ -27,7 +27,7 @@ class ImageDetailVC: BaseVC {
     
     var chooseTagView:BMTagChooseView?
 
-    var model:DTImgListModel!
+    var model:BMImage!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,10 +46,10 @@ class ImageDetailVC: BaseVC {
     }
 
     func loadData(){
-        imgTitleLab.text = model.msg
+        imgTitleLab.text = model.title
         let imgW = KScreenWidth - 10*2
-        let imgStr = model.photo.path.replacingOccurrences(of: "_webp", with: "")
-        imageViewH.constant = CGFloat(model.photo.height)*(imgW/CGFloat(model.photo.width))
+        let imgStr = model.imgUrl.replacingOccurrences(of: "_webp", with: "")
+        imageViewH.constant = CGFloat(model.height)*(imgW/CGFloat(model.width))
         imageView.kf.setImage(with: ImageResource(downloadURL: URL(string: imgStr)!), placeholder: KDefaultImg.image, options: [.transition(ImageTransition.fade(1))])
     }
 
@@ -63,7 +63,7 @@ class ImageDetailVC: BaseVC {
 //        }else{
             sender.select()
             chooseTagView = BMTagChooseView(.ImgTag) { (arr) in
-                let mod = BMFavorite<DTImgListModel>()
+                let mod = BMFavorite<BMImage>()
                 mod.model = self.model
                 var dic = Dictionary<String,String>()
                 for tag in arr{

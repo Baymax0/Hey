@@ -76,7 +76,7 @@ protocol CustomCacheProtocol {
     //获得图片所有Tag
     func getImageTags() -> Array<BMTag>
     //获得所有收藏的图片
-    func getFavoriteImgList() -> Array<BMFavorite<DTImgListModel>>
+    func getFavoriteImgList() -> Array<BMFavorite<BMImage>>
     //添加收藏
     func addFavorite(_ model:BMFavorite<DTImgListModel>) ->Void
 }
@@ -132,11 +132,11 @@ extension CacheManager : CustomCacheProtocol{
     func getImageTags() -> Array<BMTag>{
         return getModelList(.ImgTags, type: BMTag.self)
     }
-    func getFavoriteImgList() -> Array<BMFavorite<DTImgListModel>>{
-        return getModelList(.ImageFavoriteList, type: BMFavorite<DTImgListModel>.self)
+    func getFavoriteImgList() -> Array<BMFavorite<BMImage>>{
+        return getModelList(.ImageFavoriteList, type: BMFavorite<BMImage>.self)
     }
-    func addFavorite(_ model:BMFavorite<DTImgListModel>) ->Void{
-        var arr = getModelList(.ImageFavoriteList, type: BMFavorite<DTImgListModel>.self)
+    func addFavorite<T:HandyJSON>(_ model:BMFavorite<T>) ->Void{
+        var arr = getModelList(.ImageFavoriteList, type: BMFavorite<T>.self)
         arr.append(model)
         set(.ImageFavoriteList, value: arr)
     }

@@ -7,10 +7,11 @@
 //
 
 import UIKit
+import Hero
 
 class BaseVC: UIViewController {
 
-    var hideNav = false
+    var hideNav = true
     var popGestureEnable = true
 
     static var currentVC:String?
@@ -27,6 +28,7 @@ class BaseVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hero.isEnabled = true
     }
 
     override func viewWillAppear(_ animated: Bool) {

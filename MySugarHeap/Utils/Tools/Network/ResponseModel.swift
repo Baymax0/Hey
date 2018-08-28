@@ -17,4 +17,10 @@ class DTRespObject<T:HandyJSON>: HandyJSON {
     required init() {}
 }
 
-
+/// 数据封装为对象
+class DTRespArrayObject<T:HandyJSON>: HandyJSON {
+    var status:Int!
+    var message:String!
+    var data:Array<T>?
+    required init() {}
+}
