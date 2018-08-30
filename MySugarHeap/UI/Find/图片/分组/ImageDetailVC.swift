@@ -37,15 +37,22 @@ class ImageDetailVC: BaseVC {
         bottomView.hero.id =  "bottom \(heroId)"
         imgTitleLab.hero.id =  "title \(heroId)"
         favoriteBtn.imageColorOff = KBlack_178
-        favoriteBtn.imageColorOn = KRed
-        favoriteBtn.circleColor = KRed
-        favoriteBtn.lineColor = KOrange
+        favoriteBtn.imageColorOn = KRed_shanhu
+        favoriteBtn.circleColor = KRed_shanhu
+        favoriteBtn.lineColor = KOrange_light
         bgSC.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(back)))
+        bgSC.delegate = self
         view.insertSubview(visualEffectView, at: 0)
         loadData()
+
+        //侧滑返回
+        addSlideBack(view)
     }
 
     func loadData(){
+        if model.imgUrl == nil{
+            return
+        }
         imgTitleLab.text = model.title
         let imgW = KScreenWidth - 10*2
         let imgStr = model.imgUrl.replacingOccurrences(of: "_webp", with: "")
@@ -76,4 +83,34 @@ class ImageDetailVC: BaseVC {
         }
     }
 
+    @IBAction func downloadAction(_ sender: Any) {
+        let img = imageView.image
+        UIImageWriteToSavedPhotosAlbum(img!, self, #selector(image(image:didFinishSavingWithError:contextInfo:)), nil)
+    }
+
+    @objc func image(image:UIImage,didFinishSavingWithError error:NSError?,contextInfo:AnyObject) {
+        if error != nil{
+            print("error!")
+            return
+        }else{
+            HUD.text("已保存到相册")
+        }
+    }
+
 }
+
+extension ImageDetailVC:UIScrollViewDelegate{
+
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if scrollView.contentOffset.y < -70{
+            dismiss(animated: YES, completion: nil)
+        }
+    }
+
+
+}
+
+
+
+
+

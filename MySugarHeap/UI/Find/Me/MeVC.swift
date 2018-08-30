@@ -20,4 +20,9 @@ class MeVC: BaseVC {
 
     }
 
+    @IBAction func clearAction(_ sender: Any) {
+        BMCache.clear()
+    }
+
+
 }

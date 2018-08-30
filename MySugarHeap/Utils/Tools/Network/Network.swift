@@ -12,10 +12,35 @@ import HandyJSON
 
 
 class Network{
-    private static func requestBase<T:HandyJSON>(_ api:ApiManager, params:[String:Any], _ model:T.Type, finish: @escaping (_ resp:T?)->()) -> Void{
-        let param = params
-//        param[] = ""
-        Alamofire.request(api.url, method: .get, parameters: param).responseString { (response) in
+    private static func requestBase<T:HandyJSON>(targetUrl:String? = nil ,api:ApiManager, params:[String:Any], model:T.Type, finish: @escaping (_ resp:T?)->()) -> Void{
+        var param:[String:Any]? = nil
+        var url:URL!
+        if targetUrl == nil {
+            url = api.url
+            param = params
+        }else{
+            var s = targetUrl!.replacingOccurrences(of: "duitang://www.duitang.com", with: "\(api.host)/napi")
+            if params.keys.count != 0{
+                var i = 0
+                for d in params {
+                    if i == 0{
+                        if s.contains("?"){
+                            s.append("&")
+                        }else{
+                            s.append("?")
+                        }
+                    }else{
+                        s.append("&")
+                    }
+                    let par = "\(d.key)=\(d.value)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+                    s.append(par!)
+                    i += 1
+                }
+            }
+            url = URL.init(string: s)!
+        }
+
+        Alamofire.request(url, method: .get, parameters: param).responseString { (response) in
             switch response.result{
             case .success(let jsonStr):
                 if let resp = JSONDeserializer<T>.deserializeFrom(json: jsonStr){
@@ -61,16 +86,16 @@ class Network{
 
 extension Network {
     //堆糖 请求
-    static func requestDT<T: HandyJSON>(_ api:DTApiManager, params:Dictionary<String,Any>, model:T.Type, finish: @escaping (_ rep:T?)->()) -> Void{
+    static func requestDT<T: HandyJSON>(targetUrl:String? = nil ,api:DTApiManager, params:Dictionary<String,Any>, model:T.Type, finish: @escaping (_ rep:T?)->()) -> Void{
         var orignParam = api.orignParam
         orignParam.merge(params) { (a, b) -> Any in return a}
-        Network.requestBase(api, params: orignParam, (DTRespObject<T>).self) { (mod) in finish(mod?.data) }
+        Network.requestBase(targetUrl:targetUrl, api:api, params: orignParam, model:(DTRespObject<T>).self) { (mod) in finish(mod?.data) }
     }
     //堆糖 请求
-    static func requestDTList<T: HandyJSON>(_ api:DTApiManager, params:Dictionary<String,Any>, model:T.Type, finish: @escaping (_ rep:[T]?)->()) -> Void{
+    static func requestDTList<T: HandyJSON>(targetUrl:String? = nil ,api:DTApiManager, params:Dictionary<String,Any>, model:T.Type, finish: @escaping (_ rep:[T]?)->()) -> Void{
         var orignParam = api.orignParam
         orignParam.merge(params) { (a, b) -> Any in return a}
-        Network.requestBase(api, params: orignParam, (DTRespArrayObject<T>).self) { (mod) in finish(mod?.data) }
+        Network.requestBase(targetUrl:targetUrl, api:api, params: orignParam, model:(DTRespArrayObject<T>).self) { (mod) in finish(mod?.data) }
     }
 
 }

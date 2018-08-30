@@ -50,7 +50,7 @@ class BaseVC: UIViewController {
             let progress = gr.translation(in: nil).x / view.bounds.width
             Hero.shared.update(progress)
         default:
-            if (gr.translation(in: nil).x + gr.velocity(in: nil).x) / view.bounds.width > 0.5 {
+            if (gr.translation(in: nil).x + gr.velocity(in: nil).x) / view.bounds.width > 0.38 {
                 Hero.shared.finish()
             } else {
                 Hero.shared.cancel()

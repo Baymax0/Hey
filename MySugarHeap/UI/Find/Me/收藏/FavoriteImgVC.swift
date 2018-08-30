@@ -94,6 +94,12 @@ class FavoriteImgVC: BaseCollectionVC {
         cell.delegate = self
         return cell
     }
+
+
+    @IBAction func back(_ sender: Any) {
+        dismiss(animated: YES, completion: nil)
+    }
+
 }
 
 extension FavoriteImgVC:CustomeCellProtocol{

@@ -78,6 +78,7 @@ class BaseCollectionVC: BaseVC,MyCollectionViewLayoutDelegate,UICollectionViewDa
         collectionView.mj_header = header
 
         footer.setRefreshingTarget(self, refreshingAction:#selector(loadMoreData))
+        footer.triggerAutomaticallyRefreshPercent = -9
         view.addSubview(collectionView)
 
         var w = CGFloat(35)

@@ -34,7 +34,7 @@ class ImageTableVC: BaseCollectionVC {
         param["kw"] = keyWords
         param["buyable"] = 0
         param["include_fields"] = "sender,favroite_count,album,reply_count,like_count"
-        Network.requestDT(DTApiManager.imageSearch, params: param, model: DTList<DTImgListModel>.self) { (resp) in
+        Network.requestDT(api:DTApiManager.imageSearch, params: param, model: DTList<DTImgListModel>.self) { (resp) in
             if resp != nil{
                 let arr = resp?.object_list ?? []
                 if let next = (resp?.next_start) {

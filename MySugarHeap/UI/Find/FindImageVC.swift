@@ -26,7 +26,13 @@ class FindImageVC: BaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         contentSC.backgroundColor = KBGGray
-        requestGroups()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if self.groupArr.count == 0 {
+            requestGroups()
+        }
     }
 
     @IBAction func searchAction(_ sender: Any) {
@@ -35,7 +41,7 @@ class FindImageVC: BaseVC {
 
     //请求分组
     func requestGroups() -> Void {
-        Network.requestDTList(.groups, params: Dictionary<String,Any>(), model: DTGroupsListModel.self) { [weak self] (resp) in
+        Network.requestDTList(api:.groups, params: Dictionary<String,Any>(), model: DTGroupsListModel.self) { [weak self] (resp) in
             if resp != nil{
                 let noNeedDic = ["视频":"1","堆糖Class":"1","美食菜谱":"1","瘦身塑形":"1","婚纱婚礼":"1","时尚街拍":"1","美容美妆":"1"]
                 for m in resp!{
@@ -77,7 +83,7 @@ class FindImageVC: BaseVC {
             let img = UIImageView(frame: CGRect(x: 0, y: blankH, width: btnW, height: btnW))
             img.layer.cornerRadius = 4
             img.layer.masksToBounds = true
-            img.backgroundColor = KBGGray
+            img.backgroundColor = KBGGrayLine
             img.kf.setImage(with: model.icon_url.resource, placeholder: KDefaultImg.image, options: [.transition(ImageTransition.fade(0.1))])
             btn.addSubview(img)
 

@@ -9,7 +9,7 @@
 import Foundation
 import HandyJSON
 
-struct BMImage: HandyJSON {
+class BMImage: HandyJSON {
     var imgId:String!
     var title:String!
     var imgUrl:String!
@@ -17,9 +17,11 @@ struct BMImage: HandyJSON {
     var width:Int!
     var height:Int!
 
+    //是否是第一次展示 默认是nil 显示过一次 设为"", 设""的目的是即使缓存时转json会忽略字段 下次取出来还是nil
+    var showed:String! = nil
 
     static func convert(_ from:DTImgListModel) -> BMImage {
-        var mod = BMImage()
+        let mod = BMImage()
         mod.imgId = String(from.id)
         mod.imgUrl = from.photo.path
         mod.width = from.photo.width
@@ -35,6 +37,10 @@ struct BMImage: HandyJSON {
         }
         return tempArr
     }
+
+    required init() {}
 }
+
+
 
 

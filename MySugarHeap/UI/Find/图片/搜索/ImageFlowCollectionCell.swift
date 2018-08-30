@@ -43,8 +43,21 @@ class ImageFlowCollectionCell: UICollectionViewCell {
     }
     
     func setData(_ mod:BMImage) -> Void {
+        if mod.imgUrl == nil{
+            return
+        }
+        self.imgView.backgroundColor = KBGGrayLine
         let imgStr = mod.imgUrl.replacingOccurrences(of: "_webp", with: "")
         self.imgView.kf.setImage(with: imgStr.resource, placeholder: KDefaultImg.image, options: [.transition(ImageTransition.fade(1))])
+        if mod.showed == nil {
+            self.alpha = 0
+            UIView.animate(withDuration: 0.7) {
+                self.alpha = 1
+            }
+            mod.showed = ""
+        }else{
+            self.alpha = 1
+        }
         self.titleLab.text = mod.title
     }
 

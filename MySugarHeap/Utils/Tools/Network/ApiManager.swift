@@ -22,6 +22,7 @@ extension ApiManager{
 
 //堆糖接口
 enum DTApiManager : ApiManager{
+    case null
     case imageSearch //图片搜索
     case hotImg      //热门图片
     case groups      //图片分组
@@ -37,6 +38,8 @@ extension DTApiManager{
     }
     var api: String {
         switch self {
+        case .null:
+            return ""
         case .imageSearch:
             return "/napi/blog/list/by_search/"
         case .hotImg:

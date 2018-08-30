@@ -470,7 +470,6 @@
 				2DD5E86E212D2907003153A9 /* SearchVC.swift */,
 				2DD5E8A6212D58D1003153A9 /* SearchResultVC.swift */,
 				2DD5E904212D5A54003153A9 /* ImageTableVC.swift */,
-				2D229619212EB2EB00A4D2DE /* ImageDetailVC.swift */,
 				2D5D237F212E801F00AE65B2 /* ImageFlowCollectionCell.swift */,
 				2D5D2380212E801F00AE65B2 /* ImageFlowCollectionCell.xib */,
 			);
@@ -481,6 +480,7 @@
 			isa = PBXGroup;
 			children = (
 				2DFC960721353B0B00EAB65A /* GroupImgVC.swift */,
+				2D229619212EB2EB00A4D2DE /* ImageDetailVC.swift */,
 			);
 			path = "分组";
 			sourceTree = "<group>";

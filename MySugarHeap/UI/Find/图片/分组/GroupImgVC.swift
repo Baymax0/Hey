@@ -12,10 +12,13 @@ import Hero
 
 class GroupImgVC: BaseCollectionVC {
 
+    @IBOutlet weak var titleLab: UILabel!
+
     var start:Int = 0
     weak var selectedCell : ImageFlowCollectionCell?
 
     var groupModel:DTGroupsModel! = nil
+    var subGroupModel:DTGroupsModel! = nil
 
     var groupArr:Array<DTGroupsModel> = Array<DTGroupsModel>()
 
@@ -27,15 +30,35 @@ class GroupImgVC: BaseCollectionVC {
         view.sendSubview(toBack: collectionView)
         collectionView.mj_header = nil
 
-        customHead()
-
+        if groupModel != nil{
+            titleLab.text = groupModel.name
+            showGroups()
+            headSC.alpha = 0
+            headSC.showsHorizontalScrollIndicator = false
+            headSC.showsVerticalScrollIndicator = false
+            customHead()
+            //请求数据
+            loadNewData()
+        }else{
+            titleLab.text = subGroupModel.name
+            //请求模型数据
+            loadThemeData()
+        }
+        //侧滑返回
         addSlideBack(view)
 
-        //请求数据
-        loadNewDataWithIndicator()
     }
 
+    func loadThemeData() -> Void {
+        Network.requestDT(targetUrl: subGroupModel.target, api: .null, params: Dictionary<String,Any>(), model: DTThemeModel.self) { (model) in
+            if model != nil {
+                self.subGroupModel.filter_id = model?.filter_id
+                self.subGroupModel.filter_url = model?.filter_url
+                self.loadNewData()
+            }
+        }
 
+    }
 
     @objc override func loadMoreData() -> Void {
         loadData(start)
@@ -46,8 +69,18 @@ class GroupImgVC: BaseCollectionVC {
         param["start"] = index
         param["limit"] = 0
         param["include_fields"] = "favroite_count,reply_count"
-        param["cate_key"] = groupModel.idFromTarget()
-        Network.requestDT(DTApiManager.groupImage, params: param, model: DTList<DTImgListModel>.self) { (resp) in
+        var api:DTApiManager!
+        var url:String? = nil
+        if groupModel != nil{
+            api = DTApiManager.groupImage
+            param["cate_key"] = groupModel.idFromTarget()
+        }else{
+            api = DTApiManager.null
+            url = subGroupModel.filter_url
+            param["filter_id"] = subGroupModel.filter_id
+        }
+
+        Network.requestDT(targetUrl: url,api:api, params: param, model: DTList<DTImgListModel>.self) { (resp) in
             if resp != nil{
                 let arr = resp?.object_list ?? []
                 if let next = (resp?.next_start) {
@@ -92,7 +125,7 @@ extension GroupImgVC{
         var param = Dictionary<String,Any>()
 
         param["category_id"] = groupModel.idFromTarget()
-        Network.requestDT(.subGroups, params: param, model: DTGroupsDetailModel.self) { [weak self] (resp) in
+        Network.requestDT(api:.subGroups, params: param, model: DTGroupsDetailModel.self) { [weak self] (resp) in
             if resp != nil{
                     //拿到分组模型
                     if let m = resp?.sub_cates{
@@ -107,7 +140,6 @@ extension GroupImgVC{
 
     //显示分组
     func showGroups() -> Void {
-        let mutiRows  = false
         let numInrow :CGFloat = 4.5
         let blankW   :CGFloat = 12
         let blankH   :CGFloat = 6
@@ -115,7 +147,7 @@ extension GroupImgVC{
         let labH    :CGFloat = 30
         let btnH    :CGFloat = blankH + btnW + labH
         var x       :CGFloat = -btnW
-        var y       :CGFloat = 0
+        let y       :CGFloat = 0
         for i in 0 ..< groupArr.count{
             let model = groupArr[i]
             let btn = UIButton()
@@ -125,7 +157,7 @@ extension GroupImgVC{
             let img = UIImageView(frame: CGRect(x: 0, y: blankH, width: btnW, height: btnW))
             img.layer.cornerRadius = 4
             img.layer.masksToBounds = true
-            img.backgroundColor = KBGGray
+            img.backgroundColor = KBGGrayLine
             img.kf.setImage(with: model.icon_url.resource, placeholder: KDefaultImg.image, options: [.transition(ImageTransition.fade(0.1))])
             btn.addSubview(img)
 
@@ -137,27 +169,29 @@ extension GroupImgVC{
             lab.textAlignment = .center
             btn.addSubview(lab)
 
-            x += (btnW + blankW)
-            if mutiRows{//多行
-                if (x+btnW) > KScreenWidth{
-                    x = blankW
-                    y += btnH
-                }
-                btn.frame = CGRect(x: x, y: y, width: btnW, height: btnH)
-            }else{//单行
-                btn.frame = CGRect(x: x, y: y, width: btnW, height: btnH)
+            btn.alpha = 0
+            UIView.animate(withDuration: 0.3+0.15*Double(i)) {
+                btn.alpha = 1
             }
+            x += (btnW + blankW)
+            btn.frame = CGRect(x: x, y: y, width: btnW, height: btnH)
             headSC.addSubview(btn)
         }
         let headSCH = y + btnH + 4
-
+        let headSCW = x + btnW + blankW
+        UIView.animate(withDuration: 0.3) {
+            self.headSC.alpha = 1
+        }
         headSC.frame = CGRect(x: 0, y: -headSCH, width: KScreenWidth, height: headSCH)
-        headSC.contentSize = CGSize(width: x, height: headSCH)
-        collectionView.contentInset = UIEdgeInsetsMake((headSCH), 0, 0, 0)
+        headSC.contentSize = CGSize(width: headSCW, height: headSCH)
+        collectionView.contentInset = UIEdgeInsetsMake((headSCH+8), 0, 0, 0)
     }
 
     @objc func chooseGroup(_ btn:UIButton) -> Void {
-        print(btn.tag)
+        let vc = GroupImgVC.fromStoryboard() as! GroupImgVC
+        vc.subGroupModel = groupArr[btn.tag]
+
+        present(vc, animated: true, completion: nil)
     }
 }
 

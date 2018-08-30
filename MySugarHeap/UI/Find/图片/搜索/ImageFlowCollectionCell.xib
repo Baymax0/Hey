@@ -32,7 +32,7 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="15" id="cj3-Q6-Xsz"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" name="PingFangTC-Regular" family="PingFang TC" pointSize="14"/>
+                                        <fontDescription key="fontDescription" name="PingFangTC-Regular" family="PingFang TC" pointSize="13"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>

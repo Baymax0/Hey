@@ -54,6 +54,11 @@ class CacheManager: NSObject {
         NSUbiquitousKeyValueStore.default.synchronize()
         print("保存数据至 icloud")
     }
+
+    func clear() -> Void{
+        allData = Dictionary<String,String>()
+        self.saveWhenQuit()
+    }
 }
 
 protocol CustomCacheProtocol {
