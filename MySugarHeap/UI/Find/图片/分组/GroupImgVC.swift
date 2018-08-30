@@ -14,22 +14,29 @@ class GroupImgVC: BaseCollectionVC {
 
     var start:Int = 0
     weak var selectedCell : ImageFlowCollectionCell?
+
+    var groupModel:DTGroupsModel! = nil
+
     var groupArr:Array<DTGroupsModel> = Array<DTGroupsModel>()
 
     var headSC: UIScrollView = UIScrollView(frame: CGRect(x: 0, y: KNaviBarH, width: KScreenWidth, height: 0))
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        hideNav = true
-        initCollectionView(rect: CGRect(x: 0, y: KNaviBarH, width: KScreenWidth, height: KScreenHeight-KNaviBarH-KTabBarH))
+        initCollectionView(rect: CGRect(x: 0, y: KNaviBarSmallH, width: KScreenWidth, height: KScreenHeight-KNaviBarSmallH))
         view.sendSubview(toBack: collectionView)
         collectionView.mj_header = nil
 
         customHead()
+
+        addSlideBack(view)
+
         //请求数据
         loadNewDataWithIndicator()
-
     }
+
+
+
     @objc override func loadMoreData() -> Void {
         loadData(start)
     }
@@ -39,7 +46,8 @@ class GroupImgVC: BaseCollectionVC {
         param["start"] = index
         param["limit"] = 0
         param["include_fields"] = "favroite_count,reply_count"
-        Network.requestDT(DTApiManager.hotImg, params: param, model: DTList<DTImgListModel>.self) { (resp) in
+        param["cate_key"] = groupModel.idFromTarget()
+        Network.requestDT(DTApiManager.groupImage, params: param, model: DTList<DTImgListModel>.self) { (resp) in
             if resp != nil{
                 let arr = resp?.object_list ?? []
                 if let next = (resp?.next_start) {
@@ -81,43 +89,33 @@ extension GroupImgVC{
     }
     //请求分组
     func requestGroups() -> Void {
-        Network.requestDTList(.groups, params: Dictionary<String,Any>(), model: DTGroupsListModel.self) { [weak self] (resp) in
+        var param = Dictionary<String,Any>()
+
+        param["category_id"] = groupModel.idFromTarget()
+        Network.requestDT(.subGroups, params: param, model: DTGroupsDetailModel.self) { [weak self] (resp) in
             if resp != nil{
-                let noNeedDic = ["视频":"1",
-                                 "堆糖Class":"1",
-                                 "美食菜谱":"1",
-                                 "瘦身塑形":"1",
-                                 "婚纱婚礼":"1",
-                                 "时尚街拍":"1",
-                                 "美容美妆":"1",]
-                for m in resp!{
                     //拿到分组模型
-                    if m.group_id == "category_i_1"{
-                        let arr = m.group_items
-                        for i in arr!{
-                            //过滤
-                            if noNeedDic[i.name] == nil{
-                                self?.groupArr.append(i)
-                            }
-                        }
+                    if let m = resp?.sub_cates{
+                        self?.groupArr =  m
                         self?.showGroups()
                     }
-                }
             }
         }
     }
 
+
+
     //显示分组
     func showGroups() -> Void {
         let mutiRows  = false
-        let numInrow:CGFloat = 4
+        let numInrow :CGFloat = 4.5
         let blankW   :CGFloat = 12
-        let blankH   :CGFloat = 12
+        let blankH   :CGFloat = 6
         let btnW    :CGFloat = (KScreenWidth-blankW*(numInrow+1))/numInrow
         let labH    :CGFloat = 30
         let btnH    :CGFloat = blankH + btnW + labH
         var x       :CGFloat = -btnW
-        var y       :CGFloat = 10
+        var y       :CGFloat = 0
         for i in 0 ..< groupArr.count{
             let model = groupArr[i]
             let btn = UIButton()
@@ -151,11 +149,10 @@ extension GroupImgVC{
             }
             headSC.addSubview(btn)
         }
-        let headSCH = y + btnH
+        let headSCH = y + btnH + 4
 
         headSC.frame = CGRect(x: 0, y: -headSCH, width: KScreenWidth, height: headSCH)
         headSC.contentSize = CGSize(width: x, height: headSCH)
-
         collectionView.contentInset = UIEdgeInsetsMake((headSCH), 0, 0, 0)
     }
 
@@ -185,3 +182,4 @@ extension GroupImgVC:CustomeCellProtocol {
         present(vc, animated: true, completion: nil)
     }
 }
+

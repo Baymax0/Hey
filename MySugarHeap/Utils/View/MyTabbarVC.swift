@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Hero
 
 class MyTabbarVC: BaseVC {
 
@@ -24,15 +25,14 @@ class MyTabbarVC: BaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.hideNav = true
-
         tabbarH.constant = KTabBarH
 
         tabBarNums = 2
         addTabbarItem("发现", "tabbar-find", FindImageVC.fromStoryboard())
         addTabbarItem("我的", "tabbar-me", MeVC.fromStoryboard())
-
         pushVC(lastBtn!)
+
+        tabBar.hero.modifiers = [.translate(y:KTabBarH)]
     }
 
     // 添加items
@@ -64,6 +64,7 @@ class MyTabbarVC: BaseVC {
         lab.tag = 1002
         lab.text = titile
         lab.textColor = unSelectedColor
+        lab.font = UIFont.init(name: "PingFangTC-Regular", size: 12)
         lab.font = UIFont.systemFont(ofSize: 12)
         lab.textAlignment = .center
         bgBtn.addSubview(lab)

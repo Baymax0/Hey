@@ -12,7 +12,6 @@ class ArticleTableVC: BaseTableVC {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        hideNav = true
         view.backgroundColor = .blue
     }
 

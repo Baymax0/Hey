@@ -16,8 +16,24 @@ struct DTGroupsListModel : HandyJSON{
 }
 
 struct DTGroupsModel : HandyJSON{
+    var id:String!      //url
     var target:String!      //url
-    var icon_url:String!    //图标
     var name:String!        //名称
+    var icon_url:String!    //图标
+    var path:String!    //图标
+
+    func idFromTarget() -> String?{
+        let r = self.target.components(separatedBy: "=").last
+        return r
+    }
 }
+
+
+struct DTGroupsDetailModel : HandyJSON{
+    var id:String!      //url
+    var name:String!        //名称
+    var sub_cates:Array<DTGroupsModel>!
+}
+
+
 

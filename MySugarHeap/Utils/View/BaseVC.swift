@@ -11,7 +11,6 @@ import Hero
 
 class BaseVC: UIViewController {
 
-    var hideNav = true
     var popGestureEnable = true
 
     static var currentVC:String?
@@ -34,10 +33,30 @@ class BaseVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         BaseVC.currentVC = String(describing: self.classForCoder)
-        navigationController?.setNavigationBarHidden(hideNav, animated: true)
-//        navigationController?.interactivePopGestureRecognizer?.isEnabled = popGestureEnable
     }
 
+    //传需要接受侧滑手势的视图
+    func addSlideBack(_ toView:UIView) -> Void {
+        let screenEdgePanGR = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handlePan(gr:)))
+        screenEdgePanGR.edges = .left
+        toView.addGestureRecognizer(screenEdgePanGR)
+    }
+
+    @objc func handlePan(gr: UIPanGestureRecognizer) {
+        switch gr.state {
+        case .began:
+            dismiss(animated: true, completion: nil)
+        case .changed:
+            let progress = gr.translation(in: nil).x / view.bounds.width
+            Hero.shared.update(progress)
+        default:
+            if (gr.translation(in: nil).x + gr.velocity(in: nil).x) / view.bounds.width > 0.5 {
+                Hero.shared.finish()
+            } else {
+                Hero.shared.cancel()
+            }
+        }
+    }
 
 }
 

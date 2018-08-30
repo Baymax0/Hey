@@ -22,10 +22,14 @@ extension ApiManager{
 
 //堆糖接口
 enum DTApiManager : ApiManager{
-    case imageSearch
-    case hotImg
-    case groups
+    case imageSearch //图片搜索
+    case hotImg      //热门图片
+    case groups      //图片分组
+    case groupImage
+    case subGroups   //详细分组
+    case subGroupImage
 }
+
 extension DTApiManager{
     var host: String {
 //        "103.21.119.229"
@@ -37,8 +41,16 @@ extension DTApiManager{
             return "/napi/blog/list/by_search/"
         case .hotImg:
             return "/napi/index/hot/"
+
         case .groups:
             return "/napi/index/groups/"
+        case .groupImage:
+            return "/napi/blog/list/by_category/"
+
+        case .subGroups:
+            return "/napi/category/detail/"
+        case .subGroupImage:
+            return "/napi/blog/list/by_filter_id/"
         }
     }
     var orignParam:Dictionary<String,Any>{

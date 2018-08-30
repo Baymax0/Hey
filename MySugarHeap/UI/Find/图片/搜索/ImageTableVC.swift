@@ -17,7 +17,6 @@ class ImageTableVC: BaseCollectionVC {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        hideNav = true
         initCollectionView(rect: CGRect(x: 0, y: 0, width: KScreenWidth, height: view.frame.height))
         //请求数据
         loadNewDataWithIndicator()

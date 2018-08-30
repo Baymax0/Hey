@@ -10,7 +10,6 @@ import UIKit
 
 
 /// 颜色
-//#colorLiteral(red: 0.937254902, green: 0.4862745098, blue: 0.4156862745, alpha: 1)
 func KRGB(_ red:CGFloat, _ green:CGFloat, _ blue:CGFloat) -> UIColor {
     return UIColor.init(red: red/255.0, green: green/255.0, blue: blue/255.0, alpha: 1)
 }

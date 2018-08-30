@@ -18,7 +18,6 @@
 		2D35000B212CF115003D329A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D35000A212CF115003D329A /* Assets.xcassets */; };
 		2D35000E212CF115003D329A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D35000C212CF115003D329A /* LaunchScreen.storyboard */; };
 		2D35001A212CF285003D329A /* BaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D350019212CF285003D329A /* BaseVC.swift */; };
-		2D35001C212CF2B5003D329A /* MyNavigationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D35001B212CF2B5003D329A /* MyNavigationVC.swift */; };
 		2D35001F212CF649003D329A /* MyTabbarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D35001E212CF649003D329A /* MyTabbarVC.swift */; };
 		2D350021212CF806003D329A /* MyTabbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D350020212CF806003D329A /* MyTabbar.swift */; };
 		2D350023212CF9B3003D329A /* Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D350022212CF9B3003D329A /* Const.swift */; };
@@ -109,7 +108,6 @@
 		2D35000D212CF115003D329A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2D35000F212CF115003D329A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2D350019212CF285003D329A /* BaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVC.swift; sourceTree = "<group>"; };
-		2D35001B212CF2B5003D329A /* MyNavigationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNavigationVC.swift; sourceTree = "<group>"; };
 		2D35001E212CF649003D329A /* MyTabbarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTabbarVC.swift; sourceTree = "<group>"; };
 		2D350020212CF806003D329A /* MyTabbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTabbar.swift; sourceTree = "<group>"; };
 		2D350022212CF9B3003D329A /* Const.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Const.swift; sourceTree = "<group>"; };
@@ -214,6 +212,13 @@
 			path = "图片";
 			sourceTree = "<group>";
 		};
+		2D2A66A3213676B600ED2D9F /* sources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = sources;
+			sourceTree = "<group>";
+		};
 		2D350001212CF112003D329A /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -237,6 +242,7 @@
 		2D350015212CF127003D329A /* support */ = {
 			isa = PBXGroup;
 			children = (
+				2D2A66A3213676B600ED2D9F /* sources */,
 				2D35000F212CF115003D329A /* Info.plist */,
 				2D35000C212CF115003D329A /* LaunchScreen.storyboard */,
 				2D35000A212CF115003D329A /* Assets.xcassets */,
@@ -275,7 +281,6 @@
 				2D350019212CF285003D329A /* BaseVC.swift */,
 				2DD5E897212D3E47003153A9 /* BaseTableVC.swift */,
 				2D5D237A212E798300AE65B2 /* BaseCollectionVC.swift */,
-				2D35001B212CF2B5003D329A /* MyNavigationVC.swift */,
 				2D35001E212CF649003D329A /* MyTabbarVC.swift */,
 				2D350020212CF806003D329A /* MyTabbar.swift */,
 				2D5D237C212E7A4900AE65B2 /* MyCollectionViewLayout.swift */,
@@ -693,7 +698,6 @@
 				2DD5E8B9212D59A1003153A9 /* DNSPageCollectionViewFlowLayout.swift in Sources */,
 				2DD5E8F3212D59A8003153A9 /* Typealiases.swift in Sources */,
 				2DD5E902212D59A8003153A9 /* ConstraintLayoutSupportDSL.swift in Sources */,
-				2D35001C212CF2B5003D329A /* MyNavigationVC.swift in Sources */,
 				2D350004212CF112003D329A /* AppDelegate.swift in Sources */,
 				2DD5E872212D3242003153A9 /* CacheManager.swift in Sources */,
 				2DD5E8E1212D59A8003153A9 /* ConstraintMultiplierTarget.swift in Sources */,

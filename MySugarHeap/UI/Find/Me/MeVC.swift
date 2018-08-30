@@ -12,12 +12,12 @@ class MeVC: BaseVC {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        hideNav = true
 
     }
 
     @IBAction func faviriteImgAction(_ sender: UIButton) {
-        navigationController?.pushViewController(FavoriteImgVC.fromStoryboard(), animated: YES)
+        present(FavoriteImgVC.fromStoryboard(), animated: true, completion: nil)
+
     }
 
 }

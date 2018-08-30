@@ -29,7 +29,6 @@ class FavoriteImgVC: BaseCollectionVC {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        hideNav = true
 
         initCollectionView(rect: CGRect(x: 0, y: KNaviBarH, width: KScreenWidth, height: KScreenHeight-KNaviBarH))
         collectionView.register(ImageFlowCollectionCell.self, forCellWithReuseIdentifier: cellID)

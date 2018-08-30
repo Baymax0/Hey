@@ -20,7 +20,6 @@ class SearchResultVC: BaseVC {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        hideNav = true
 
         searchTF.text = searchString
 
@@ -58,11 +57,11 @@ class SearchResultVC: BaseVC {
     }
 
     @IBAction func back(_ sender: Any) {
-        self.navigationController?.popToRootViewController(animated: NO)
+        dismiss(animated: NO, completion: nil)
     }
 
     @IBAction func backToSearchAction(_ sender: Any) {
-        navigationController?.popViewController(animated: NO)
+        dismiss(animated: NO, completion: nil)
     }
 
 }

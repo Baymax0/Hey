@@ -20,7 +20,6 @@ class SearchVC: BaseVC {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        hideNav = true
         historySearch = Array<String>()
         historySearch = BMCache.getStringList(.FindSearchHistory)
     }
@@ -35,7 +34,8 @@ class SearchVC: BaseVC {
 
     @IBAction func back(_ sender: Any) {
         self.view.endEditing(YES)
-        self.navigationController?.popViewController(animated: NO)
+        dismiss(animated: NO, completion: nil)
+
     }
 }
 
@@ -105,7 +105,8 @@ extension SearchVC{
         }
         let vc = SearchResultVC.fromStoryboard() as! SearchResultVC
         vc.searchString = searchTF.text!
-        self.navigationController?.pushViewController(vc, animated: NO)
+
+        present(vc, animated: true, completion: nil)
     }
 }
 
