@@ -64,13 +64,13 @@
                     <connections>
                         <outlet property="tabBar" destination="ec3-bA-hDe" id="UJr-Jl-h4e"/>
                         <outlet property="tabbarH" destination="dKI-tq-1II" id="EHM-uK-Sn3"/>
-                        <segue destination="CTJ-7g-vkh" kind="push" id="l07-ui-X05"/>
-                        <segue destination="bVV-Zc-hRB" kind="push" id="69F-dK-h8q"/>
+                        <segue destination="CTJ-7g-vkh" kind="show" id="Ff2-FZ-r7J"/>
+                        <segue destination="bVV-Zc-hRB" kind="show" id="dyk-xh-s9V"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FRg-In-v5Q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1478" y="-833"/>
+            <point key="canvasLocation" x="-1478" y="-815"/>
         </scene>
         <!--SearchVC-->
         <scene sceneID="LFs-bm-t75">
@@ -210,7 +210,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Pl4-ZF-Poh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="58" y="-1111"/>
+            <point key="canvasLocation" x="97" y="-1111"/>
         </scene>
         <!--Find ImageVC-->
         <scene sceneID="0Eq-k9-mcE">
@@ -477,6 +477,7 @@
                         <outlet property="myHoppyViewH" destination="gDc-Bi-dd0" id="wLw-LQ-8eY"/>
                         <outlet property="topView" destination="vwJ-wr-yra" id="Ulz-b4-mNv"/>
                         <segue destination="hQE-e4-Gqt" kind="show" id="eUx-UY-uhl"/>
+                        <segue destination="AmP-Bc-uPU" kind="show" id="SBL-Od-4Iu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="avB-Pe-T4e" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -510,7 +511,7 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="橘子大大~" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6eN-5h-8q7">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="刘德华" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6eN-5h-8q7">
                                         <rect key="frame" x="0.0" y="96" width="375" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <color key="textColor" red="0.27455653183023876" green="0.27455653183023876" blue="0.27455653183023876" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -561,13 +562,32 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fjG-Y5-Bb3">
-                                <rect key="frame" x="75" y="434" width="135" height="91"/>
+                                <rect key="frame" x="60" y="535" width="135" height="91"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="清除数据"/>
                                 <connections>
                                     <action selector="clearAction:" destination="bVV-Zc-hRB" eventType="touchUpInside" id="H5q-FJ-Gy4"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JJJ-ca-agK">
+                                <rect key="frame" x="0.0" y="346" width="375" height="168"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jdw-PJ-Aao">
+                                        <rect key="frame" x="32" y="76" width="31" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="聊天"/>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="工具" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oIY-dW-0dS">
+                                        <rect key="frame" x="8" y="17" width="35" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.98049983421750664" green="0.98049983421750664" blue="0.98049983421750664" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -580,11 +600,12 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <segue destination="koF-qF-n0a" kind="show" id="mvZ-g3-HH2"/>
+                        <segue destination="EB8-6a-eug" kind="show" id="Ubc-aV-bog"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IN8-uh-rBB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-690.39999999999998" y="-403.44827586206901"/>
+            <point key="canvasLocation" x="-690.39999999999998" y="-457.38916256157637"/>
         </scene>
         <!--Search ResultVC-->
         <scene sceneID="bLo-0k-QDR">
@@ -727,7 +748,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jgp-Xb-DWz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="801" y="-1111"/>
+            <point key="canvasLocation" x="870" y="-1111"/>
         </scene>
         <!--Image DetailVC-->
         <scene sceneID="KNO-5x-WYZ">
@@ -900,7 +921,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="n7i-Gp-4UD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1565.5999999999999" y="-1111.3300492610838"/>
+            <point key="canvasLocation" x="1649" y="-1111"/>
         </scene>
         <!--Group ImgVC-->
         <scene sceneID="T11-1P-u72">
@@ -962,7 +983,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RIG-EX-C7P" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="57" y="-1778"/>
+            <point key="canvasLocation" x="97" y="-1776"/>
         </scene>
         <!--Favorite ImgVC-->
         <scene sceneID="jNt-U3-lHU">
@@ -1042,7 +1063,25 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="86J-aQ-ZhZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="13.6" y="-403.44827586206901"/>
+            <point key="canvasLocation" x="97" y="-457"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="GM5-dS-6bk">
+            <objects>
+                <viewController id="EB8-6a-eug" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="xGk-sR-F8u"/>
+                        <viewControllerLayoutGuide type="bottom" id="Tno-Zh-trL"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="0Op-kL-CaR">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Rmz-QG-e95" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="97" y="284"/>
         </scene>
         <!--Hoppy ImgVC-->
         <scene sceneID="9jP-Dz-dCw">

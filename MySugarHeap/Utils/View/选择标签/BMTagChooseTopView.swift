@@ -74,15 +74,23 @@ class BMTagChooseTopView: UIView {
 
     required init?(coder aDecoder: NSCoder) {fatalError("init(coder:) has not been implemented")}
 
-    func loadData(_ tag:BMTagType){
-        tagsArr = BMCache.getImageTags()
+    func loadData(){
+        if type == .ImgTag {
+            tagsArr = BMCache.getImageTags()
+        }
+        let _ = tagBtnBGView.subviews.map { $0.removeFromSuperview()}
         let blank:CGFloat   = 15
         let h   :CGFloat    = 35
         var row :CGFloat    = 0
         var x   :CGFloat    = 0
         var maxY:CGFloat = 0
-        for i in 0..<tagsArr.count{
-            let tag = tagsArr[i]
+        for i in 0...tagsArr.count{
+            var tag = BMTag()
+            if i == tagsArr.count {
+                tag = BMTag(tagId: -2001, tagName: "  +  ")
+            }else{
+                tag = tagsArr[i]
+            }
             var w = tag.tagName.stringWidth(14)+30
             w = w < (KScreenWidth-blank*2) ? w : KScreenWidth-blank*2-1
             if x + blank + w + blank > KScreenWidth{
@@ -92,8 +100,12 @@ class BMTagChooseTopView: UIView {
             x += blank
             let btn = BMTagChooseTopView.createTagBtn(tag)
             btn.frame = CGRect(x: x, y: row*(h+blank), width: w, height: h)
-            btn.addTarget(self, action: #selector(choose), for: .touchUpInside)
             btn.tag = i
+            if tag.tagId == -2001{
+                btn.addTarget(self, action: #selector(add), for: .touchUpInside)
+            }else{
+                btn.addTarget(self, action: #selector(choose), for: .touchUpInside)
+            }
             if self.selectedTag! == tag{
                 btn.isSelected = true
             }
@@ -135,7 +147,7 @@ class BMTagChooseTopView: UIView {
             btn.isSelected = false
         }
         //刷新界面
-        loadData(type)
+        loadData()
 
         let w = UIApplication.shared.keyWindow
         bgView.alpha = 0
@@ -167,6 +179,26 @@ class BMTagChooseTopView: UIView {
             finish(tagsArr[btn.tag])
         }
         close()
+    }
+    @objc func add(_ btn :UIButton){
+        let appearance = SCLAlertView.SCLAppearance(
+            kTextFieldHeight: 40,
+            showCloseButton: false,
+            hideWhenBackgroundViewIsTapped: true
+        )
+        let alert = SCLAlertView(appearance: appearance)
+        let txt = alert.addTextField("输入标签名称")
+        _ = alert.addButton("确定") {
+            if let s = txt.text{
+                if s.count>0{
+                    let b = BMTag(tagId: self.tagsArr.last!.tagId+1, tagName: txt.text)
+                    self.tagsArr.append(b)
+                    BMCache.set(.ImgTags, value: self.tagsArr)
+                    self.loadData()
+                }
+            }
+        }
+        _ = alert.showEdit("添加", subTitle:"标签用于给图片分组，尽量简短")
     }
 
 }

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Kingfisher
+
 
 protocol CustomeCellProtocol:NSObjectProtocol{
     func didSelectedItems(_ index:IndexPath) -> Void
@@ -48,7 +48,7 @@ class ImageFlowCollectionCell: UICollectionViewCell {
         }
         self.imgView.backgroundColor = KBGGrayLine
         let imgStr = mod.imgUrl.replacingOccurrences(of: "_webp", with: "")
-        self.imgView.kf.setImage(with: imgStr.resource, placeholder: KDefaultImg.image, options: [.transition(ImageTransition.fade(1))])
+        self.imgView.loadImage(imgStr, placeHolder: KDefaultImg)
         if mod.showed == nil {
             self.alpha = 0
             UIView.animate(withDuration: 0.7) {

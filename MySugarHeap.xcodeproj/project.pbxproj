@@ -94,6 +94,10 @@
 		2DD5E903212D59A8003153A9 /* ConstraintMakerRelatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD5E8E0212D59A8003153A9 /* ConstraintMakerRelatable.swift */; };
 		2DD5E905212D5A54003153A9 /* ImageTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD5E904212D5A54003153A9 /* ImageTableVC.swift */; };
 		2DD5E907212D5A6C003153A9 /* ArticleTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD5E906212D5A6C003153A9 /* ArticleTableVC.swift */; };
+		2DFA37F42138DC020062D49B /* UIImageView+LoadImg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFA37F32138DC020062D49B /* UIImageView+LoadImg.swift */; };
+		2DFA37F72138EC970062D49B /* SettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFA37F62138EC970062D49B /* SettingVC.swift */; };
+		2DFA37FD213941E30062D49B /* SCLAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFA37FB213941E30062D49B /* SCLAlertView.swift */; };
+		2DFA37FE213941E30062D49B /* SCLExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFA37FC213941E30062D49B /* SCLExtensions.swift */; };
 		2DFC960821353B0B00EAB65A /* GroupImgVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFC960721353B0B00EAB65A /* GroupImgVC.swift */; };
 /* End PBXBuildFile section */
 
@@ -189,6 +193,10 @@
 		2DD5E8E0212D59A8003153A9 /* ConstraintMakerRelatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstraintMakerRelatable.swift; sourceTree = "<group>"; };
 		2DD5E904212D5A54003153A9 /* ImageTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTableVC.swift; sourceTree = "<group>"; };
 		2DD5E906212D5A6C003153A9 /* ArticleTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleTableVC.swift; sourceTree = "<group>"; };
+		2DFA37F32138DC020062D49B /* UIImageView+LoadImg.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+LoadImg.swift"; sourceTree = "<group>"; };
+		2DFA37F62138EC970062D49B /* SettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingVC.swift; sourceTree = "<group>"; };
+		2DFA37FB213941E30062D49B /* SCLAlertView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SCLAlertView.swift; sourceTree = "<group>"; };
+		2DFA37FC213941E30062D49B /* SCLExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SCLExtensions.swift; sourceTree = "<group>"; };
 		2DFC960721353B0B00EAB65A /* GroupImgVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupImgVC.swift; sourceTree = "<group>"; };
 		63495EC1167FE3679774508B /* Pods-MySugarHeap.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MySugarHeap.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MySugarHeap/Pods-MySugarHeap.debug.xcconfig"; sourceTree = "<group>"; };
 		C7C81191F70D8DDB48353461 /* Pods-MySugarHeap.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MySugarHeap.release.xcconfig"; path = "Pods/Target Support Files/Pods-MySugarHeap/Pods-MySugarHeap.release.xcconfig"; sourceTree = "<group>"; };
@@ -281,6 +289,7 @@
 		2D350018212CF261003D329A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				2DFA37FA213941E30062D49B /* 弹出框 */,
 				2D61E5F8212FF3AC005B1553 /* 选择标签 */,
 				2D35002A212CFFD0003D329A /* DOFavoriteButton.swift */,
 				2D350019212CF285003D329A /* BaseVC.swift */,
@@ -309,6 +318,7 @@
 			children = (
 				2D92297D2133C788006D6CA6 /* 收藏 */,
 				2D350028212CFEE0003D329A /* MeVC.swift */,
+				2DFA37F62138EC970062D49B /* SettingVC.swift */,
 			);
 			path = Me;
 			sourceTree = "<group>";
@@ -381,6 +391,7 @@
 				2DD5E86A212D0D27003153A9 /* UIView+IBInspectable.swift */,
 				2DD5E86C212D120D003153A9 /* UIViewController+Utils.swift */,
 				2DD5E868212D0D03003153A9 /* UITableViewCell+Utils.swift */,
+				2DFA37F32138DC020062D49B /* UIImageView+LoadImg.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -484,6 +495,15 @@
 				2DD5E8E0212D59A8003153A9 /* ConstraintMakerRelatable.swift */,
 			);
 			path = SnapKit;
+			sourceTree = "<group>";
+		};
+		2DFA37FA213941E30062D49B /* 弹出框 */ = {
+			isa = PBXGroup;
+			children = (
+				2DFA37FB213941E30062D49B /* SCLAlertView.swift */,
+				2DFA37FC213941E30062D49B /* SCLExtensions.swift */,
+			);
+			path = "弹出框";
 			sourceTree = "<group>";
 		};
 		2DFC960521353AC900EAB65A /* 搜索 */ = {
@@ -679,6 +699,7 @@
 				2DD5E8EF212D59A8003153A9 /* UILayoutSupport+Extensions.swift in Sources */,
 				2DD5E86D212D120D003153A9 /* UIViewController+Utils.swift in Sources */,
 				2DD5E869212D0D03003153A9 /* UITableViewCell+Utils.swift in Sources */,
+				2DFA37F72138EC970062D49B /* SettingVC.swift in Sources */,
 				2DD5E903212D59A8003153A9 /* ConstraintMakerRelatable.swift in Sources */,
 				2DD5E8E6212D59A8003153A9 /* ConstraintViewDSL.swift in Sources */,
 				2D5D237D212E7A4900AE65B2 /* MyCollectionViewLayout.swift in Sources */,
@@ -724,6 +745,7 @@
 				2D350004212CF112003D329A /* AppDelegate.swift in Sources */,
 				2DD5E872212D3242003153A9 /* CacheManager.swift in Sources */,
 				2DD5E8E1212D59A8003153A9 /* ConstraintMultiplierTarget.swift in Sources */,
+				2DFA37F42138DC020062D49B /* UIImageView+LoadImg.swift in Sources */,
 				2DD5E8B4212D59A1003153A9 /* DNSPageContentView.swift in Sources */,
 				2DD5E8E4212D59A8003153A9 /* ConstraintMakerPriortizable.swift in Sources */,
 				2DD5E8A5212D4A7E003153A9 /* Hud.swift in Sources */,
@@ -741,11 +763,13 @@
 				2D350023212CF9B3003D329A /* Const.swift in Sources */,
 				2DD5E8F7212D59A8003153A9 /* ConstraintMaker.swift in Sources */,
 				2D108CAE2134E35000394660 /* BMImage.swift in Sources */,
+				2DFA37FE213941E30062D49B /* SCLExtensions.swift in Sources */,
 				2D5D2377212E630700AE65B2 /* DTListModel.swift in Sources */,
 				2DD5E8E8212D59A8003153A9 /* ConstraintInsets.swift in Sources */,
 				2DD5E8E3212D59A8003153A9 /* ConstraintDescription.swift in Sources */,
 				2DD5E8F9212D59A8003153A9 /* ConstraintLayoutGuideDSL.swift in Sources */,
 				2DFC960821353B0B00EAB65A /* GroupImgVC.swift in Sources */,
+				2DFA37FD213941E30062D49B /* SCLAlertView.swift in Sources */,
 				2DD5E8FE212D59A8003153A9 /* ConstraintRelatableTarget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

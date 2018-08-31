@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Kingfisher
 import Hero
 
 class FindImageVC: BaseVC {
@@ -87,7 +86,7 @@ extension FindImageVC {
             img.layer.masksToBounds = true
             img.backgroundColor = KBGGrayLine
             img.contentMode = .scaleAspectFill
-            img.kf.setImage(with: model.imgUrl().resource, placeholder: nil, options: [.transition(ImageTransition.fade(0.1))])
+            img.loadDiskImage(model.imgUrl())
             img.clipsToBounds = true
             img.hero.id = "img\(i)"
             btn.addSubview(img)
@@ -178,7 +177,7 @@ extension FindImageVC {
             img.layer.cornerRadius = 4
             img.layer.masksToBounds = true
             img.backgroundColor = KBGGrayLine
-            img.kf.setImage(with: model.icon_url.resource, placeholder: nil, options: [.transition(ImageTransition.fade(0.1))])
+            img.loadDiskImage(model.icon_url)
             btn.addSubview(img)
 
             let lab = UILabel(frame: CGRect(x: 0, y: img.maxY, width: btnW, height: labH))

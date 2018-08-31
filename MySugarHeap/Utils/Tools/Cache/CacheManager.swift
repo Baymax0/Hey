@@ -8,6 +8,7 @@
 
 import UIKit
 import HandyJSON
+import Kingfisher
 
 let BMCache = CacheManager.share
 
@@ -19,12 +20,36 @@ enum CacheKey_String:String {
 
 }
 
+protocol CustomCacheProtocol {
+    // ------------  基础方法  -----------------
+    //存储字符串对象
+    func set(_ Key:CacheKey_String, value: String?)
+    func getString(_ Key:CacheKey_String) -> String?
+    //存储字符串数组对象
+    func set(_ Key:CacheKey_String, value:Array<String>?)
+    func getStringList(_ Key:CacheKey_String) -> Array<String>
+    //存储自定义对象
+    func set(_ Key:CacheKey_String, value: HandyJSON?)
+    func getModel<T:HandyJSON>(_ Key:CacheKey_String, type:T.Type?) -> T?
+    //自定义对象 数组
+    func set<T:HandyJSON>(_ Key:CacheKey_String, value: Array<T>?)
+    func getModelList<T:HandyJSON>(_ Key:CacheKey_String, type:T.Type?) -> Array<T>
+
+    // ------------  具体方法  -----------------
+    //获得图片所有Tag
+    func getImageTags() -> Array<BMTag>
+    //获得所有收藏的图片
+    func getFavoriteImgList() -> Array<BMFavorite<BMImage>>
+    //添加收藏
+    func addFavorite(_ model:BMFavorite<DTImgListModel>) ->Void
+}
+
 class CacheManager: NSObject {
     static let share = CacheManager()
     private static let ICloudCacheKey = "CacheManager"
 
     private var allData : Dictionary<String,String>!
-
+    let kfManager = KingfisherManager.shared
     //初始化
     override init() {
         super.init()
@@ -61,30 +86,7 @@ class CacheManager: NSObject {
     }
 }
 
-protocol CustomCacheProtocol {
 
-    // ------------  基础方法  -----------------
-    //存储字符串对象
-    func set(_ Key:CacheKey_String, value: String?)
-    func getString(_ Key:CacheKey_String) -> String?
-    //存储字符串数组对象
-    func set(_ Key:CacheKey_String, value:Array<String>?)
-    func getStringList(_ Key:CacheKey_String) -> Array<String>
-    //存储自定义对象
-    func set(_ Key:CacheKey_String, value: HandyJSON?)
-    func getModel<T:HandyJSON>(_ Key:CacheKey_String, type:T.Type?) -> T?
-    //自定义对象 数组
-    func set<T:HandyJSON>(_ Key:CacheKey_String, value: Array<T>?)
-    func getModelList<T:HandyJSON>(_ Key:CacheKey_String, type:T.Type?) -> Array<T>
-
-    // ------------  具体方法  -----------------
-    //获得图片所有Tag
-    func getImageTags() -> Array<BMTag>
-    //获得所有收藏的图片
-    func getFavoriteImgList() -> Array<BMFavorite<BMImage>>
-    //添加收藏
-    func addFavorite(_ model:BMFavorite<DTImgListModel>) ->Void
-}
 
 private let separator = ";"
 
@@ -149,7 +151,34 @@ extension CacheManager : CustomCacheProtocol{
 }
 
 
+extension CacheManager {
+    func setImgCacheOptions() -> Void {
+        kfManager.downloader.downloadTimeout = 10
+        //最大图片缓存 1G
+        //浏览的图片 放在内存中
+        kfManager.cache.maxMemoryCost = 1024*1024*1024
+        // 设置硬盘最大缓存500G ，默认无限
+        // 按钮图片 及 收藏图片 放在硬盘上
+        kfManager.cache.maxDiskCacheSize =  1024*1024*1024
+        // 设置硬盘最大保存5天 ， 默认1周
+        kfManager.cache.maxCachePeriodInSecond = 60 * 60 * 24 * 5
+    }
 
+    /// 清理内存
+    func clearMemoryCache(){
+        kfManager.cache.clearMemoryCache()
+    }
+
+    /// 获得缓存大小 主要计算图片  allData字典不计算在内
+    /// - Parameter complete: 返回单位 0.0M
+    func getCacheSize(complete: @escaping ((_ size: Double) -> Void) ) -> Void{
+        kfManager.cache.calculateDiskCacheSize { (size) in
+            print(size)
+            let sizeM:Double = Double(size)/1024/1024
+            complete(sizeM)
+        }
+    }
+}
 
 
 

@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Kingfisher
 import Hero
 
 class ImageDetailVC: BaseVC {
@@ -57,7 +56,7 @@ class ImageDetailVC: BaseVC {
         let imgW = KScreenWidth - 10*2
         let imgStr = model.imgUrl.replacingOccurrences(of: "_webp", with: "")
         imageViewH.constant = CGFloat(model.height)*(imgW/CGFloat(model.width))
-        imageView.kf.setImage(with: ImageResource(downloadURL: URL(string: imgStr)!), placeholder: KDefaultImg.image, options: [.transition(ImageTransition.fade(1))])
+        imageView.loadImage(imgStr, placeHolder: KDefaultImg)
     }
 
     @objc func back() {

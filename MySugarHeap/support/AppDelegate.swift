@@ -15,12 +15,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        let b1 = BMTag(tagId: 0, tagName: "头像")
-        let b2 = BMTag(tagId: 1, tagName: "壁纸")
-        let b3 = BMTag(tagId: 2, tagName: "水彩")
-        let b4 = BMTag(tagId: 3, tagName: "测试用longlongTag")
-        BMCache.set(.ImgTags, value: [b1,b2,b3,b4])
+
+//        let b1 = BMTag(tagId: 0, tagName: "头像")
+//        let b2 = BMTag(tagId: 1, tagName: "壁纸")
+//        let b3 = BMTag(tagId: 2, tagName: "水彩")
+//        let b4 = BMTag(tagId: 3, tagName: "测试用")
+//        BMCache.set(.ImgTags, value: [b1,b2,b3,b4])
+
+        //配置图片缓存机制
+        BMCache.setImgCacheOptions()
         return true
     }
 

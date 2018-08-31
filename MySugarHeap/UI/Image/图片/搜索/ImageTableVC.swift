@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Kingfisher
 import Hero
 
 class ImageTableVC: BaseCollectionVC {
@@ -68,7 +67,7 @@ extension ImageTableVC:CustomeCellProtocol{
         let bottomId    = "bottom \(index.item)"
         let titleId     = "title \(index.item)"
 
-        weak var cell = collectionView.cellForItem(at: index) as! ImageFlowCollectionCell
+        weak var cell = collectionView.cellForItem(at: index) as? ImageFlowCollectionCell
 
         cell?.imgView.hero.id = imgHeroId
         cell?.bottomView.hero.id = bottomId
