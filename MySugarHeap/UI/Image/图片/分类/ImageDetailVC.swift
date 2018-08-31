@@ -27,7 +27,7 @@ class ImageDetailVC: BaseVC {
     
     var chooseTagView:BMTagChooseView?
 
-    var model:BMImage!
+    weak var model:BMImage!
 
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -20,6 +20,7 @@ class BMImage: HandyJSON {
     //是否是第一次展示 默认是nil 显示过一次 设为"", 设""的目的是即使缓存时转json会忽略字段 下次取出来还是nil
     var showed:String! = nil
 
+    //堆糖模型
     static func convert(_ from:DTImgListModel) -> BMImage {
         let mod = BMImage()
         mod.imgId = String(from.id)
@@ -37,6 +38,28 @@ class BMImage: HandyJSON {
         }
         return tempArr
     }
+
+    //花瓣模型
+    static func convert(_ from:HBImgModel) -> BMImage {
+        let mod = BMImage()
+        mod.imgId = String(from.pin_id!)
+        mod.imgUrl = from.imgUrl()
+        mod.width = from.width
+        mod.height = from.height
+        mod.title = from.name
+        return mod
+    }
+
+    static func convert(_ from:Array<HBImgModel>) -> Array<BMImage> {
+        var tempArr = Array<BMImage>()
+        for mod in from{
+            tempArr.append(BMImage.convert(mod))
+        }
+        return tempArr
+    }
+
+
+
 
     required init() {}
 }

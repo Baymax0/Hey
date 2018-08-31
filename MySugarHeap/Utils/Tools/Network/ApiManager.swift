@@ -76,3 +76,29 @@ extension DTApiManager{
     }
 }
 
+
+
+//堆糖接口
+enum HBApiManager : ApiManager{
+    case myThemeList
+    case themeImages(_:String)
+}
+
+extension HBApiManager{
+    var host: String {
+        return "https://api.huaban.com"
+    }
+    var api: String {
+        switch self {
+        case .myThemeList:
+            return "/leezw/following/explores/"
+        case .themeImages(let th):
+            return "/explore/\(th)"
+        }
+    }
+    var orignParam:Dictionary<String,Any>{
+        let param = Dictionary<String,Any>()
+        return param
+    }
+}
+

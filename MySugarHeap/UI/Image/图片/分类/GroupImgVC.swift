@@ -15,7 +15,6 @@ class GroupImgVC: BaseCollectionVC {
     @IBOutlet weak var titleLab: UILabel!
 
     var start:Int = 0
-    weak var selectedCell : ImageFlowCollectionCell?
 
     var groupModel:DTGroupsModel! = nil
     var subGroupModel:DTGroupsModel! = nil
@@ -135,8 +134,6 @@ extension GroupImgVC{
             }
         }
     }
-
-
 
     //显示分组
     func showGroups() -> Void {

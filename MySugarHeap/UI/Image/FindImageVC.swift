@@ -14,14 +14,19 @@ class FindImageVC: BaseVC {
 
     var start:Int = 0
     weak var selectedCell : ImageFlowCollectionCell?
-    var groupArr:Array<DTGroupsModel> = Array<DTGroupsModel>()
 
     @IBOutlet weak var contentSC: UIScrollView!
 
     @IBOutlet weak var topView: UIView!
 
+    @IBOutlet weak var myHoppyView: UIView!
+    @IBOutlet weak var myHoppyViewH: NSLayoutConstraint!
+    var hoppyArr:Array<HBHoppyModel> = Array<HBHoppyModel>()
+
+
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var bottomViewH: NSLayoutConstraint!
+    var groupArr:Array<DTGroupsModel> = Array<DTGroupsModel>()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +36,9 @@ class FindImageVC: BaseVC {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if self.groupArr.count == 0 {
+
+            requestHoppys()
+            //堆糖数据
             requestGroups()
         }
     }
@@ -39,6 +47,92 @@ class FindImageVC: BaseVC {
         present(SearchVC.fromStoryboard(), animated: false, completion: nil)
     }
 
+
+
+}
+// MARK: - 兴趣 分类
+extension FindImageVC {
+
+    func requestHoppys() -> Void {
+        var param = Dictionary<String,Any>()
+        param["page"] = 1
+        param["per_page"] = 30
+        //获取我关注的分类
+        Network.requesrHB(api: .myThemeList, params: param, model: HBMyHoppList.self) { [weak self](myList) in
+            if let list = myList?.explores{
+                self?.hoppyArr = list
+                self?.loadHoppy()
+            }
+        }
+    }
+
+    func loadHoppy() -> Void {
+        let numInrow:CGFloat = 3
+        let blankW   :CGFloat = 28
+        let blankH   :CGFloat = 15
+        let btnW    :CGFloat = (KScreenWidth-blankW*(numInrow+1))/numInrow
+        let labH    :CGFloat = 22
+        let btnH    :CGFloat = blankH + btnW
+        var x       :CGFloat = -btnW
+        var y       :CGFloat = 35
+
+        for i in 0 ..< hoppyArr.count{
+            let model = hoppyArr[i]
+            let btn = UIButton()
+            btn.tag = i
+            btn.addTarget(self, action: #selector(chooseHoppy(_:)), for: .touchUpInside)
+
+            let img = UIImageView(frame: CGRect(x: 0, y: blankH, width: btnW, height: btnW))
+            img.layer.cornerRadius = 4
+            img.layer.masksToBounds = true
+            img.backgroundColor = KBGGrayLine
+            img.contentMode = .scaleAspectFill
+            img.kf.setImage(with: model.imgUrl().resource, placeholder: nil, options: [.transition(ImageTransition.fade(0.1))])
+            img.clipsToBounds = true
+            img.hero.id = "img\(i)"
+            btn.addSubview(img)
+
+            let lab = UILabel(frame: CGRect(x: 0, y: 0, width: btnW, height: labH))
+            lab.font = UIFont.init(name: "PingFangTC-Regular", size: 12)
+            lab.backgroundColor = KBlack_0.withAlphaComponent(0.3)
+            lab.textColor = KWhite
+            let name = model.name!
+            lab.text = "  \(name)"
+            lab.numberOfLines = 1
+            lab.hero.id = "title\(i)"
+            img.addSubview(lab)
+
+            x += (btnW + blankW)
+            if (x+btnW) > KScreenWidth{
+                x = blankW
+                y += btnH
+            }
+            btn.frame = CGRect(x: x, y: y, width: btnW, height: btnH)
+            btn.alpha = 0
+            UIView.animate(withDuration: 0.2) {
+                btn.alpha = 1
+            }
+            myHoppyView.addSubview(btn)
+        }
+        UIView.animate(withDuration: 0.5) {
+            self.myHoppyView.superview?.layoutIfNeeded()
+            self.myHoppyViewH.constant = y + btnH + 15
+        }
+    }
+
+    @objc func chooseHoppy(_ btn:UIButton) -> Void {
+        let vc = HoppyImgVC.fromStoryboard() as! HoppyImgVC
+        vc.hoppyModel = hoppyArr[btn.tag]
+        vc.heroId = btn.tag
+        present(vc, animated: true, completion: nil)
+    }
+}
+
+
+
+
+// MARK: - 堆糖 分类
+extension FindImageVC {
     //请求分组
     func requestGroups() -> Void {
         Network.requestDTList(api:.groups, params: Dictionary<String,Any>(), model: DTGroupsListModel.self) { [weak self] (resp) in
@@ -84,11 +178,10 @@ class FindImageVC: BaseVC {
             img.layer.cornerRadius = 4
             img.layer.masksToBounds = true
             img.backgroundColor = KBGGrayLine
-            img.kf.setImage(with: model.icon_url.resource, placeholder: KDefaultImg.image, options: [.transition(ImageTransition.fade(0.1))])
+            img.kf.setImage(with: model.icon_url.resource, placeholder: nil, options: [.transition(ImageTransition.fade(0.1))])
             btn.addSubview(img)
 
             let lab = UILabel(frame: CGRect(x: 0, y: img.maxY, width: btnW, height: labH))
-//            lab.font = UIFont.systemFont(ofSize: 12)
             lab.font = UIFont.init(name: "PingFangTC-Regular", size: 12)
 
             lab.textColor = KBlack_87
@@ -104,16 +197,15 @@ class FindImageVC: BaseVC {
                     y += btnH
                 }
                 btn.frame = CGRect(x: x, y: y, width: btnW, height: btnH)
-            }else{//单行
-                btn.frame = CGRect(x: x, y: y, width: btnW, height: btnH)
             }
             bottomView.addSubview(btn)
         }
-        bottomViewH.constant = y + btnH + 15
+        UIView.animate(withDuration: 0.5) {
+            self.bottomViewH.constant = y + btnH + 15
+            self.bottomView.superview?.layoutIfNeeded()
+        }
     }
-
 }
-
 
 
 

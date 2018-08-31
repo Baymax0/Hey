@@ -32,4 +32,5 @@ let KBGGray     = #colorLiteral(red: 0.9490196078, green: 0.9490196078, blue: 0.
 let KBGGray_250 = #colorLiteral(red: 0.9803921569, green: 0.9803921569, blue: 0.9803921569, alpha: 1) //背景视图灰色 242
 let KBGGrayLine = #colorLiteral(red: 0.8705882353, green: 0.8705882353, blue: 0.8705882353, alpha: 1)
 
+let KWhite      = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
 let KWhite_mi   = #colorLiteral(red: 0.9490196078, green: 0.937254902, blue: 0.9019607843, alpha: 1)

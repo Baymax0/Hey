@@ -2,4 +2,166 @@
 <Bucket
    type = "0"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MySugarHeap/Utils/Tools/Network/Network.swift"
+            timestampString = "557312315.14035"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "106"
+            endingLineNumber = "106"
+            landmarkName = "requesrHB(api:params:model:finish:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static MySugarHeap.Network.requesrHB&lt;A where A: HandyJSON.HandyJSON&gt;(api: MySugarHeap.HBApiManager, params: Swift.Dictionary&lt;Swift.String, Any&gt;, model: A.Type, finish: (Swift.Optional&lt;A&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "MySugarHeap"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/YiMi/Desktop/Me/MySugarHeap/MySugarHeap/Utils/Tools/Network/Network.swift"
+                  timestampString = "557312823.718297"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "106"
+                  endingLineNumber = "106"
+                  offsetFromSymbolStart = "192">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Optional&lt;A&gt;) -&gt; () in static MySugarHeap.Network.requesrHB&lt;A where A: HandyJSON.HandyJSON&gt;(api: MySugarHeap.HBApiManager, params: Swift.Dictionary&lt;Swift.String, Any&gt;, model: A.Type, finish: (Swift.Optional&lt;A&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "MySugarHeap"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/YiMi/Desktop/Me/MySugarHeap/MySugarHeap/Utils/Tools/Network/Network.swift"
+                  timestampString = "557312823.722096"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "106"
+                  endingLineNumber = "106"
+                  offsetFromSymbolStart = "100">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MySugarHeap/Utils/Tools/Network/Network.swift"
+            timestampString = "557312896.292748"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "requestBase(targetUrl:api:params:model:finish:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Alamofire.DataResponse&lt;Swift.String&gt;) -&gt; () in static MySugarHeap.Network.(requestBase in _FFB562C8A33541BF012407407804FB79)&lt;A where A: HandyJSON.HandyJSON&gt;(targetUrl: Swift.Optional&lt;Swift.String&gt;, api: MySugarHeap.ApiManager, params: Swift.Dictionary&lt;Swift.String, Any&gt;, model: A.Type, finish: (Swift.Optional&lt;A&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "MySugarHeap"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/YiMi/Desktop/Me/MySugarHeap/MySugarHeap/Utils/Tools/Network/Network.swift"
+                  timestampString = "557312896.987774"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "45"
+                  endingLineNumber = "45"
+                  offsetFromSymbolStart = "240">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Alamofire.DataResponse&lt;Swift.String&gt;) -&gt; () in static MySugarHeap.Network.(requestBase in _FFB562C8A33541BF012407407804FB79)&lt;A where A: HandyJSON.HandyJSON&gt;(targetUrl: Swift.Optional&lt;Swift.String&gt;, api: MySugarHeap.ApiManager, params: Swift.Dictionary&lt;Swift.String, Any&gt;, model: A.Type, finish: (Swift.Optional&lt;A&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "MySugarHeap"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/YiMi/Desktop/Me/MySugarHeap/MySugarHeap/Utils/Tools/Network/Network.swift"
+                  timestampString = "557312896.990868"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "45"
+                  endingLineNumber = "45"
+                  offsetFromSymbolStart = "268">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MySugarHeap/Utils/Tools/Network/Network.swift"
+            timestampString = "557313009.595227"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
+            landmarkName = "requestBase(targetUrl:api:params:model:finish:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static MySugarHeap.Network.(requestBase in _FFB562C8A33541BF012407407804FB79)&lt;A where A: HandyJSON.HandyJSON&gt;(targetUrl: Swift.Optional&lt;Swift.String&gt;, api: MySugarHeap.ApiManager, params: Swift.Dictionary&lt;Swift.String, Any&gt;, model: A.Type, finish: (Swift.Optional&lt;A&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "MySugarHeap"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/YiMi/Desktop/Me/MySugarHeap/MySugarHeap/Utils/Tools/Network/Network.swift"
+                  timestampString = "557313009.825794"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "43"
+                  endingLineNumber = "43"
+                  offsetFromSymbolStart = "3196">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Alamofire.DataResponse&lt;Swift.String&gt;) -&gt; () in static MySugarHeap.Network.(requestBase in _FFB562C8A33541BF012407407804FB79)&lt;A where A: HandyJSON.HandyJSON&gt;(targetUrl: Swift.Optional&lt;Swift.String&gt;, api: MySugarHeap.ApiManager, params: Swift.Dictionary&lt;Swift.String, Any&gt;, model: A.Type, finish: (Swift.Optional&lt;A&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "MySugarHeap"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/YiMi/Desktop/Me/MySugarHeap/MySugarHeap/Utils/Tools/Network/Network.swift"
+                  timestampString = "557313009.829002"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "15"
+                  endingLineNumber = "15"
+                  offsetFromSymbolStart = "168">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MySugarHeap/Utils/Tools/Network/Network.swift"
+            timestampString = "557313011.507756"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "requestBase(targetUrl:api:params:model:finish:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

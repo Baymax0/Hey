@@ -32,6 +32,8 @@
 		2D5D2382212E801F00AE65B2 /* ImageFlowCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D5D2380212E801F00AE65B2 /* ImageFlowCollectionCell.xib */; };
 		2D61E5F7212FD9C2005B1553 /* BMTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D61E5F6212FD9C2005B1553 /* BMTag.swift */; };
 		2D61E5FA212FF3D6005B1553 /* BMTagChooseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D61E5F9212FF3D6005B1553 /* BMTagChooseView.swift */; };
+		2D7ACFDD2137C2190033B02E /* HBBaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7ACFDC2137C2190033B02E /* HBBaseModel.swift */; };
+		2D7ACFE02137E2880033B02E /* HoppyImgVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7ACFDF2137E2880033B02E /* HoppyImgVC.swift */; };
 		2D92297F2133C789006D6CA6 /* FavoriteImgVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D92297E2133C788006D6CA6 /* FavoriteImgVC.swift */; };
 		2D9229812133C79E006D6CA6 /* BMTagChooseTopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D9229802133C79E006D6CA6 /* BMTagChooseTopView.swift */; };
 		2D9229832133D7A5006D6CA6 /* BMFavorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D9229822133D7A5006D6CA6 /* BMFavorite.swift */; };
@@ -123,6 +125,8 @@
 		2D61E5F3212FD318005B1553 /* MySugarHeap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MySugarHeap.entitlements; sourceTree = "<group>"; };
 		2D61E5F6212FD9C2005B1553 /* BMTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMTag.swift; sourceTree = "<group>"; };
 		2D61E5F9212FF3D6005B1553 /* BMTagChooseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMTagChooseView.swift; sourceTree = "<group>"; };
+		2D7ACFDC2137C2190033B02E /* HBBaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HBBaseModel.swift; sourceTree = "<group>"; };
+		2D7ACFDF2137E2880033B02E /* HoppyImgVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoppyImgVC.swift; sourceTree = "<group>"; };
 		2D92297E2133C788006D6CA6 /* FavoriteImgVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoriteImgVC.swift; sourceTree = "<group>"; };
 		2D9229802133C79E006D6CA6 /* BMTagChooseTopView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMTagChooseTopView.swift; sourceTree = "<group>"; };
 		2D9229822133D7A5006D6CA6 /* BMFavorite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMFavorite.swift; sourceTree = "<group>"; };
@@ -206,7 +210,8 @@
 		2D229618212EB2B300A4D2DE /* 图片 */ = {
 			isa = PBXGroup;
 			children = (
-				2DFC960621353ADB00EAB65A /* 分组 */,
+				2D7ACFDE2137E25D0033B02E /* 兴趣 */,
+				2DFC960621353ADB00EAB65A /* 分类 */,
 				2DFC960521353AC900EAB65A /* 搜索 */,
 			);
 			path = "图片";
@@ -258,7 +263,7 @@
 		2D350016212CF15B003D329A /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				2D350024212CFEB7003D329A /* Find */,
+				2D350024212CFEB7003D329A /* Image */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -288,7 +293,7 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		2D350024212CFEB7003D329A /* Find */ = {
+		2D350024212CFEB7003D329A /* Image */ = {
 			isa = PBXGroup;
 			children = (
 				2D229618212EB2B300A4D2DE /* 图片 */,
@@ -296,7 +301,7 @@
 				2DD5E906212D5A6C003153A9 /* ArticleTableVC.swift */,
 				2D350025212CFEBC003D329A /* Me */,
 			);
-			path = Find;
+			path = Image;
 			sourceTree = "<group>";
 		};
 		2D350025212CFEBC003D329A /* Me */ = {
@@ -345,6 +350,22 @@
 			path = "选择标签";
 			sourceTree = "<group>";
 		};
+		2D7ACFDB2137C16A0033B02E /* 花瓣 */ = {
+			isa = PBXGroup;
+			children = (
+				2D7ACFDC2137C2190033B02E /* HBBaseModel.swift */,
+			);
+			path = "花瓣";
+			sourceTree = "<group>";
+		};
+		2D7ACFDE2137E25D0033B02E /* 兴趣 */ = {
+			isa = PBXGroup;
+			children = (
+				2D7ACFDF2137E2880033B02E /* HoppyImgVC.swift */,
+			);
+			path = "兴趣";
+			sourceTree = "<group>";
+		};
 		2D92297D2133C788006D6CA6 /* 收藏 */ = {
 			isa = PBXGroup;
 			children = (
@@ -390,6 +411,7 @@
 			isa = PBXGroup;
 			children = (
 				2D61E5F5212FD99B005B1553 /* custom */,
+				2D7ACFDB2137C16A0033B02E /* 花瓣 */,
 				2DD5E8A1212D4855003153A9 /* 堆糖 */,
 			);
 			path = Model;
@@ -476,13 +498,13 @@
 			path = "搜索";
 			sourceTree = "<group>";
 		};
-		2DFC960621353ADB00EAB65A /* 分组 */ = {
+		2DFC960621353ADB00EAB65A /* 分类 */ = {
 			isa = PBXGroup;
 			children = (
 				2DFC960721353B0B00EAB65A /* GroupImgVC.swift */,
 				2D229619212EB2EB00A4D2DE /* ImageDetailVC.swift */,
 			);
-			path = "分组";
+			path = "分类";
 			sourceTree = "<group>";
 		};
 		76E0E967691FF8761A5ADF97 /* Pods */ = {
@@ -646,6 +668,7 @@
 			files = (
 				2DD5E8F0212D59A8003153A9 /* ConstraintView.swift in Sources */,
 				2D9229812133C79E006D6CA6 /* BMTagChooseTopView.swift in Sources */,
+				2D7ACFDD2137C2190033B02E /* HBBaseModel.swift in Sources */,
 				2D350006212CF112003D329A /* ViewController.swift in Sources */,
 				2DD5E8E5212D59A8003153A9 /* ConstraintAttributes.swift in Sources */,
 				2DD5E8F4212D59A8003153A9 /* ConstraintConstantTarget.swift in Sources */,
@@ -704,6 +727,7 @@
 				2DD5E8B4212D59A1003153A9 /* DNSPageContentView.swift in Sources */,
 				2DD5E8E4212D59A8003153A9 /* ConstraintMakerPriortizable.swift in Sources */,
 				2DD5E8A5212D4A7E003153A9 /* Hud.swift in Sources */,
+				2D7ACFE02137E2880033B02E /* HoppyImgVC.swift in Sources */,
 				2D5D2381212E801F00AE65B2 /* ImageFlowCollectionCell.swift in Sources */,
 				0A4021652131B7FA00B84900 /* ColorConst.swift in Sources */,
 				2DD5E907212D5A6C003153A9 /* ArticleTableVC.swift in Sources */,

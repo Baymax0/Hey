@@ -57,6 +57,11 @@ class BaseVC: UIViewController {
             }
         }
     }
+    deinit {
+        print( String(describing: self.classForCoder))
+        print("vc is deinit")
+    }
+
 
 }
 

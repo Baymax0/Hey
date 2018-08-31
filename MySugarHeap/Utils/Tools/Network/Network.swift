@@ -98,6 +98,14 @@ extension Network {
         Network.requestBase(targetUrl:targetUrl, api:api, params: orignParam, model:(DTRespArrayObject<T>).self) { (mod) in finish(mod?.data) }
     }
 
+
+    //花瓣 和堆糖结构不一样
+    static func requesrHB<T: HandyJSON>(api:HBApiManager, params:Dictionary<String,Any>, model:T.Type, finish: @escaping (_ rep:T?)->()) -> Void{
+        var orignParam = api.orignParam
+        orignParam.merge(params) { (a, b) -> Any in return a}
+        Network.requestBase(targetUrl:nil, api:api, params: orignParam, model:T.self) { (mod) in finish(mod) }
+    }
+
 }
 
 
