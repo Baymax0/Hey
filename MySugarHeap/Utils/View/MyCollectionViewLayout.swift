@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol MyCollectionViewLayoutDelegate {
+protocol MyCollectionViewLayoutDelegate:NSObjectProtocol {
     // 返回index位置下的item的高度
     func waterFallLayout(layout:UICollectionViewFlowLayout,index :NSInteger,width :CGFloat) ->CGFloat
     // 返回瀑布流显示的列数
@@ -17,7 +17,7 @@ protocol MyCollectionViewLayoutDelegate {
 
 class MyCollectionViewLayout: UICollectionViewFlowLayout {
 
-    var delegate :MyCollectionViewLayoutDelegate?
+    weak var delegate :MyCollectionViewLayoutDelegate?
     var attributesArray = [UICollectionViewLayoutAttributes]()//布局信息存储，防止下拉看到二次区域时，多次返回布局信息。
     var columnHeights   = Array<Float>()//存储当前行的列的高度信息。
     var columnCount :Int = 2//默认列数

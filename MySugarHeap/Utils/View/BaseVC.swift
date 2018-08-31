@@ -13,6 +13,7 @@ class BaseVC: UIViewController {
 
     var popGestureEnable = true
 
+
     static var currentVC:String?
 
     override var preferredStatusBarStyle: UIStatusBarStyle{
@@ -58,8 +59,7 @@ class BaseVC: UIViewController {
         }
     }
     deinit {
-        print( String(describing: self.classForCoder))
-        print("vc is deinit")
+        print(String(describing: self.classForCoder) + " is deinit")
     }
 
 
