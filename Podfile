@@ -18,5 +18,6 @@ pod 'NVActivityIndicatorView'
 pod 'TextFieldEffects'
 pod 'CLImagePickerTool'
 pod 'LTMorphingLabel'
+pod 'Charts'
 
 end

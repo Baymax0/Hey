@@ -101,7 +101,13 @@ extension HBApiManager{
 
 // MARK:  ---------------------   天气接口   ---------------------
 enum WTApiManager : ApiManager{
+    /* 接口来源：
+     https://www.nowapi.com/api/weather.future
+     */
     case currentWeather(_:String)
+    /* 接口来源：
+     https://www.sojson.com/api/weather.html
+     */
     case futureWeather(_:String)
 }
 

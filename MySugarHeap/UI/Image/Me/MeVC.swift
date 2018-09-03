@@ -43,7 +43,7 @@ class MeVC: BaseVC {
         if now != lastWeatherTime{
             Network.requesrCurrentWeather(address: ip!) { (mod) in
                 if mod != nil{
-                    self.weatherWenduLab.text = mod?.temp_curr
+                    self.weatherWenduLab.text = (mod?.temp_curr)! + "°"
                     let type = (mod?.citynm)! + " " + (mod?.weather_curr)!
                     self.weatherTypeLab.text = type
                     let pm:Int! = Int((mod?.aqi)!)
@@ -74,8 +74,6 @@ class MeVC: BaseVC {
 
     @IBAction func weatherAction(_ sender: Any) {
         let vc = WeatherVC.fromStoryboard()
-        weatherView.hero.id = "v"
-        vc.view.hero.id = "v"
         present(vc, animated: true, completion: nil)
     }
 

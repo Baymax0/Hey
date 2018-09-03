@@ -9,6 +9,7 @@
 import Foundation
 import HandyJSON
 
+
 struct WeatherBase1: HandyJSON{
     var success:String!
     var result:RealTimeWeatherModel!
