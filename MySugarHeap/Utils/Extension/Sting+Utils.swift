@@ -71,6 +71,19 @@ extension String  {
 }
 
 
+extension Date {
+    func toString(_ formate:String) -> String?{
+        let timeZone = TimeZone.init(identifier: "UTC")
+        let formatter = DateFormatter()
+        formatter.timeZone = timeZone
+        formatter.locale = Locale.init(identifier: "zh_CN")
+        formatter.dateFormat = formate
+        let date = formatter.string(from: self)
+        return date
+    }
+}
+
+
 
 //// ----------------------  以下为手动计算 MD5 加密算法 -------------------------------
 

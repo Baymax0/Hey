@@ -184,11 +184,15 @@ class BMTagChooseTopView: UIView {
         let appearance = SCLAlertView.SCLAppearance(
             kTextFieldHeight: 40,
             showCloseButton: false,
+            fieldCornerRadius: 6,
             hideWhenBackgroundViewIsTapped: true
         )
+
         let alert = SCLAlertView(appearance: appearance)
         let txt = alert.addTextField("输入标签名称")
-        _ = alert.addButton("确定") {
+        
+
+        _ = alert.addButton("确定",backgroundColor : KRed) {
             if let s = txt.text{
                 if s.count>0{
                     let b = BMTag(tagId: self.tagsArr.last!.tagId+1, tagName: txt.text)
@@ -198,7 +202,8 @@ class BMTagChooseTopView: UIView {
                 }
             }
         }
-        _ = alert.showEdit("添加", subTitle:"标签用于给图片分组，尽量简短")
+        _ = alert.showEdit("添加标签", colorStyle:0xFF6160 )
+        txt.becomeFirstResponder()
     }
 
 }

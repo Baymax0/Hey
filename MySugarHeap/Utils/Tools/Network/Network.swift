@@ -106,6 +106,38 @@ extension Network {
         Network.requestBase(targetUrl:nil, api:api, params: orignParam, model:T.self) { (mod) in finish(mod) }
     }
 
+    //当前天气
+    static func requesrCurrentWeather(address:String, finish: @escaping (_ rep:RealTimeWeatherModel?)->()) -> Void{
+        let api = WTApiManager.currentWeather(address)
+        let orignParam = api.orignParam
+        Network.requestBase(targetUrl:nil, api:api, params: orignParam, model:WeatherBase1.self) { (mod) in finish(mod?.result)
+        }
+    }
+    //查询ip
+    static func requiredIP(finish: @escaping (_ ip:String?)->()) -> Void{
+        Alamofire.request("http://pv.sohu.com/cityjson?ie=utf-8", method: .get, parameters: nil).responseString { (response) in
+            switch response.result{
+            case .success(let jsonStr):
+                //var returnCitySN = {"cip": "115.234.159.198", "cid": "330300", "cname": "浙江省温州市"};
+                if jsonStr.hasPrefix("var returnCitySN = "){
+                    let newJson = jsonStr.replacingOccurrences(of: "var returnCitySN = ", with: "").replacingOccurrences(of: ";", with: "")
+                    let jsonData:Data = newJson.data(using: .utf8)!
+                    let dict = try? JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers)
+                    if let dic =  dict as? Dictionary<String,String>{
+                        if let ip = dic["cip"]{
+                            finish(ip)
+                            return
+                }}}
+                print("ip 获取失败")
+                finish(nil)
+            //常见 访问失败 原因
+            case .failure(let _):
+                print("ip 获取失败")
+                finish(nil)
+            }
+        }
+    }
+
 }
 
 

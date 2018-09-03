@@ -20,7 +20,7 @@ extension ApiManager{
     }
 }
 
-//堆糖接口
+// MARK: ---------------------   堆糖接口   ---------------------
 enum DTApiManager : ApiManager{
     case null
     case imageSearch //图片搜索
@@ -60,16 +60,13 @@ extension DTApiManager{
         var param = Dictionary<String,Any>()
         param["screen_height"] = Int(KScreenHeight)
         param["screen_width"] = Int(KScreenWidth)
-
         param["platform_name"] = "iOS"
         param["platform_version"] = "11.4"
         param["device_platform"] = "iPhone10,3"
         param["device_name"] = "Unknown iPhone"
-
         param["uuid"] = "a1e06615cf440e391c94514ba0bcbae9abd280c1"
         param["app_version"] = "6.16.1 rv:198075"
         param["app_code"] = "gandalf"
-
         param["__domain"] = "www.duitang.com"
         param["locale"] = "zh_CN"
         return param
@@ -78,7 +75,7 @@ extension DTApiManager{
 
 
 
-//堆糖接口
+// MARK: ---------------------   花瓣接口   ---------------------
 enum HBApiManager : ApiManager{
     case myThemeList
     case themeImages(_:String)
@@ -101,4 +98,44 @@ extension HBApiManager{
         return param
     }
 }
+
+// MARK:  ---------------------   天气接口   ---------------------
+enum WTApiManager : ApiManager{
+    case currentWeather(_:String)
+    case futureWeather(_:String)
+}
+
+extension WTApiManager{
+    var host: String {
+        return ""
+    }
+    var api: String {
+        switch self {
+        case .currentWeather(_):
+            return "http://api.k780.com/"
+        case .futureWeather(_):
+            return "https://www.sojson.com/open/api/weather/json.shtml"
+        }
+    }
+    var orignParam:Dictionary<String,Any>{
+        var param = Dictionary<String,Any>()
+        switch self {
+        case .currentWeather(let ip):
+            param["app"] = "weather.today"
+            param["weaid"] = ip
+            param["appkey"] = "36358"
+            param["sign"] = "68cedd8b7f50af04cb5d59eaeb2a25f3"
+            param["format"] = "json"
+        case .futureWeather(let loc):
+            param["city"] = loc
+        }
+        return param
+    }
+}
+
+
+
+
+
+
 
