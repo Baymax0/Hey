@@ -12,6 +12,7 @@ class MeVC: BaseVC {
 
     var lastWeatherTime :String! = ""
     var ip :String! = nil
+    var weatherModel:RealTimeWeatherModel? = nil
     @IBOutlet weak var weatherView: UIView!
     @IBOutlet weak var weatherWenduLab: UILabel!
     @IBOutlet weak var weatherTypeLab: UILabel!
@@ -73,7 +74,8 @@ class MeVC: BaseVC {
     }
 
     @IBAction func weatherAction(_ sender: Any) {
-        let vc = WeatherVC.fromStoryboard()
+        let vc = WeatherVC.fromStoryboard() as! WeatherVC
+        vc.weatherModel = weatherModel
         present(vc, animated: true, completion: nil)
     }
 

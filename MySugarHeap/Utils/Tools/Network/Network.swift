@@ -113,6 +113,12 @@ extension Network {
         Network.requestBase(targetUrl:nil, api:api, params: orignParam, model:WeatherBase1.self) { (mod) in finish(mod?.result)
         }
     }
+    static func requestFutureWeather(address:String, finish: @escaping (_ rep:WeatherBase2?)->()) -> Void{
+        let api = WTApiManager.futureWeather(address)
+        let orignParam = api.orignParam
+        Network.requestBase(targetUrl:nil, api:api, params: orignParam, model:WeatherBase2.self) { (mod) in finish(mod)
+        }
+    }
     //查询ip
     static func requiredIP(finish: @escaping (_ ip:String?)->()) -> Void{
         Alamofire.request("http://pv.sohu.com/cityjson?ie=utf-8", method: .get, parameters: nil).responseString { (response) in
@@ -137,6 +143,8 @@ extension Network {
             }
         }
     }
+
+
 
 }
 

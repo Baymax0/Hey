@@ -27,4 +27,23 @@ struct RealTimeWeatherModel: HandyJSON {
     var aqi:String!     //pm2.5  "53"
 }
 
+struct WeatherBase2: HandyJSON{
+    var data:String!
+    var result:Array<RealTimeWeatherModel>!
+}
+
+struct FutureWeatherModel: HandyJSON {
+    var date:String!    //日期 03日星期一
+    var sunrise:String!     //05:42
+    var sunset:String!      //18:45
+    var high:String!    //"高温 32.0℃",
+    var low:String!     //"低温 19.0℃",
+    var aqi:Int!        //pm2.5  "53"
+    var type:String!    //"晴",
+    var notice:String!  //"愿你拥有比阳光明媚的心情"
+}
+
+
+
+
 
