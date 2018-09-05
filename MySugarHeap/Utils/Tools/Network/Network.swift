@@ -37,7 +37,7 @@ class Network{
                     i += 1
                 }
             }
-            url = URL.init(string: s)!
+            url = (s.url())!
         }
 
         Alamofire.request(url, method: .get, parameters: param).responseString { (response) in
@@ -116,7 +116,7 @@ extension Network {
     static func requestFutureWeather(address:String, finish: @escaping (_ rep:WeatherBase2?)->()) -> Void{
         let api = WTApiManager.futureWeather(address)
         let orignParam = api.orignParam
-        Network.requestBase(targetUrl:nil, api:api, params: orignParam, model:WeatherBase2.self) { (mod) in finish(mod)
+        Network.requestBase(targetUrl:api.api, api:api, params: orignParam, model:WeatherBase2.self) { (mod) in finish(mod)
         }
     }
     //查询ip

@@ -16,7 +16,7 @@ protocol ApiManager {
 }
 extension ApiManager{
     var url: URL {
-        return URL.init(string: "\(self.host)\(self.api)")!
+        return "\(self.host)\(self.api)".url()!
     }
 }
 
@@ -119,8 +119,8 @@ extension WTApiManager{
         switch self {
         case .currentWeather(_):
             return "http://api.k780.com/"
-        case .futureWeather(_):
-            return "https://www.sojson.com/open/api/weather/json.shtml"
+        case .futureWeather(let city):
+            return "https://www.sojson.com/open/api/weather/json.shtml?city=\(city)"
         }
     }
     var orignParam:Dictionary<String,Any>{
@@ -132,8 +132,9 @@ extension WTApiManager{
             param["appkey"] = "36358"
             param["sign"] = "68cedd8b7f50af04cb5d59eaeb2a25f3"
             param["format"] = "json"
-        case .futureWeather(let loc):
-            param["city"] = loc
+        case .futureWeather(_):
+            print("")
+//            param["city"] = loc
         }
         return param
     }

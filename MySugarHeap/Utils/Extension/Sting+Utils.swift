@@ -61,6 +61,13 @@ extension String  {
         return date
     }
 
+    func url() -> URL?{
+        if let encodeUrlString = self.addingPercentEncoding(withAllowedCharacters:.urlQueryAllowed){
+            return URL.init(string: encodeUrlString)
+        }
+        return nil
+    }
+
     func  toInt() -> Int{
         if let i = Int(self){
             return i

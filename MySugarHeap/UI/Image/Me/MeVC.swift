@@ -22,13 +22,17 @@ class MeVC: BaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        requestWeather()
 
+        weatherModel = BMCache.getModel(.WeatherInfo, type: RealTimeWeatherModel.self)
+        loadWeatherMod()
+
+        requestWeather()
     }
 
     //查询实时天气
     func requestWeather() ->  Void{
         if ip == nil {
+            //获取ip地址
             Network.requiredIP { (ip) in
                 self.ip = ip
                 if self.ip == nil{
@@ -40,37 +44,46 @@ class MeVC: BaseVC {
             return
         }
         let now = Date().toString("yyyy-MM-dd-HH")
-        //以小时为单位刷新
         if now != lastWeatherTime{
+            //请求天气
             Network.requesrCurrentWeather(address: ip!) { (mod) in
                 if mod != nil{
-                    self.weatherWenduLab.text = (mod?.temp_curr)! + "°"
-                    let type = (mod?.citynm)! + " " + (mod?.weather_curr)!
-                    self.weatherTypeLab.text = type
-                    let pm:Int! = Int((mod?.aqi)!)
-                    var att : NSMutableAttributedString!
-                    if pm < 50{
-                        att = NSMutableAttributedString(string: String(format: "空气优 %@", (mod?.aqi)!))
-                        att.addAttribute(.foregroundColor, value: KGreen_Light, range: NSRange(location: 0, length: att.length))
-                    }else if pm < 100{
-                        att = NSMutableAttributedString(string: String(format: "空气良 %@", (mod?.aqi)!))
-                        att.addAttribute(.foregroundColor, value: KGreen_Light, range: NSRange(location: 0, length: att.length))
-                    }else {
-                        att = NSMutableAttributedString(string: String(format: "空气差 %@", (mod?.aqi)!))
-                        att.addAttribute(.foregroundColor, value: KRed, range: NSRange(location: 0, length: att.length))
-                    }
-                    att.addAttribute(.font, value: UIFont(name: "AvenirNext-DemiBold", size: 11) ?? UIFont.systemFont(ofSize: 12), range: NSRange(location: 0, length: att.length))
-                    att.addAttribute(.foregroundColor, value: KBlack_178, range: NSRange(location: 0, length: 3))
-                    att.addAttribute(.font, value: UIFont.systemFont(ofSize: 11), range: NSRange(location: 0, length: 3))
-                    self.weatherQuaLab.attributedText = att
-                    if let img = mod?.weather_curr.image{
-                        self.weatherTypeImg.image = img
-                    }
+                    self.weatherModel = mod
+                    self.loadWeatherMod()
+                    BMCache.set(.WeatherInfo, value: mod)
+                    self.lastWeatherTime = now
                 }
             }
-            lastWeatherTime = now
         }
+    }
 
+    //加载天气信息
+    func loadWeatherMod() -> Void {
+        guard self.weatherModel != nil else {
+            return
+        }
+        self.weatherWenduLab.text = (weatherModel?.temp_curr)! + "°"
+        let type = (weatherModel?.citynm)! + " " + (weatherModel?.weather_curr)!
+        self.weatherTypeLab.text = type
+        let pm:Int! = Int((weatherModel?.aqi)!)
+        var att : NSMutableAttributedString!
+        if pm < 50{
+            att = NSMutableAttributedString(string: String(format: "空气优 %@", (weatherModel?.aqi)!))
+            att.addAttribute(.foregroundColor, value: KGreen_Light, range: NSRange(location: 0, length: att.length))
+        }else if pm < 100{
+            att = NSMutableAttributedString(string: String(format: "空气良 %@", (weatherModel?.aqi)!))
+            att.addAttribute(.foregroundColor, value: KGreen_Light, range: NSRange(location: 0, length: att.length))
+        }else {
+            att = NSMutableAttributedString(string: String(format: "空气差 %@", (weatherModel?.aqi)!))
+            att.addAttribute(.foregroundColor, value: KRed, range: NSRange(location: 0, length: att.length))
+        }
+        att.addAttribute(.font, value: UIFont(name: "AvenirNext-DemiBold", size: 11) ?? UIFont.systemFont(ofSize: 12), range: NSRange(location: 0, length: att.length))
+        att.addAttribute(.foregroundColor, value: KBlack_178, range: NSRange(location: 0, length: 3))
+        att.addAttribute(.font, value: UIFont.systemFont(ofSize: 11), range: NSRange(location: 0, length: 3))
+        self.weatherQuaLab.attributedText = att
+        if let img = weatherModel?.weather_curr.image{
+            self.weatherTypeImg.image = img
+        }
     }
 
     @IBAction func weatherAction(_ sender: Any) {

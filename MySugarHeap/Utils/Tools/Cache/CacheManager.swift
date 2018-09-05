@@ -17,6 +17,8 @@ enum CacheKey_String:String {
     case ImgTags //图片的所有tags
     case ImageFavoriteList //所有收藏的图片
     case FindSearchHistory //搜索历史记录
+    case WeatherInfo    //天气
+    case futureWeather    //天气
 
 }
 

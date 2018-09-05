@@ -27,9 +27,31 @@ struct RealTimeWeatherModel: HandyJSON {
     var aqi:String!     //pm2.5  "53"
 }
 
-struct WeatherBase2: HandyJSON{
-    var data:String!
-    var result:Array<RealTimeWeatherModel>!
+class WeatherBase2: HandyJSON{
+    var city:String!
+    var count:Int!
+    var date:String!
+
+    var yesterday:FutureWeatherModel!
+
+    var forecast:Array<FutureWeatherModel>!
+
+    var result:Array<FutureWeatherModel>{
+        var temp = forecast ?? Array<FutureWeatherModel>()
+        if yesterday != nil{
+            temp.insert(yesterday, at: 0)
+        }
+        return temp
+    }
+
+    func mapping(mapper: HelpingMapper) {
+        mapper <<<
+            self.yesterday <-- "data.yesterday"
+        mapper <<<
+            self.forecast <-- "data.forecast"
+    }
+
+    required init() {    }
 }
 
 struct FutureWeatherModel: HandyJSON {
@@ -43,6 +65,12 @@ struct FutureWeatherModel: HandyJSON {
     var notice:String!  //"愿你拥有比阳光明媚的心情"
 }
 
+//本地保存的时候 解析为WeatherBase3 防止通过mapping读不到数据
+class WeatherBase3: WeatherBase2{
+    override func mapping(mapper: HelpingMapper) {
+    }
+    required init() {    }
+}
 
 
 
