@@ -1,0 +1,23 @@
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '10.0'
+use_frameworks!
+target 'LisApp' do
+
+#tools
+pod 'Alamofire'
+pod 'Kingfisher'
+pod 'HandyJSON', '~> 4.2.0'
+pod 'MJRefresh'
+pod 'SwiftyUserDefaults'
+pod 'IQKeyboardManagerSwift'
+pod 'SQLite.swift'
+pod 'Hero'
+
+#custom view
+pod 'NVActivityIndicatorView'
+pod 'TextFieldEffects'
+pod 'CLImagePickerTool'
+pod 'LTMorphingLabel'
+pod 'Charts'
+
+end
