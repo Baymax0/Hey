@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D22F0FA221E792900DB56DB /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F0F8221E792900DB56DB /* CustomCell.swift */; };
+		2D22F0FB221E792900DB56DB /* CustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D22F0F9221E792900DB56DB /* CustomCell.xib */; };
+		2D22F0FD221E9FBF00DB56DB /* VideoPlayVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F0FC221E9FBF00DB56DB /* VideoPlayVC.swift */; };
 		2D2B44D7221BF8A100D0F19E /* MySiMiVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2B44D6221BF8A100D0F19E /* MySiMiVC.swift */; };
 		2D2B44D9221BF97300D0F19E /* HoppyImageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2B44D8221BF97300D0F19E /* HoppyImageVC.swift */; };
 		2D2B44DB221BF9E400D0F19E /* ImageDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2B44DA221BF9E400D0F19E /* ImageDetailVC.swift */; };
@@ -96,6 +99,9 @@
 
 /* Begin PBXFileReference section */
 		155AACD1D7C4196221BC9BC5 /* Pods_LisApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LisApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D22F0F8221E792900DB56DB /* CustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
+		2D22F0F9221E792900DB56DB /* CustomCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomCell.xib; sourceTree = "<group>"; };
+		2D22F0FC221E9FBF00DB56DB /* VideoPlayVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayVC.swift; sourceTree = "<group>"; };
 		2D2B44D6221BF8A100D0F19E /* MySiMiVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySiMiVC.swift; sourceTree = "<group>"; };
 		2D2B44D8221BF97300D0F19E /* HoppyImageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoppyImageVC.swift; sourceTree = "<group>"; };
 		2D2B44DA221BF9E400D0F19E /* ImageDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDetailVC.swift; sourceTree = "<group>"; };
@@ -221,6 +227,9 @@
 			isa = PBXGroup;
 			children = (
 				2D2B44D6221BF8A100D0F19E /* MySiMiVC.swift */,
+				2D22F0F8221E792900DB56DB /* CustomCell.swift */,
+				2D22F0F9221E792900DB56DB /* CustomCell.xib */,
+				2D22F0FC221E9FBF00DB56DB /* VideoPlayVC.swift */,
 			);
 			path = "相册";
 			sourceTree = "<group>";
@@ -280,10 +289,10 @@
 		2D3155DA221AABDB00419C16 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				2D2B44D1221BF21E00D0F19E /* 工具 */,
-				2D2B44D0221BF21900D0F19E /* 探索 */,
 				2D315670221AAE8A00419C16 /* MeVC.swift */,
 				2D3155CB221A902D00419C16 /* Main.storyboard */,
+				2D2B44D1221BF21E00D0F19E /* 工具 */,
+				2D2B44D0221BF21900D0F19E /* 探索 */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -565,6 +574,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D22F0FB221E792900DB56DB /* CustomCell.xib in Resources */,
 				2D3155D2221A902F00419C16 /* LaunchScreen.storyboard in Resources */,
 				2D3155CF221A902F00419C16 /* Assets.xcassets in Resources */,
 				2D3155CD221A902D00419C16 /* Main.storyboard in Resources */,
@@ -593,7 +603,14 @@
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/LTMorphingLabel/LTMorphingLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/MJRefresh/MJRefresh.framework",
+				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
 				"${BUILT_PRODUCTS_DIR}/NVActivityIndicatorView/NVActivityIndicatorView.framework",
+				"${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework",
+				"${BUILT_PRODUCTS_DIR}/SJAttributesFactory/SJAttributesFactory.framework",
+				"${BUILT_PRODUCTS_DIR}/SJBaseVideoPlayer/SJBaseVideoPlayer.framework",
+				"${BUILT_PRODUCTS_DIR}/SJObserverHelper/SJObserverHelper.framework",
+				"${BUILT_PRODUCTS_DIR}/SJUIFactory/SJUIFactory.framework",
+				"${BUILT_PRODUCTS_DIR}/SJVideoPlayer/SJVideoPlayer.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyUserDefaults/SwiftyUserDefaults.framework",
 				"${BUILT_PRODUCTS_DIR}/TextFieldEffects/TextFieldEffects.framework",
@@ -611,7 +628,14 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LTMorphingLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJRefresh.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NVActivityIndicatorView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SJAttributesFactory.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SJBaseVideoPlayer.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SJObserverHelper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SJUIFactory.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SJVideoPlayer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyUserDefaults.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TextFieldEffects.framework",
@@ -663,6 +687,7 @@
 				2D31564D221AACFB00419C16 /* ConstraintLayoutGuideDSL.swift in Sources */,
 				2D3155E7221AACC400419C16 /* Sting+Utils.swift in Sources */,
 				2D315669221AAD4B00419C16 /* ColorConst.swift in Sources */,
+				2D22F0FA221E792900DB56DB /* CustomCell.swift in Sources */,
 				2D31563B221AACFB00419C16 /* ConstraintPriorityTarget.swift in Sources */,
 				2D315659221AACFB00419C16 /* ApiManager.swift in Sources */,
 				2D315685221AB11400419C16 /* DTBaseModel.swift in Sources */,
@@ -695,6 +720,7 @@
 				2D315651221AACFB00419C16 /* Debugging.swift in Sources */,
 				2D3155E5221AACC400419C16 /* UITableViewCell+Utils.swift in Sources */,
 				2D31564B221AACFB00419C16 /* ConstraintMaker.swift in Sources */,
+				2D22F0FD221E9FBF00DB56DB /* VideoPlayVC.swift in Sources */,
 				2D315639221AACFB00419C16 /* ConstraintAttributes.swift in Sources */,
 				2D315662221AACFB00419C16 /* BaseVC.swift in Sources */,
 				2D315660221AACFB00419C16 /* BMTagChooseView.swift in Sources */,

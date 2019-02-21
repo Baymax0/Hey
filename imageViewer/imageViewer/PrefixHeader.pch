@@ -1,0 +1,97 @@
+//
+//  PrefixHeader.pch
+//  general
+//
+//  Created by 李志伟 on 17/3/27.
+//  Copyright © 2017年 baymax0. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#pragma mark - ============== 头文件 ==============
+#import "Utils.h"          //全局的工具方法
+#import <UIKit/UIKit.h>
+#import "HUD.h"
+
+#pragma mark --------------------  通知  ---------------------
+
+#define KNotification_SaveImg @"KNotification_SaveImg"
+
+#define KNotification_SafeLogin @"KNotification_SafeLogin"
+#define KNotification_UnSafeLogin @"KNotification_UnSafeLogin"
+
+#define unSafeKey @"new"
+
+
+#pragma mark -----------------   CacheKey   ------------------
+//每级菜单历史最后访问记录字典
+#define KCacheKey_LastVisitFileDic @"KCacheKey_LastVisitFileDic"
+//是否排序
+#define KCacheKey_Sort @"KCacheKey_Sort"
+
+
+
+#pragma mark -----------------    界面尺寸   ------------------
+
+#define kMainScreenWidth    [UIScreen mainScreen].bounds.size.width
+
+#define kMainScreenHeight   ([UIScreen mainScreen].bounds.size.height)
+//导航栏下的内容高度
+#define kMainScreenHInNav   ([UIScreen mainScreen].bounds.size.height==812?([UIScreen mainScreen].bounds.size.height-88):([UIScreen mainScreen].bounds.size.height-64))
+
+#pragma mark -------------------   颜 色  ---------------------
+
+#define KRGB(R,G,B) [UIColor colorWithRed:(R)/255.0 green:(G)/255.0 blue:(B)/255.0 alpha:1]
+#define KBlack    [UIColor colorWithRed:0 green:0 blue:0 alpha:1]
+#define KWhite    [UIColor colorWithRed:1 green:1 blue:1 alpha:1]
+#define kMaskViewColor [[UIColor blackColor] colorWithAlphaComponent:0.4]
+//红色 FA464B 
+#define KRed    [UIColor colorWithRed:250/255.0 green:70/255.0 blue:75/255.0 alpha:1]
+#define KBlue    [UIColor colorWithRed:36/255.0 green:141/255.0 blue:245/255.0 alpha:1]
+#define KLightRed KRGB(254, 94, 92)
+//黄色 #fff100
+#define KYellow    KRGB(255,241,0)
+//绿色 #34C82D
+#define kGreen  KRGB(52,200,45)
+//灰色 #333333
+#define KTextBlack    KRGB(51,51,51)
+//灰色 #999999
+#define KTextBlack2    KRGB(88,88,88)
+//灰色 #999999
+#define KTextGray    KRGB(153,153,153)
+//橙色 #FF4500
+#define KOrange    KRGB(255,69,0)
+//橙色 #333333
+#define KLightOrange    KRGB(255,220,222)
+#define KBgGray    KRGB(244,244,244)
+#define KBgGrayLine    KRGB(218,218,218)
+#define cellDisableColor KRGB(235, 235, 235)
+
+
+
+
+#pragma mark ------------------  代码块 ------------------
+
+#define CLHWeakSelf(type)  __weak typeof(type) weak##type = type;
+#define WeakSelf __weak typeof(self) weakSelf = self;
+//网络请求失败
+#define HUD_Request_Faild [HUD showTitle:@"网络异常"];
+//网络请求异常
+#define HUD_Request_FaildText(text) [HUD showTitle:text];
+//是否登录
+#define JudgeLogin     if (![self judgeLogin]) { return; }
+
+#define Account_PayInterfaceChannelType @([AccountManager shared].payInterfaceChannelType)
+//判断字符串是否为空  没有值为yes
+#define CLHStringIsEmpty(str) ([str isKindOfClass:[NSNull class]] || str == nil || [str length] < 1 ? YES : NO )
+//判断数组是否为空  没有值为yes
+#define CLHArrayIsEmpty(array) (array == nil || [array isKindOfClass:[NSNull class]] || array.count == 0)
+//判断字典是否为空  没有值为yes
+#define CLHDictIsEmpty(dic) (dic == nil || [dic isKindOfClass:[NSNull class]] || dic.allKeys == 0)
+//判断对象是否为空  没有值为yes
+#define CLHObjectIsEmpty(_object) (_object == nil \ || [_object isKindOfClass:[NSNull class]] \ || ([_object respondsToSelector:@selector(length)] && [(NSData *)_object length] == 0) \ || ([_object respondsToSelector:@selector(count)] && [(NSArray *)_object count] == 0))
+
+
+#endif /* PrefixHeader_pch */
+

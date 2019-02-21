@@ -20,4 +20,8 @@ pod 'CLImagePickerTool'
 pod 'LTMorphingLabel'
 pod 'Charts'
 
+pod 'SJVideoPlayer'
+pod 'SJBaseVideoPlayer'
+pod 'Masonry'
+
 end

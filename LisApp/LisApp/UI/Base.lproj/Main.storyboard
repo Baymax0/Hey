@@ -104,7 +104,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UtX-5J-ymK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="954" y="-33"/>
+            <point key="canvasLocation" x="927" y="23"/>
         </scene>
         <!--My Si MiVC-->
         <scene sceneID="E9a-y2-XrX">
@@ -127,23 +127,65 @@
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fbw-Kq-2oE">
                                         <rect key="frame" x="296" y="20" width="79" height="45"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="Button"/>
+                                        <state key="normal" title="设置"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e2j-Xk-bD3">
+                                        <rect key="frame" x="0.0" y="20" width="60" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="60" id="Mt5-9d-2MK"/>
+                                            <constraint firstAttribute="height" constant="44" id="Rxr-Xs-Wlo"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <state key="normal" title="上一级"/>
+                                        <connections>
+                                            <action selector="upAction:" destination="biv-Vv-bN7" eventType="touchUpInside" id="NvD-RC-Yae"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="64" id="3EY-NZ-3VA"/>
+                                    <constraint firstAttribute="bottom" secondItem="e2j-Xk-bD3" secondAttribute="bottom" id="Dlm-BV-hWX"/>
+                                    <constraint firstItem="e2j-Xk-bD3" firstAttribute="leading" secondItem="CcU-OU-L9u" secondAttribute="leading" id="xEI-9Y-d9U"/>
                                 </constraints>
                             </view>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="gTW-ZX-yQW">
+                                <rect key="frame" x="0.0" y="64" width="375" height="748"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="EY4-tY-jtm">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="ZJW-sf-iYj">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </view>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
                         </subviews>
                         <color key="backgroundColor" red="0.94117647058823528" green="0.94117647058823528" blue="0.94117647058823528" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="bUn-5V-LC6" firstAttribute="trailing" secondItem="gTW-ZX-yQW" secondAttribute="trailing" id="6rL-Ju-Nae"/>
+                            <constraint firstAttribute="bottom" secondItem="gTW-ZX-yQW" secondAttribute="bottom" id="BKv-Yx-TI3"/>
                             <constraint firstItem="CcU-OU-L9u" firstAttribute="leading" secondItem="bUn-5V-LC6" secondAttribute="leading" id="Gbt-q1-ItA"/>
                             <constraint firstItem="bUn-5V-LC6" firstAttribute="trailing" secondItem="CcU-OU-L9u" secondAttribute="trailing" id="OQh-2O-9uU"/>
                             <constraint firstItem="CcU-OU-L9u" firstAttribute="top" secondItem="MT2-Ss-mhE" secondAttribute="top" id="Ot3-oM-4pz"/>
+                            <constraint firstItem="gTW-ZX-yQW" firstAttribute="leading" secondItem="bUn-5V-LC6" secondAttribute="leading" id="li4-I8-kxn"/>
+                            <constraint firstItem="gTW-ZX-yQW" firstAttribute="top" secondItem="CcU-OU-L9u" secondAttribute="bottom" id="nfO-dW-81I"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="bUn-5V-LC6"/>
                     </view>
+                    <connections>
+                        <outlet property="collectionView" destination="gTW-ZX-yQW" id="7Vw-T2-wJC"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qfH-oX-2lW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
