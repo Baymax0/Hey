@@ -8,12 +8,16 @@
 
 import UIKit
 import Kingfisher
+import Hero
 
 let cellH:CGFloat = 120
+let rowNum:CGFloat = 3
 
 class MySiMiVC: BaseVC{
 
     weak var selectedCell : ImageFlowCollectionCell?
+    
+    @IBOutlet weak var upBtn: UIButton!
     
     var fileManager:FileManager!
     //当前路径 层级 数组
@@ -35,6 +39,11 @@ class MySiMiVC: BaseVC{
 
     @IBOutlet weak var collectionView: UICollectionView!
     
+    @IBOutlet var settingView: UIView!
+    @IBOutlet weak var contentModeSwitch: UISwitch!
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = KBGGray
@@ -42,6 +51,9 @@ class MySiMiVC: BaseVC{
         loadData()
         //侧滑返回
         addSlideBack(view)
+
+        KingfisherManager.shared.cache.diskStorage.config.sizeLimit        =  100 * 1024 * 1024
+        KingfisherManager.shared.cache.memoryStorage.config.totalCostLimit = 30 * 1024
     }
     
     func initUI(){
@@ -71,16 +83,46 @@ class MySiMiVC: BaseVC{
     
     func loadSubFile() {
         self.subFiles = try? fileManager.contentsOfDirectory(atPath: self.directPath)
+        var temp = Array<String>()
+        for s in subFiles{
+            if s.hasPrefix("."){
+                continue
+            }else{
+                temp.append(s)
+            }
+        }
+        self.subFiles = temp
+        if directArr.count == 1{
+            upBtn.isHidden = true
+        }else{
+            upBtn.isHidden = false
+        }
         self.collectionView.collectionViewLayout.invalidateLayout()
         self.collectionView.reloadData()
     }
+    
+    override func hideMaskView() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.maskView.alpha = 0
+            self.settingView.alpha = 0
+        }) { (_) in
+            self.settingView.frame = CGRect(x: KScreenWidth, y: 0, width: 180, height: KScreenHeight)
+            self.settingView.removeFromSuperview()
+            self.maskView.removeFromSuperview()
+        }
+    }
+    
+    @IBAction func changeContentModeAction(_ sender: UISwitch) {
+        self.collectionView.reloadData()
+    }
+    
 }
 
 
 extension MySiMiVC:UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
+    // ------------ layout
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize{
-        let num:CGFloat = 4
-        let itemW = (KScreenWidth - 5 * (num - 1) - 10) / num
+        let itemW = (KScreenWidth - 5 * (rowNum - 1) - 10) / rowNum
         let size = CGSize(width: itemW - 1, height: cellH)
         return size
     }
@@ -90,8 +132,11 @@ extension MySiMiVC:UICollectionViewDelegate,UICollectionViewDataSource,UICollect
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 5
     }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 5
+    }
     
-    
+    // ------------ data
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -114,14 +159,22 @@ extension MySiMiVC:UICollectionViewDelegate,UICollectionViewDataSource,UICollect
         }
         // 视频
         else if Utils.isVideoFile(path){
-            cell.imgBGView.isHidden = false
-            cell.fileBGView.isHidden = true
+            cell.imgBGView.isHidden = true
+            cell.fileBGView.isHidden = false
             cell.fileNameLab.text = name
             cell.fileImg.image = UIImage(named: "视频")
         }
         // 图片
         else{
-            cell.img.kf.setImage(with: ImageResource(downloadURL: URL(fileURLWithPath: path)))
+            cell.imgBGView.isHidden = false
+            cell.fileBGView.isHidden = true
+            if contentModeSwitch.isOn == true{
+                cell.img.contentMode = .scaleAspectFill
+            }else{
+                cell.img.contentMode = .scaleAspectFit
+            }
+            self.loadImg(cell.img, path)
+//            cell.img.kf.setImage(with: URL(fileURLWithPath: path))
             if  name.contains("gif") {
                 cell.gifLab.isHidden = false
             }else{
@@ -133,10 +186,29 @@ extension MySiMiVC:UICollectionViewDelegate,UICollectionViewDataSource,UICollect
         return cell
     }
     
+    func loadImg(_ view:UIImageView,_ path:String ){
+        view.alpha = 0
+        let url = URL(fileURLWithPath: path)
+        print("url:")
+        print(url)
+        
+        view.kf.setImage(with: url)
+        
+//        DispatchQueue.global().async {
+//            let img = UIImage(contentsOfFile: path)
+//            DispatchQueue.main.async {
+//                view.image = img
+//                UIView.animate(withDuration: 0.25, animations: {
+//                    view.alpha = 1
+//                })
+//            }
+//        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let name = self.subFiles[indexPath.item]
         let path = String(format: "%@/%@", directPath, name)
-        
+
         if Utils.isVideoFile(path) {
             let vc = VideoPlayVC()
             vc.videoURL = path
@@ -146,9 +218,38 @@ extension MySiMiVC:UICollectionViewDelegate,UICollectionViewDataSource,UICollect
             self.loadSubFile()
         }else{
             // 预览
+            let cell = collectionView.cellForItem(at: indexPath) as! CustomCell
+            cell.img.hero.id = "imgHeroId \(indexPath.item)"
             
+            let vc = EditImageView.fromStoryboard() as! EditImageView
+            vc.tempImgView.hero.id = "imgHeroId \(indexPath.item)"
+            vc.directPath = self.directPath
+            vc.subFiles = self.subFiles
+            vc.imageIndex = indexPath.item
+
+            let name = self.subFiles[indexPath.item]
+            let path = String(format: "%@/%@", directPath, name)
+            vc.tempImgView.image = UIImage(contentsOfFile: path)
+            
+            self.present(vc, animated: true, completion: nil)
         }
     }
+}
 
+
+// MARK: -  ---------------------- setting ------------------------
+extension MySiMiVC{
+    @IBAction func openSettingAction(_ sender: Any) {
+        window?.addSubview(self.maskView)
+        settingView.frame = CGRect(x: KScreenWidth, y: 0, width: 180, height: KScreenHeight)
+        window?.addSubview(settingView)
+        self.maskView.alpha = 0
+        self.settingView.alpha = 1
+        UIView.animate(withDuration: 0.25) {
+            self.maskView.alpha = 1
+            self.settingView.frame = CGRect(x: KScreenWidth-180, y: 0, width: 180, height: KScreenHeight)
+        }
+    }
+    
     
 }

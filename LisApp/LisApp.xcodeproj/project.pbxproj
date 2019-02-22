@@ -10,6 +10,11 @@
 		2D22F0FA221E792900DB56DB /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F0F8221E792900DB56DB /* CustomCell.swift */; };
 		2D22F0FB221E792900DB56DB /* CustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D22F0F9221E792900DB56DB /* CustomCell.xib */; };
 		2D22F0FD221E9FBF00DB56DB /* VideoPlayVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F0FC221E9FBF00DB56DB /* VideoPlayVC.swift */; };
+		2D23F8EE221FBF9700303548 /* EditImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D23F8ED221FBF9700303548 /* EditImageView.swift */; };
+		2D23F8FB221FE94000303548 /* WRProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D23F8F7221FE94000303548 /* WRProxy.swift */; };
+		2D23F8FC221FE94000303548 /* WRPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D23F8F8221FE94000303548 /* WRPageControl.swift */; };
+		2D23F8FD221FE94000303548 /* WRCycleScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D23F8F9221FE94000303548 /* WRCycleScrollView.swift */; };
+		2D23F8FE221FE94000303548 /* WRCycleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D23F8FA221FE94000303548 /* WRCycleCell.swift */; };
 		2D2B44D7221BF8A100D0F19E /* MySiMiVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2B44D6221BF8A100D0F19E /* MySiMiVC.swift */; };
 		2D2B44D9221BF97300D0F19E /* HoppyImageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2B44D8221BF97300D0F19E /* HoppyImageVC.swift */; };
 		2D2B44DB221BF9E400D0F19E /* ImageDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2B44DA221BF9E400D0F19E /* ImageDetailVC.swift */; };
@@ -102,6 +107,11 @@
 		2D22F0F8221E792900DB56DB /* CustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
 		2D22F0F9221E792900DB56DB /* CustomCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomCell.xib; sourceTree = "<group>"; };
 		2D22F0FC221E9FBF00DB56DB /* VideoPlayVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayVC.swift; sourceTree = "<group>"; };
+		2D23F8ED221FBF9700303548 /* EditImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditImageView.swift; sourceTree = "<group>"; };
+		2D23F8F7221FE94000303548 /* WRProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WRProxy.swift; sourceTree = "<group>"; };
+		2D23F8F8221FE94000303548 /* WRPageControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WRPageControl.swift; sourceTree = "<group>"; };
+		2D23F8F9221FE94000303548 /* WRCycleScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WRCycleScrollView.swift; sourceTree = "<group>"; };
+		2D23F8FA221FE94000303548 /* WRCycleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WRCycleCell.swift; sourceTree = "<group>"; };
 		2D2B44D6221BF8A100D0F19E /* MySiMiVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySiMiVC.swift; sourceTree = "<group>"; };
 		2D2B44D8221BF97300D0F19E /* HoppyImageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoppyImageVC.swift; sourceTree = "<group>"; };
 		2D2B44DA221BF9E400D0F19E /* ImageDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDetailVC.swift; sourceTree = "<group>"; };
@@ -206,6 +216,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2D23F8F6221FE94000303548 /* WRCycleScrollView */ = {
+			isa = PBXGroup;
+			children = (
+				2D23F8F7221FE94000303548 /* WRProxy.swift */,
+				2D23F8F8221FE94000303548 /* WRPageControl.swift */,
+				2D23F8F9221FE94000303548 /* WRCycleScrollView.swift */,
+				2D23F8FA221FE94000303548 /* WRCycleCell.swift */,
+			);
+			path = WRCycleScrollView;
+			sourceTree = "<group>";
+		};
 		2D2B44D0221BF21900D0F19E /* 探索 */ = {
 			isa = PBXGroup;
 			children = (
@@ -226,10 +247,12 @@
 		2D2B44D5221BF72300D0F19E /* 相册 */ = {
 			isa = PBXGroup;
 			children = (
+				2D23F8F6221FE94000303548 /* WRCycleScrollView */,
 				2D2B44D6221BF8A100D0F19E /* MySiMiVC.swift */,
 				2D22F0F8221E792900DB56DB /* CustomCell.swift */,
 				2D22F0F9221E792900DB56DB /* CustomCell.xib */,
 				2D22F0FC221E9FBF00DB56DB /* VideoPlayVC.swift */,
+				2D23F8ED221FBF9700303548 /* EditImageView.swift */,
 			);
 			path = "相册";
 			sourceTree = "<group>";
@@ -683,6 +706,7 @@
 				2D3155CA221A902D00419C16 /* ViewController.swift in Sources */,
 				2D31565A221AACFB00419C16 /* Hud.swift in Sources */,
 				2D31562F221AACFB00419C16 /* DNSPageView.swift in Sources */,
+				2D23F8FD221FE94000303548 /* WRCycleScrollView.swift in Sources */,
 				2D31566A221AAD4B00419C16 /* Const.swift in Sources */,
 				2D31564D221AACFB00419C16 /* ConstraintLayoutGuideDSL.swift in Sources */,
 				2D3155E7221AACC400419C16 /* Sting+Utils.swift in Sources */,
@@ -701,6 +725,7 @@
 				2D315630221AACFB00419C16 /* DNSPageTitleView.swift in Sources */,
 				2D31563E221AACFB00419C16 /* ConstraintDSL.swift in Sources */,
 				2D315642221AACFB00419C16 /* ConstraintConfig.swift in Sources */,
+				2D23F8FB221FE94000303548 /* WRProxy.swift in Sources */,
 				2D31564E221AACFB00419C16 /* ConstraintView+Extensions.swift in Sources */,
 				2D315636221AACFB00419C16 /* LayoutConstraintItem.swift in Sources */,
 				2D31565E221AACFB00419C16 /* MyTabbar.swift in Sources */,
@@ -712,10 +737,12 @@
 				2D315648221AACFB00419C16 /* ConstraintConstantTarget.swift in Sources */,
 				2D315666221AACFB00419C16 /* BaseTableVC.swift in Sources */,
 				2D315641221AACFB00419C16 /* ConstraintInsetTarget.swift in Sources */,
+				2D23F8EE221FBF9700303548 /* EditImageView.swift in Sources */,
 				2D3155E8221AACC400419C16 /* UIView+IBInspectable.swift in Sources */,
 				2D315683221AB11400419C16 /* DTGroupsModel.swift in Sources */,
 				2D3155C8221A902D00419C16 /* AppDelegate.swift in Sources */,
 				2D31563C221AACFB00419C16 /* ConstraintInsets.swift in Sources */,
+				2D23F8FC221FE94000303548 /* WRPageControl.swift in Sources */,
 				2D31565B221AACFB00419C16 /* Utils.swift in Sources */,
 				2D315651221AACFB00419C16 /* Debugging.swift in Sources */,
 				2D3155E5221AACC400419C16 /* UITableViewCell+Utils.swift in Sources */,
@@ -740,6 +767,7 @@
 				2D315684221AB11400419C16 /* DTListModel.swift in Sources */,
 				2D315644221AACFB00419C16 /* ConstraintView.swift in Sources */,
 				2D31565D221AACFB00419C16 /* BaseCollectionVC.swift in Sources */,
+				2D23F8FE221FE94000303548 /* WRCycleCell.swift in Sources */,
 				2D315631221AACFB00419C16 /* DNSPageViewManager.swift in Sources */,
 				2D31564F221AACFB00419C16 /* ConstraintItem.swift in Sources */,
 				2D315653221AACFB00419C16 /* LayoutConstraint.swift in Sources */,

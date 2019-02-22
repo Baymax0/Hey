@@ -20,6 +20,9 @@ enum CacheKey_String:String {
     case WeatherInfo    //天气
     case futureWeather    //天气
 
+    
+    case imageTagsDic    //
+
 }
 
 protocol CustomCacheProtocol {
@@ -100,6 +103,7 @@ extension CacheManager : CustomCacheProtocol{
     func getString(_ Key:CacheKey_String) -> String?{
         return allData[Key.rawValue]
     }
+    
     //存储字符串数组对象
     func set(_ Key:CacheKey_String, value:Array<String>?){
         var res:String?
@@ -116,6 +120,7 @@ extension CacheManager : CustomCacheProtocol{
             return str.components(separatedBy: separator)
         }
     }
+    
     //存储自定义对象
     func set(_ Key:CacheKey_String, value: HandyJSON?){
         let jsonStr = value?.toJSONString(prettyPrint: false)
@@ -124,6 +129,26 @@ extension CacheManager : CustomCacheProtocol{
     func getModel<T:HandyJSON>(_ Key:CacheKey_String, type:T.Type?) -> T?{
         return T.deserialize(from: getString(Key))
     }
+    
+    //存储自定义对象
+    func set(_ Key:CacheKey_String, value: Dictionary<String,String>?){
+        var jsonStr:String? = nil
+        if let jsonData = try? JSONSerialization.data(withJSONObject: value, options: []){
+            jsonStr = String(data: jsonData, encoding: .utf8) ?? ""
+        }
+        set(Key, value: jsonStr)
+    }
+    
+    func getDic(_ Key:CacheKey_String) -> Dictionary<String,String>?{
+        if let str = getString(Key){
+            let data = str.data(using: .utf8)
+            if let jsonDic = try? JSONSerialization.jsonObject(with: data!, options: []) as? [String:String]{
+                return jsonDic
+            }
+        }
+        return nil
+    }
+    
     //自定义对象 数组
     func set<T:HandyJSON>(_ Key:CacheKey_String, value: Array<T>?){
         let jsonStr = value?.toJSONString(prettyPrint: false)

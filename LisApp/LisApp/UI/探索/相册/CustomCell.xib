@@ -25,18 +25,21 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="MTW-UB-Z8A">
                                 <rect key="frame" x="0.0" y="0.0" width="173" height="145"/>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.60000002384185791" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="gif" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BXW-aV-bRE">
-                                <rect key="frame" x="143" y="0.0" width="30" height="23"/>
-                                <color key="backgroundColor" red="0.99622859500000005" green="1" blue="0.98953255470000001" alpha="0.85575632670000001" colorSpace="custom" customColorSpace="sRGB"/>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="gif" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BXW-aV-bRE">
+                                <rect key="frame" x="143" y="0.0" width="30" height="20"/>
+                                <color key="backgroundColor" red="0.90701591969999995" green="0.32811147359971465" blue="0.33673603702949456" alpha="0.87427761130136983" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="30" id="Wj8-Xb-wmx"/>
-                                    <constraint firstAttribute="height" constant="23" id="Xqi-us-2Mj"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="30" id="bbz-Nc-lsZ"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="23" id="djq-Ly-Rvb"/>
+                                    <constraint firstAttribute="height" constant="20" id="Xqi-us-2Mj"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </label>
                         </subviews>
                         <constraints>
@@ -52,7 +55,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="173" height="145"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="文件夹" translatesAutoresizingMaskIntoConstraints="NO" id="6rx-cL-h4v">
-                                <rect key="frame" x="0.0" y="6" width="173" height="95"/>
+                                <rect key="frame" x="12" y="8" width="149" height="93"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="abc" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2VK-Z2-yHf">
                                 <rect key="frame" x="0.0" y="101" width="173" height="40"/>
@@ -67,11 +70,11 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="2VK-Z2-yHf" firstAttribute="leading" secondItem="Gc1-Ln-jsJ" secondAttribute="leading" id="1lu-nl-5JQ"/>
-                            <constraint firstItem="6rx-cL-h4v" firstAttribute="top" secondItem="Gc1-Ln-jsJ" secondAttribute="top" constant="6" id="7Ii-zb-xyH"/>
-                            <constraint firstAttribute="trailing" secondItem="6rx-cL-h4v" secondAttribute="trailing" id="Lbw-yH-a2L"/>
+                            <constraint firstItem="6rx-cL-h4v" firstAttribute="top" secondItem="Gc1-Ln-jsJ" secondAttribute="top" constant="8" id="7Ii-zb-xyH"/>
+                            <constraint firstAttribute="trailing" secondItem="6rx-cL-h4v" secondAttribute="trailing" constant="12" id="Lbw-yH-a2L"/>
                             <constraint firstAttribute="trailing" secondItem="2VK-Z2-yHf" secondAttribute="trailing" id="ZAE-TS-bnS"/>
                             <constraint firstItem="2VK-Z2-yHf" firstAttribute="top" secondItem="6rx-cL-h4v" secondAttribute="bottom" id="fLa-VL-Aq1"/>
-                            <constraint firstItem="6rx-cL-h4v" firstAttribute="leading" secondItem="Gc1-Ln-jsJ" secondAttribute="leading" id="gc5-I2-8Rl"/>
+                            <constraint firstItem="6rx-cL-h4v" firstAttribute="leading" secondItem="Gc1-Ln-jsJ" secondAttribute="leading" constant="12" id="gc5-I2-8Rl"/>
                             <constraint firstAttribute="bottom" secondItem="2VK-Z2-yHf" secondAttribute="bottom" constant="4" id="sdo-6E-8rj"/>
                         </constraints>
                     </view>

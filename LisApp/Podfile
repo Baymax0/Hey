@@ -6,6 +6,7 @@ target 'LisApp' do
 #tools
 pod 'Alamofire'
 pod 'Kingfisher'
+pod 'YYWebImage'
 pod 'HandyJSON', '~> 4.2.0'
 pod 'MJRefresh'
 pod 'SwiftyUserDefaults'

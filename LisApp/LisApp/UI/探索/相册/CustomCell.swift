@@ -20,4 +20,5 @@ class CustomCell: UICollectionViewCell {
     @IBOutlet weak var fileNameLab: UILabel!
     
     
+    
 }
