@@ -46,14 +46,14 @@ class Network{
                 if let resp = JSONDeserializer<T>.deserializeFrom(json: jsonStr){
                     finish(resp)
                 }else{
-                    HUD.text("解析失败")
+                    HUD.showText("解析失败")
                     finish(nil)
                 }
             //常见 访问失败 原因
             case .failure(let error):
                 let (_,msg) = Network.bundleError(error as NSError)
                 print("接口访问失败: \(api.url)  code:\(msg)")
-                HUD.text("访问失败")
+                HUD.showText("访问失败")
                 finish(nil)
             }
         }

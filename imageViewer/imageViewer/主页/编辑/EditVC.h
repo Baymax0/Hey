@@ -6,9 +6,9 @@
 //  Copyright © 2018 Baymax. All rights reserved.
 //
 
-#import "BaseViewController.h"
+#import <UIKit/UIKit.h>
 
-@interface EditVC : BaseViewController
+@interface EditVC : UIViewController
 
 /** <#注释#> */
 @property (strong, nonatomic) NSString * imgPath;

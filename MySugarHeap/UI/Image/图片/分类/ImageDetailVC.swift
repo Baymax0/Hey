@@ -95,7 +95,6 @@ class ImageDetailVC: BaseVC {
             HUD.text("已保存到相册")
         }
     }
-
 }
 
 extension ImageDetailVC:UIScrollViewDelegate{

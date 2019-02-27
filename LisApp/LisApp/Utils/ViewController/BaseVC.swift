@@ -39,12 +39,14 @@ class BaseVC: UIViewController {
     
     override var preferredStatusBarStyle: UIStatusBarStyle{
         get{
+//            return .lightContent
             return .default
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = KBGGray
         self.hero.isEnabled = true
     }
 
@@ -67,6 +69,7 @@ class BaseVC: UIViewController {
         switch gr.state {
         case .began:
             dismiss(animated: true, completion: nil)
+            self.closekeyboard()
         case .changed:
             let progress = gr.translation(in: nil).x / view.bounds.width
             Hero.shared.update(progress)

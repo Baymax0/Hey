@@ -7,7 +7,6 @@
 //
 
 #import "EditVC.h"
-#import "UIImageView+YYWebImage.h"
 #import "TKImageView.h"
 
 @interface EditVC (){
@@ -38,7 +37,7 @@
     orignImg = self.imageView.image;
     self.imageView.image = self.myNewImg;
 
-    self.cutImgView.backgroundColor = KBlack;
+    self.cutImgView.backgroundColor = UIColor.blackColor;
     self.cutImgView.showMidLines = YES;
     self.cutImgView.needScaleCrop = YES;
     self.cutImgView.showCrossLines = NO;
@@ -152,7 +151,7 @@
 
 - (IBAction)saveBtnAction:(id)sender {
     [UIImagePNGRepresentation(self.imageView.image) writeToFile:self.imgPath atomically:YES];
-    [[NSNotificationCenter defaultCenter] postNotificationName:KNotification_SaveImg object:nil userInfo:nil];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:KNotification_SaveImg object:nil userInfo:nil];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

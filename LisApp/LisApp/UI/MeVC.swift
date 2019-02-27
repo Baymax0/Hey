@@ -13,19 +13,29 @@ class MeVC: BaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideNav = true
-
-
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @IBAction func searchAction(_ sender: Any) {
+        
     }
-    */
+    
+    
+    @IBAction func exploreAction(_ sender: UIButton) {
+        let keys = ["水彩","插画"]
+        let vc = DTResultVC.fromStoryboard() as! DTResultVC
+        vc.title = keys[sender.tag]
+        vc.api = DTApiManager.imageSearch
+        vc.param["limit"] = 0
+        vc.param["kw"] = keys[sender.tag]
+        vc.param["buyable"] = 0
+        vc.param["include_fields"] = "sender,favroite_count,album,reply_count,like_count"
+        present(vc, animated: true, completion: nil)
+    }
+    
+    @IBAction func codeScanAction(_ sender: Any) {
+        let vc = ScanCodeVC.fromStoryboard() as! ScanCodeVC
+        present(vc, animated: true, completion: nil)
+    }
+    
 
 }

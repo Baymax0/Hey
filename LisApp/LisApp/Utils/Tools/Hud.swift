@@ -13,71 +13,39 @@ private let sn_topBar: Int = 1001
 private let HudHideTime: TimeInterval = 1.5
 
 
-class HUD {
-    /// wait with your own animated images
-    @discardableResult
-
-    //hud 获得时间
-    static func hudHideTime() -> TimeInterval { return HudHideTime }
-
-    //显示文字
-    @discardableResult
-    class func text(_ text: String,
-             autoClear: Bool = false,
-             autoClearTime: TimeInterval = HudHideTime) -> UIWindow{
-        return SwiftNotice.showText(text)
+class HUD: NSObject {
+    /// 显示等待界面
+    static func showWait() -> Void{
+        SwiftNotice.clear()
+        SwiftNotice.wait()
     }
-
-    //显示 等待
-    @discardableResult
-    class func wait() -> UIWindow{
-        return SwiftNotice.wait()
-    }
-
-    //显示图片
-    @discardableResult
-    class func image(_ imageNames: Array<UIImage>, timeInterval: Int) -> UIWindow{
-        return SwiftNotice.wait(imageNames, timeInterval: timeInterval)
-    }
-
-    //显示顶端
-    @discardableResult
-    class func top(_ text: String, autoClear: Bool = true, autoClearTime: TimeInterval = HudHideTime) -> UIWindow{
-        return SwiftNotice.noticeOnStatusBar(text, autoClear: autoClear, autoClearTime: autoClearTime)
+    /// 显示text
+    static func showText(_ text:String?, autoClearTime: TimeInterval = HudHideTime) -> Void{
+        SwiftNotice.clear()
+        if text == nil || text?.count == 0{
+            return
+        }
+        SwiftNotice.showText(text!, autoClear: true, autoClearTime: autoClearTime)
     }
     
-    //显示成功
-    @discardableResult
-    class func success(_ text: String,
-                    autoClear: Bool = false,
-                    autoClearTime:TimeInterval = HudHideTime) -> UIWindow{
-
-        return SwiftNotice.showNoticeWithText(NoticeType.success, text: text, autoClear: autoClear, autoClearTime: autoClearTime)
-    }
-
-    //显示失败
-    @discardableResult
-    class func error(_ text: String,
-                  autoClear: Bool = false,
-                  autoClearTime: TimeInterval = HudHideTime) -> UIWindow{
-
-        return SwiftNotice.showNoticeWithText(NoticeType.error, text: text, autoClear: autoClear, autoClearTime: autoClearTime)
-    }
-
-
-    //隐藏
-    class func hide(){
+    static func hide() -> Void{
         SwiftNotice.clear()
     }
-
-    //hud 自动消失后回调
-    class func runAfterHud(_  block: @escaping ()->() ){
+    
+    
+    
+    //hud 默认隐藏时间
+    static func hudHideTime() -> TimeInterval {
+        return HudHideTime
+    }
+    
+    //hud 自动消失回调
+    static func runAfterHud(_  block: @escaping ()->() ) -> Void{
         let deadline = DispatchTime.now() + hudHideTime()
         DispatchQueue.main.asyncAfter(deadline: deadline) {
             block()
         }
     }
-
 }
 
 enum NoticeType{
@@ -101,8 +69,6 @@ class SwiftNotice: NSObject {
         }
     }
     
-    // fix https://github.com/johnlui/SwiftNotice/issues/2
-    // thanks broccolii(https://github.com/broccolii) and his PR https://github.com/johnlui/SwiftNotice/pull/5
     static func clear() {
         self.cancelPreviousPerformRequests(withTarget: self)
         if let _ = timer {
@@ -182,7 +148,7 @@ class SwiftNotice: NSObject {
                 iv.image = imageNames.first!
                 iv.contentMode = UIView.ContentMode.scaleAspectFit
                 mainView.addSubview(iv)
-                timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: DispatchQueue.main) as! DispatchSource
+                timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: DispatchQueue.main) as? DispatchSource
                 timer.schedule(deadline: DispatchTime.now(), repeating: DispatchTimeInterval.milliseconds(timeInterval))
                 timer.setEventHandler(handler: { () -> Void in
                     let name = imageNames[timerTimes % imageNames.count]
@@ -198,17 +164,9 @@ class SwiftNotice: NSObject {
             mainView.addSubview(ai)
         }
         
-        window.frame = frame
+        window.frame = CGRect(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight)
         mainView.frame = frame
-        window.center = rv!.center
-        
-        if let version = Double(UIDevice.current.systemVersion),
-            version < 9.0 {
-            // change center
-            window.center = getRealCenter()
-            // change direction
-            window.transform = CGAffineTransform(rotationAngle: CGFloat(degree * Double.pi / 180))
-        }
+        mainView.center = rv!.center
         
         window.windowLevel = UIWindow.Level.alert
         window.isHidden = false
@@ -223,7 +181,7 @@ class SwiftNotice: NSObject {
     }
     
     @discardableResult
-    static func showText(_ text: String, autoClear: Bool=true, autoClearTime: TimeInterval=2.0) -> UIWindow {
+    static func showText(_ text: String, autoClear: Bool=true, autoClearTime: TimeInterval=HudHideTime) -> UIWindow {
         let window = UIWindow()
         window.backgroundColor = UIColor.clear
         let mainView = UIView()
@@ -240,20 +198,11 @@ class SwiftNotice: NSObject {
         label.bounds = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         mainView.addSubview(label)
         
-        let superFrame = CGRect(x: 0, y: 0, width: label.frame.width + 50 , height: label.frame.height + 30)
-        window.frame = superFrame
-        mainView.frame = superFrame
+        window.frame = CGRect(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight)
+        mainView.frame = CGRect(x: 0, y: 0, width: label.frame.width + 50 , height: label.frame.height + 30)
         
         label.center = mainView.center
-        window.center = rv!.center
-        
-        if let version = Double(UIDevice.current.systemVersion),
-            version < 9.0 {
-            // change center
-            window.center = getRealCenter()
-            // change direction
-            window.transform = CGAffineTransform(rotationAngle: CGFloat(degree * Double.pi / 180))
-        }
+        mainView.center = rv!.center
         
         window.windowLevel = UIWindow.Level.alert
         window.isHidden = false
@@ -267,7 +216,7 @@ class SwiftNotice: NSObject {
     }
     
     @discardableResult
-    static func showNoticeWithText(_ type: NoticeType,text: String, autoClear: Bool, autoClearTime: TimeInterval) -> UIWindow {
+    static func showNoticeWithText(_ type: NoticeType,text: String, autoClear: Bool, autoClearTime: TimeInterval = HudHideTime) -> UIWindow {
         let frame = CGRect(x: 0, y: 0, width: 90, height: 90)
         let window = UIWindow()
         window.backgroundColor = UIColor.clear
@@ -299,13 +248,6 @@ class SwiftNotice: NSObject {
         mainView.frame = frame
         window.center = rv!.center
         
-        if let version = Double(UIDevice.current.systemVersion),
-            version < 9.0 {
-            // change center
-            window.center = getRealCenter()
-            // change direction
-            window.transform = CGAffineTransform(rotationAngle: CGFloat(degree * Double.pi / 180))
-        }
         
         window.windowLevel = UIWindow.Level.alert
         window.center = rv!.center
@@ -456,7 +398,6 @@ fileprivate extension Selector {
             
         }
     }
-    
 }
 
 
