@@ -991,13 +991,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 34BD4U8K6Y;
+				DEVELOPMENT_TEAM = A3RUKEN8Q5;
 				INFOPLIST_FILE = "$(SRCROOT)/LisApp/Supports/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yimi.test233;
+				PRODUCT_BUNDLE_IDENTIFIER = baymax.lisapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "LisApp/Supports/LisApp-Brdging-Header.h";
 				SWIFT_VERSION = 4.2;
@@ -1011,13 +1011,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 34BD4U8K6Y;
+				DEVELOPMENT_TEAM = A3RUKEN8Q5;
 				INFOPLIST_FILE = "$(SRCROOT)/LisApp/Supports/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yimi.test233;
+				PRODUCT_BUNDLE_IDENTIFIER = baymax.lisapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "LisApp/Supports/LisApp-Brdging-Header.h";
 				SWIFT_VERSION = 4.2;

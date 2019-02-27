@@ -51,7 +51,7 @@ class ReviewVC: BaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideNav = true
-        
+        self.view.backgroundColor = KBlack_0
 
         subFilesUrl = subFiles.map({ (name) -> String in
             return String(format: "%@/%@", directPath, name)
@@ -107,8 +107,10 @@ class ReviewVC: BaseVC {
         let fontSize:CGFloat = 14
         
         var set = Set<String>()
+        var location = directPath.components(separatedBy: "Documents").last!
+        location = location + "/"
         for (key,str) in tagDic{
-            if key.contains(directPath){
+            if key.contains(location){
                 set.insert(str)
             }
         }
@@ -142,7 +144,7 @@ class ReviewVC: BaseVC {
     //给名字加上相对地址
     func getSaveKey(withName name:String) -> String {
         var path = directPath.components(separatedBy: "Documents").last!
-        path = path + name
+        path = path + "/" + name
         return path
     }
     

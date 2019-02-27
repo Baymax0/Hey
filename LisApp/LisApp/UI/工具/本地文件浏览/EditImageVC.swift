@@ -46,7 +46,6 @@ class EditImageVC: BaseVC {
     
     @IBAction func saveEditAction(_ sender: Any) {
         if slideBGView.isHidden{
-            
             dismiss(animated: false, completion: nil)
         }else{
             slideBGView.isHidden = true

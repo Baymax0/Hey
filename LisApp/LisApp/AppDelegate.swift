@@ -8,6 +8,9 @@
 
 import UIKit
 
+//com.yimi.test233
+//baymax.lisapp
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 

@@ -51,8 +51,6 @@ class MySiMiVC: BaseVC{
         super.viewDidLoad()
         self.view.backgroundColor = KBGGray
         
-        tagDic = BMCache.getDic(.imageTagsDic) ?? Dictionary<String,String>()
-        
         initUI()
         loadData()
         //侧滑返回
@@ -60,6 +58,11 @@ class MySiMiVC: BaseVC{
 
         KingfisherManager.shared.cache.diskStorage.config.sizeLimit        =  100 * 1024 * 1024
         KingfisherManager.shared.cache.memoryStorage.config.totalCostLimit = 30 * 1024
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tagDic = BMCache.getDic(.imageTagsDic) ?? Dictionary<String,String>()
     }
     
     func initUI(){
@@ -112,9 +115,18 @@ class MySiMiVC: BaseVC{
             }
             // 更具tag排序
             if sortByTagSwitch.isOn{
-                let a1 = tagDic[getSaveKey(withName: a)] ?? a
-                let b1 = tagDic[getSaveKey(withName: b)] ?? b
-                return a1.localizedStandardCompare(b1) == ComparisonResult.orderedAscending
+                let a1 = tagDic[getSaveKey(withName: a)]
+                let b1 = tagDic[getSaveKey(withName: b)]
+                if a1 == nil ,b1 != nil{
+                    return false
+                } else if b1 == nil ,a1 != nil{
+                    return true
+                }else if b1 != nil ,a1 != nil{
+                    return a1!.localizedStandardCompare(b1!) == ComparisonResult.orderedAscending
+                }else{
+                    return a.localizedStandardCompare(b) == ComparisonResult.orderedAscending
+                }
+                
             }
             return a.localizedStandardCompare(b) == ComparisonResult.orderedAscending
         })
@@ -152,7 +164,7 @@ class MySiMiVC: BaseVC{
     //给名字加上相对地址
     func getSaveKey(withName name:String) -> String {
         var path = directPath.components(separatedBy: "Documents").last!
-        path = path + name
+        path = path + "/" + name
         return path
     }
     
