@@ -28,8 +28,10 @@ class ReviewVC: BaseVC {
     var tagDic:Dictionary<String,String>!
 
     @IBOutlet weak var addTagView: UIView!
+    @IBOutlet weak var addTagViewH: NSLayoutConstraint!
     @IBOutlet weak var tagBtnBGView: UIView!
     @IBOutlet weak var tagInputTF: UITextField!
+    
     
     var name:String{
         if imageIndex >= subFiles.count{
@@ -114,11 +116,12 @@ class ReviewVC: BaseVC {
                 set.insert(str)
             }
         }
+        let temp = set.sorted()
         
-        for str in set {
+        for str in temp {
             var w = str.stringWidth(fontSize)+30
             w = w < (KScreenWidth-blank*2) ? w : KScreenWidth-blank*2-1
-            if x + blank + w + blank > KScreenWidth{
+            if x + blank + w + blank + 32 > KScreenWidth{
                 x = 0
                 row = row + 1
             }
@@ -138,6 +141,8 @@ class ReviewVC: BaseVC {
             btn.titleLabel?.lineBreakMode = .byTruncatingTail
             btn.addTarget(self, action: #selector(chooseTagBtn(_:)), for: .touchUpInside)
             tagBtnBGView.addSubview(btn)
+            
+            addTagViewH.constant = (row+1)*(h+blank)+70
         }
     }
     
@@ -162,11 +167,12 @@ class ReviewVC: BaseVC {
             return
         }
         if tagInputTF.text!.count == 0{
-            return
+            tagDic[self.getSaveKey(withName: name)] = nil
+        }else{
+            tagDic[self.getSaveKey(withName: name)] = tagInputTF.text
+
         }
-        tagDic[self.getSaveKey(withName: name)] = tagInputTF.text
         tagInputTF.text = ""
-        
         BMCache.set(.imageTagsDic, value: tagDic)
         
         self.closekeyboard()
@@ -224,9 +230,17 @@ extension ReviewVC: BMScrollViewDelegate{
             vc.imgPath = self.subFilesUrl[index]
             self.present(vc, animated: false, completion: nil)
         }
+        
         let deleteAction = UIAlertAction(title: "删除", style: UIAlertAction.Style.destructive){ (action:UIAlertAction)in
-            
+            let path = self.subFilesUrl[index]
+            try? FileManager.default.removeItem(atPath: path)
+            self.subFiles.remove(at: index)
+            self.subFilesUrl.remove(at: index)
+            self.tagDic[self.getSaveKey(withName: self.name)] = nil
+            self.sc.dataArr = self.subFilesUrl
+            self.sc.loadImage()
         }
+        
         let cancelAction = UIAlertAction(title: "取消", style: UIAlertAction.Style.cancel,handler:nil)
 
         alert.addAction(editAction)

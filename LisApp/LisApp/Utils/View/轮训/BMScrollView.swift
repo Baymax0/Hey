@@ -130,6 +130,9 @@ class BMScrollView: UIView ,UIScrollViewDelegate{
         btn.addTarget(self, action: #selector(tapAction), for: .touchUpInside)
         sc.addSubview(btn)
         
+        self.loadImage()
+    }
+    func loadImage(){
         self.loadImage(leftImageView, index: currentIndex-1)
         self.loadImage(centerImageView, index: currentIndex)
         self.loadImage(rightImageView, index: currentIndex+1)

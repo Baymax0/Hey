@@ -30,7 +30,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sib-XM-XXD">
-                                        <rect key="frame" x="8" y="20" width="71" height="59"/>
+                                        <rect key="frame" x="8" y="9" width="71" height="65"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <state key="normal" title="水彩"/>
                                         <connections>
@@ -38,7 +38,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" tag="1" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cuq-sW-WGy">
-                                        <rect key="frame" x="108" y="20" width="71" height="59"/>
+                                        <rect key="frame" x="87" y="9" width="71" height="66"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <state key="normal" title="插画"/>
                                         <connections>
@@ -52,20 +52,34 @@
                                 <rect key="frame" x="16" y="333" width="335" height="159"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yZr-2T-PcW">
-                                        <rect key="frame" x="8" y="8" width="96" height="58"/>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ffg-mM-Wbk">
+                                        <rect key="frame" x="87" y="8" width="64" height="67"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="二维码工具"/>
-                                        <connections>
-                                            <action selector="codeScanAction:" destination="58p-Hh-tej" eventType="touchUpInside" id="554-Zl-JYe"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ffg-mM-Wbk">
-                                        <rect key="frame" x="125" y="8" width="66" height="67"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="本地相册"/>
+                                        <state key="normal" image="本地文件"/>
                                         <connections>
                                             <segue destination="biv-Vv-bN7" kind="show" id="nsy-5m-mya"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="扫码" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zVq-UU-AxA">
+                                        <rect key="frame" x="8" y="66" width="71" height="28"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" red="0.2084517045" green="0.20637649490000001" blue="0.202331964" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="文件" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fXM-ak-wRz">
+                                        <rect key="frame" x="87" y="65" width="71" height="28"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" red="0.2084517045" green="0.20637649490000001" blue="0.202331964" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yZr-2T-PcW">
+                                        <rect key="frame" x="8" y="8" width="71" height="67"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" image="扫码"/>
+                                        <connections>
+                                            <action selector="codeScanAction:" destination="58p-Hh-tej" eventType="touchUpInside" id="554-Zl-JYe"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -402,7 +416,7 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="4mh-Aj-5Q4" firstAttribute="leading" secondItem="riE-tO-SAy" secondAttribute="leading" id="61p-Cs-DJF"/>
                                     <constraint firstItem="4vM-ia-wwP" firstAttribute="leading" secondItem="cmb-TT-Kms" secondAttribute="trailing" id="6o0-MD-nKa"/>
@@ -557,7 +571,6 @@
                             <constraint firstItem="FYJ-ek-FbZ" firstAttribute="trailing" secondItem="gRz-Tt-wb3" secondAttribute="trailing" constant="16" id="EX4-Ry-k8H"/>
                             <constraint firstItem="fP3-tf-JDk" firstAttribute="trailing" secondItem="FYJ-ek-FbZ" secondAttribute="trailing" id="G0d-pN-C97"/>
                             <constraint firstItem="Lmv-if-ngG" firstAttribute="leading" secondItem="FYJ-ek-FbZ" secondAttribute="leading" id="QMB-2K-13I"/>
-                            <constraint firstItem="gRz-Tt-wb3" firstAttribute="top" secondItem="riE-tO-SAy" secondAttribute="bottom" constant="230" id="SEO-P3-LFW"/>
                             <constraint firstItem="FYJ-ek-FbZ" firstAttribute="trailing" secondItem="Lmv-if-ngG" secondAttribute="trailing" id="aKN-gA-O0Y"/>
                             <constraint firstItem="fP3-tf-JDk" firstAttribute="leading" secondItem="FYJ-ek-FbZ" secondAttribute="leading" id="eR9-66-Ohf"/>
                             <constraint firstItem="riE-tO-SAy" firstAttribute="leading" secondItem="FYJ-ek-FbZ" secondAttribute="leading" id="etd-mp-OiL"/>
@@ -565,12 +578,14 @@
                             <constraint firstItem="riE-tO-SAy" firstAttribute="trailing" secondItem="FYJ-ek-FbZ" secondAttribute="trailing" id="huZ-VV-47r"/>
                             <constraint firstItem="Lmv-if-ngG" firstAttribute="top" secondItem="fP3-tf-JDk" secondAttribute="bottom" id="s3j-gy-jxw"/>
                             <constraint firstItem="gRz-Tt-wb3" firstAttribute="leading" secondItem="FYJ-ek-FbZ" secondAttribute="leading" constant="16" id="uhJ-AX-3OF"/>
+                            <constraint firstItem="Lmv-if-ngG" firstAttribute="top" secondItem="gRz-Tt-wb3" secondAttribute="bottom" constant="284" id="vDv-Sa-8os"/>
                             <constraint firstItem="fP3-tf-JDk" firstAttribute="top" secondItem="riE-tO-SAy" secondAttribute="bottom" id="zDk-Mg-9RJ"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="FYJ-ek-FbZ"/>
                     </view>
                     <connections>
                         <outlet property="addTagView" destination="gRz-Tt-wb3" id="6LN-85-87W"/>
+                        <outlet property="addTagViewH" destination="Py1-9p-TA3" id="qlW-eX-I3l"/>
                         <outlet property="tagBtnBGView" destination="maP-6m-HPC" id="V5x-Q7-C5x"/>
                         <outlet property="tagInputTF" destination="8Yi-M9-ohP" id="v3x-tl-JK6"/>
                         <outlet property="tagLab" destination="q9d-Fx-GMj" id="Uo7-Ri-nwD"/>
@@ -1212,16 +1227,18 @@
         </scene>
     </scenes>
     <resources>
-        <image name="access-left" width="8" height="13.666666984558105"/>
-        <image name="access-right" width="8" height="13.666666984558105"/>
+        <image name="access-left" width="12" height="20"/>
+        <image name="access-right" width="12" height="20"/>
         <image name="search" width="18" height="18"/>
-        <image name="下载" width="80" height="80"/>
-        <image name="删除" width="66" height="66"/>
+        <image name="下载" width="26" height="26"/>
+        <image name="删除" width="22" height="22"/>
         <image name="左旋转" width="24" height="24"/>
-        <image name="收藏" width="128" height="128"/>
+        <image name="扫码" width="42" height="42"/>
+        <image name="收藏" width="42" height="42"/>
         <image name="旋转" width="24" height="24"/>
+        <image name="本地文件" width="42" height="42"/>
         <image name="水平翻转" width="30" height="30"/>
         <image name="裁剪" width="24" height="24"/>
-        <image name="还原" width="24" height="14.666666984558105"/>
+        <image name="还原" width="24" height="14"/>
     </resources>
 </document>
