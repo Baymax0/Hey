@@ -83,12 +83,49 @@ class CacheManager: NSObject {
         NSUbiquitousKeyValueStore.default.set(allData, forKey: CacheManager.ICloudCacheKey)
         NSUbiquitousKeyValueStore.default.synchronize()
         print("保存数据至 icloud")
+        
+        let fileManager = FileManager.default
+        let filePath:String = NSHomeDirectory() + "/Documents/Cache.txt"
+        let exist = fileManager.fileExists(atPath: filePath)
+        if exist == false{//创建
+            
+        }
+        //保存
+        let json = allData.toJsonString()
+        if json == nil{
+            print("json 为 nil")
+        }
+        try? json?.write(toFile: filePath, atomically: true, encoding: .utf8)
+        print("保存数据至 /Documents/Cache.txt")
     }
 
     func clear() -> Void{
         allData = Dictionary<String,String>()
         self.saveWhenQuit()
     }
+    
+    func reloadCacheFromCloud(){
+        let dic = UserDefaults.standard.object(forKey: CacheManager.ICloudCacheKey)
+        if dic != nil{
+            allData = dic as? Dictionary<String,String>
+            return
+        }
+    }
+    
+    func reloadCacheFromDocument(){
+        let fileManager = FileManager.default
+        let filePath:String = NSHomeDirectory() + "/Documents/Cache.txt"
+        let exist = fileManager.fileExists(atPath: filePath)
+        if exist == true{
+            
+            let jsonData = try? Data(contentsOf: URL(fileURLWithPath: filePath))
+            let jsonString = String(data: jsonData!, encoding: .utf8)
+            let dic = jsonString?.toJsonDictonary()
+            allData = dic as? Dictionary<String,String>
+            return
+        }
+    }
+    
 }
 
 
@@ -183,12 +220,12 @@ extension CacheManager {
         kfManager.downloader.downloadTimeout = 10
         //最大图片缓存 1G
         //浏览的图片 放在内存中
-        kfManager.cache.maxMemoryCost = 1024*1024*1024
+        kfManager.cache.memoryStorage.config.totalCostLimit = 1024*1024*1024
         // 设置硬盘最大缓存500G ，默认无限
         // 按钮图片 及 收藏图片 放在硬盘上
-        kfManager.cache.maxDiskCacheSize =  1024*1024*1024
+        kfManager.cache.diskStorage.config.sizeLimit =  1024*1024*1024
         // 设置硬盘最大保存5天 ， 默认1周
-        kfManager.cache.maxCachePeriodInSecond = 60 * 60 * 24 * 5
+        kfManager.cache.diskStorage.config.expiration = .days(5)
     }
 
     /// 清理内存

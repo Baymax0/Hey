@@ -12,6 +12,8 @@
 		2D22F0FB221E792900DB56DB /* CustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D22F0F9221E792900DB56DB /* CustomCell.xib */; };
 		2D22F0FD221E9FBF00DB56DB /* VideoPlayVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F0FC221E9FBF00DB56DB /* VideoPlayVC.swift */; };
 		2D23F8EE221FBF9700303548 /* ReviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D23F8ED221FBF9700303548 /* ReviewVC.swift */; };
+		2D27B3C3222FAEDB003457B7 /* JsonExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D27B3C2222FAEDB003457B7 /* JsonExtension.swift */; };
+		2D27B3C6222FB43C003457B7 /* SettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D27B3C5222FB43C003457B7 /* SettingVC.swift */; };
 		2D283ED6222637D500BEE809 /* DTResultVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D283ED5222637D500BEE809 /* DTResultVC.swift */; };
 		2D283ED822263AA900BEE809 /* DTSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D283ED722263AA900BEE809 /* DTSearchVC.swift */; };
 		2D283EDB22263CB800BEE809 /* ScanCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D283EDA22263CB800BEE809 /* ScanCodeVC.swift */; };
@@ -112,6 +114,8 @@
 		2D22F0F9221E792900DB56DB /* CustomCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomCell.xib; sourceTree = "<group>"; };
 		2D22F0FC221E9FBF00DB56DB /* VideoPlayVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayVC.swift; sourceTree = "<group>"; };
 		2D23F8ED221FBF9700303548 /* ReviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewVC.swift; sourceTree = "<group>"; };
+		2D27B3C2222FAEDB003457B7 /* JsonExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonExtension.swift; sourceTree = "<group>"; };
+		2D27B3C5222FB43C003457B7 /* SettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingVC.swift; sourceTree = "<group>"; };
 		2D283ED5222637D500BEE809 /* DTResultVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTResultVC.swift; sourceTree = "<group>"; };
 		2D283ED722263AA900BEE809 /* DTSearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTSearchVC.swift; sourceTree = "<group>"; };
 		2D283EDA22263CB800BEE809 /* ScanCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanCodeVC.swift; sourceTree = "<group>"; };
@@ -233,6 +237,14 @@
 			path = "轮训";
 			sourceTree = "<group>";
 		};
+		2D27B3C4222FB426003457B7 /* 设置 */ = {
+			isa = PBXGroup;
+			children = (
+				2D27B3C5222FB43C003457B7 /* SettingVC.swift */,
+			);
+			path = "设置";
+			sourceTree = "<group>";
+		};
 		2D283ED42226370B00BEE809 /* 搜索 */ = {
 			isa = PBXGroup;
 			children = (
@@ -269,6 +281,7 @@
 		2D2B44D1221BF21E00D0F19E /* 工具 */ = {
 			isa = PBXGroup;
 			children = (
+				2D27B3C4222FB426003457B7 /* 设置 */,
 				2D283ED922263C9F00BEE809 /* 二维码工具 */,
 				2D2B44D5221BF72300D0F19E /* 本地文件浏览 */,
 			);
@@ -387,6 +400,7 @@
 				2D3155E1221AACC400419C16 /* UIViewController+Utils.swift */,
 				2D3155E2221AACC400419C16 /* Sting+Utils.swift */,
 				2D3155E3221AACC400419C16 /* UIView+IBInspectable.swift */,
+				2D27B3C2222FAEDB003457B7 /* JsonExtension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -818,6 +832,8 @@
 				2D315682221AB11400419C16 /* MyHobbyModel.swift in Sources */,
 				2D315664221AACFB00419C16 /* SCLAlertView.swift in Sources */,
 				2D315671221AAE8A00419C16 /* MeVC.swift in Sources */,
+				2D27B3C3222FAEDB003457B7 /* JsonExtension.swift in Sources */,
+				2D27B3C6222FB43C003457B7 /* SettingVC.swift in Sources */,
 				2D315656221AACFB00419C16 /* ConstraintMakerRelatable.swift in Sources */,
 				2D315650221AACFB00419C16 /* Constraint.swift in Sources */,
 				2D315638221AACFB00419C16 /* ConstraintMakerPriortizable.swift in Sources */,
@@ -991,13 +1007,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = A3RUKEN8Q5;
+				DEVELOPMENT_TEAM = 34BD4U8K6Y;
 				INFOPLIST_FILE = "$(SRCROOT)/LisApp/Supports/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = baymax.lisapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yimi.test233;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "LisApp/Supports/LisApp-Brdging-Header.h";
 				SWIFT_VERSION = 4.2;
@@ -1011,13 +1027,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = A3RUKEN8Q5;
+				DEVELOPMENT_TEAM = 34BD4U8K6Y;
 				INFOPLIST_FILE = "$(SRCROOT)/LisApp/Supports/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = baymax.lisapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yimi.test233;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "LisApp/Supports/LisApp-Brdging-Header.h";
 				SWIFT_VERSION = 4.2;

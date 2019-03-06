@@ -95,7 +95,10 @@ class MySiMiVC: BaseVC{
         self.subFiles = try? fileManager.contentsOfDirectory(atPath: self.directPath)
         var temp = Array<String>()
         for s in subFiles{
+            // 过滤.开头的隐藏文件
             if s.hasPrefix("."){
+                continue
+            }else if s.hasPrefix("Cache"){
                 continue
             }else{
                 temp.append(s)
