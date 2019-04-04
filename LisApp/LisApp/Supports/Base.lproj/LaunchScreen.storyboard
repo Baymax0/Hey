@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launch" translatesAutoresizingMaskIntoConstraints="NO" id="zjJ-Xn-48E">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="613779.gif" translatesAutoresizingMaskIntoConstraints="NO" id="zjJ-Xn-48E">
                                 <rect key="frame" x="0.0" y="-94" width="375" height="1000"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1000" id="UVI-CG-XDD"/>
@@ -40,6 +40,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="launch" width="1125" height="2436"/>
+        <image name="613779.gif" width="800" height="600"/>
     </resources>
 </document>

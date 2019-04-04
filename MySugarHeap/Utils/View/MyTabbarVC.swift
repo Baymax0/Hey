@@ -27,9 +27,10 @@ class MyTabbarVC: BaseVC {
 
         tabbarH.constant = KTabBarH
 
-        tabBarNums = 2
-        addTabbarItem("发现", "tabbar-find", FindImageVC.fromStoryboard())
-        addTabbarItem("我的", "tabbar-me", MeVC.fromStoryboard())
+        tabBarNums = 3
+        addTabbarItem("发现", "tabbar-find", MeVC.fromStoryboard())
+        addTabbarItem("音乐", "tabbar-music", MusicVC.fromStoryboard())
+        addTabbarItem("工具", "tabbar-tools", ToolsVC.fromStoryboard())
         pushVC(lastBtn!)
 
         tabBar.hero.modifiers = [.translate(y:KTabBarH)]
@@ -73,7 +74,7 @@ class MyTabbarVC: BaseVC {
 
         vc.view.frame =  CGRect(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight - KTabBarH)
         self.view.addSubview(vc.view)
-        self.addChildViewController(vc)
+        self.addChild(vc)
         VCArray.append(vc)
 
         //默认选择第一个
@@ -85,7 +86,7 @@ class MyTabbarVC: BaseVC {
     // 按钮点击事件
     @objc func pushVC(_ btn:UIButton) -> Void {
         let vc = VCArray[btn.tag]
-        self.view.bringSubview(toFront: vc.view)
+        self.view.bringSubviewToFront(vc.view)
         setBtnON(lastBtn,false)
         setBtnON(btn,true)
         lastBtn = btn

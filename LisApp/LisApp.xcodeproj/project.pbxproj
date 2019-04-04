@@ -20,6 +20,7 @@
 		2D283EDF22263F4200BEE809 /* WFPermissionTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D283EDE22263F4100BEE809 /* WFPermissionTool.swift */; };
 		2D2B44D7221BF8A100D0F19E /* MySiMiVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2B44D6221BF8A100D0F19E /* MySiMiVC.swift */; };
 		2D2B44DB221BF9E400D0F19E /* ImageDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2B44DA221BF9E400D0F19E /* ImageDetailVC.swift */; };
+		2D2DFE0622532B55004AE734 /* 613779.gif in Resources */ = {isa = PBXBuildFile; fileRef = 2D2DFE0522532B55004AE734 /* 613779.gif */; };
 		2D3155C8221A902D00419C16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3155C7221A902D00419C16 /* AppDelegate.swift */; };
 		2D3155CA221A902D00419C16 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3155C9221A902D00419C16 /* ViewController.swift */; };
 		2D3155CD221A902D00419C16 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D3155CB221A902D00419C16 /* Main.storyboard */; };
@@ -104,6 +105,9 @@
 		2D8CA61E22253C21003C3B20 /* TKImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D8CA61922253C20003C3B20 /* TKImageView.m */; };
 		2D8CA61F22253C21003C3B20 /* EditVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D8CA61B22253C20003C3B20 /* EditVC.xib */; };
 		2D8CA62022253C21003C3B20 /* EditVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D8CA61D22253C20003C3B20 /* EditVC.m */; };
+		2DD760152256041D004BE906 /* MyTabbarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD760142256041D004BE906 /* MyTabbarVC.swift */; };
+		2DD76018225605FD004BE906 /* MusicVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD76017225605FD004BE906 /* MusicVC.swift */; };
+		2DD7601A225606D5004BE906 /* ToolsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD76019225606D5004BE906 /* ToolsVC.swift */; };
 		37BA2E964959D4AE122AFBB8 /* Pods_LisApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 155AACD1D7C4196221BC9BC5 /* Pods_LisApp.framework */; };
 /* End PBXBuildFile section */
 
@@ -122,6 +126,7 @@
 		2D283EDE22263F4100BEE809 /* WFPermissionTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WFPermissionTool.swift; sourceTree = "<group>"; };
 		2D2B44D6221BF8A100D0F19E /* MySiMiVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySiMiVC.swift; sourceTree = "<group>"; };
 		2D2B44DA221BF9E400D0F19E /* ImageDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDetailVC.swift; sourceTree = "<group>"; };
+		2D2DFE0522532B55004AE734 /* 613779.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 613779.gif; sourceTree = "<group>"; };
 		2D3155C4221A902D00419C16 /* LisApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LisApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D3155C7221A902D00419C16 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2D3155C9221A902D00419C16 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -213,6 +218,9 @@
 		2D8CA61C22253C20003C3B20 /* EditVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditVC.h; sourceTree = "<group>"; };
 		2D8CA61D22253C20003C3B20 /* EditVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditVC.m; sourceTree = "<group>"; };
 		2D8CA62122253CCB003C3B20 /* LisApp-Brdging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LisApp-Brdging-Header.h"; sourceTree = "<group>"; };
+		2DD760142256041D004BE906 /* MyTabbarVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MyTabbarVC.swift; path = ../../../../MySugarHeap/Utils/View/MyTabbarVC.swift; sourceTree = "<group>"; };
+		2DD76017225605FD004BE906 /* MusicVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicVC.swift; sourceTree = "<group>"; };
+		2DD76019225606D5004BE906 /* ToolsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolsVC.swift; sourceTree = "<group>"; };
 		6AE987A7F0E85508DC1F64EB /* Pods-LisApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LisApp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LisApp/Pods-LisApp.debug.xcconfig"; sourceTree = "<group>"; };
 		7938316A9B82199FC5618855 /* Pods-LisApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LisApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-LisApp/Pods-LisApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -284,6 +292,7 @@
 				2D27B3C4222FB426003457B7 /* 设置 */,
 				2D283ED922263C9F00BEE809 /* 二维码工具 */,
 				2D2B44D5221BF72300D0F19E /* 本地文件浏览 */,
+				2DD76019225606D5004BE906 /* ToolsVC.swift */,
 			);
 			path = "工具";
 			sourceTree = "<group>";
@@ -349,6 +358,7 @@
 		2D3155D9221AABB000419C16 /* Supports */ = {
 			isa = PBXGroup;
 			children = (
+				2D2DFE0522532B55004AE734 /* 613779.gif */,
 				2D8CA62122253CCB003C3B20 /* LisApp-Brdging-Header.h */,
 				2D315667221AAD4B00419C16 /* ColorConst.swift */,
 				2D315668221AAD4B00419C16 /* Const.swift */,
@@ -362,6 +372,7 @@
 		2D3155DA221AABDB00419C16 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				2DD76016225605DB004BE906 /* 音乐 */,
 				2D315670221AAE8A00419C16 /* MeVC.swift */,
 				2D2B44D0221BF21900D0F19E /* 探索 */,
 				2D2B44D1221BF21E00D0F19E /* 工具 */,
@@ -526,6 +537,7 @@
 			isa = PBXGroup;
 			children = (
 				2D315622221AACFB00419C16 /* MyTabbar.swift */,
+				2DD760142256041D004BE906 /* MyTabbarVC.swift */,
 				2D315621221AACFB00419C16 /* BaseCollectionVC.swift */,
 				2D315623221AACFB00419C16 /* MyCollectionViewLayout.swift */,
 				2D315627221AACFB00419C16 /* BaseVC.swift */,
@@ -589,6 +601,14 @@
 			);
 			name = "编辑";
 			path = "../../../../../imageViewer/imageViewer/主页/编辑";
+			sourceTree = "<group>";
+		};
+		2DD76016225605DB004BE906 /* 音乐 */ = {
+			isa = PBXGroup;
+			children = (
+				2DD76017225605FD004BE906 /* MusicVC.swift */,
+			);
+			path = "音乐";
 			sourceTree = "<group>";
 		};
 		770D8ADB4A572547F488EB01 /* Pods */ = {
@@ -672,6 +692,7 @@
 				2D3155D2221A902F00419C16 /* LaunchScreen.storyboard in Resources */,
 				2D8CA61F22253C21003C3B20 /* EditVC.xib in Resources */,
 				2D3155CF221A902F00419C16 /* Assets.xcassets in Resources */,
+				2D2DFE0622532B55004AE734 /* 613779.gif in Resources */,
 				2D3155CD221A902D00419C16 /* Main.storyboard in Resources */,
 				2D315689221AB3C800419C16 /* ImageFlowCollectionCell.xib in Resources */,
 			);
@@ -795,6 +816,7 @@
 				2D315661221AACFB00419C16 /* BMTagChooseTopView.swift in Sources */,
 				2D3155E4221AACC400419C16 /* UIImageView+LoadImg.swift in Sources */,
 				2D315649221AACFB00419C16 /* ConstraintOffsetTarget.swift in Sources */,
+				2DD76018225605FD004BE906 /* MusicVC.swift in Sources */,
 				2D315630221AACFB00419C16 /* DNSPageTitleView.swift in Sources */,
 				2D31563E221AACFB00419C16 /* ConstraintDSL.swift in Sources */,
 				2D315642221AACFB00419C16 /* ConstraintConfig.swift in Sources */,
@@ -835,12 +857,14 @@
 				2D27B3C3222FAEDB003457B7 /* JsonExtension.swift in Sources */,
 				2D27B3C6222FB43C003457B7 /* SettingVC.swift in Sources */,
 				2D315656221AACFB00419C16 /* ConstraintMakerRelatable.swift in Sources */,
+				2DD760152256041D004BE906 /* MyTabbarVC.swift in Sources */,
 				2D315650221AACFB00419C16 /* Constraint.swift in Sources */,
 				2D315638221AACFB00419C16 /* ConstraintMakerPriortizable.swift in Sources */,
 				2D31565F221AACFB00419C16 /* MyCollectionViewLayout.swift in Sources */,
 				2D31562E221AACFB00419C16 /* DNSPageHelper.swift in Sources */,
 				2D315684221AB11400419C16 /* DTListModel.swift in Sources */,
 				2D315644221AACFB00419C16 /* ConstraintView.swift in Sources */,
+				2DD7601A225606D5004BE906 /* ToolsVC.swift in Sources */,
 				2D8CA61E22253C21003C3B20 /* TKImageView.m in Sources */,
 				2D283ED822263AA900BEE809 /* DTSearchVC.swift in Sources */,
 				2D31565D221AACFB00419C16 /* BaseCollectionVC.swift in Sources */,

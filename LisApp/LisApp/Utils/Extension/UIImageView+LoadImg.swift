@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Kingfisher
 
 protocol CustomImageLoader {
     func loadImage(_ urlString:String, placeHolder:String?) ->  Void
@@ -15,9 +14,9 @@ protocol CustomImageLoader {
 }
 
 extension UIImageView : CustomImageLoader{
+    
     //普通加载图片  只缓存到内存  不存在本地
     func loadImage(_ urlString:String, placeHolder:String? = nil) ->  Void{
-
 //        self.kf.setImage(
 //            with: urlString.resource,
 //            placeholder: placeHolder?.image,

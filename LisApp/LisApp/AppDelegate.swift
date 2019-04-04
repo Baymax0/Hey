@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 //com.yimi.test233
 //baymax.lisapp
@@ -34,16 +35,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         view.addSubview(btn)
         
         let img = UIImageView()
-        img.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
+        img.frame = CGRect(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight)
         img.center = view.center
-        img.image = #imageLiteral(resourceName: "点击")
+        img.contentMode = .scaleAspectFit
+        img.backgroundColor = .white
+        img.alpha = 0.4
+//        img.image = #imageLiteral(resourceName: "点击")
+        let path = Bundle.main.path(forResource: "613779", ofType: "gif")
+        let url = URL(fileURLWithPath: path!)
+        img.kf.setImage(with: LocalFileImageDataProvider(fileURL: url), placeholder: nil, options: [KingfisherOptionsInfoItem.fromMemoryCacheOrRefresh], progressBlock: nil, completionHandler: nil)
+//        img.kf.setImage(with: "613779.gif".resource)
+
         view.addSubview(img)
         return view
     }()
 
     // MARK: -  ---------------------- func ------------------------
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-//        BMCache.set(.imageTagsDic, value: Dictionary<String,String>())
+//        let img = UIImageView(frame: CGRect(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight))
+//        img.kf.setImage(with: "613779.gif".resource)
+//        window?.addSubview(img)
+        
         return true
     }
 
