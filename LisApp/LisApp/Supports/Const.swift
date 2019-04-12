@@ -33,7 +33,7 @@ let KDefaultAvatar = "default-avatar"
 let KDefaultImg = "default-img"
 
 
-
+let requestLog = false
 
 
 

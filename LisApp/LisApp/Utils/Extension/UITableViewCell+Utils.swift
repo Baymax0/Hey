@@ -39,6 +39,13 @@ extension CustomCellProtocol{
 
 extension UITableViewCell:CustomCellProtocol{}
 
-
+extension UITableViewCell{
+    static var nib:UINib{
+        let name = String(describing: self.classForCoder())
+        return UINib.init(nibName: name, bundle: Bundle.main)
+    }
+    
+    
+}
 
 

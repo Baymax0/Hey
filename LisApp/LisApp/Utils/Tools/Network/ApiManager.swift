@@ -15,6 +15,9 @@ protocol ApiManager {
     var orignParam:Dictionary<String,Any>{get}
 }
 extension ApiManager{
+    var urlStr: String {
+        return "\(self.host)\(self.api)"
+    }
     var url: URL {
         return "\(self.host)\(self.api)".url()!
     }
@@ -29,9 +32,7 @@ enum DTApiManager : ApiManager{
     case groupImage
     case subGroups   //详细分组
     case subGroupImage
-}
-
-extension DTApiManager{
+    
     var host: String {
 //        "103.21.119.229"
         return "https://221.228.82.177"
@@ -84,20 +85,19 @@ enum WTApiManager : ApiManager{
      https://www.sojson.com/api/weather.html
      */
     case futureWeather(_:String)
-}
-
-extension WTApiManager{
+    
+    
     var host: String {
-        return ""
-    }
+        return ""}
+    
     var api: String {
         switch self {
         case .currentWeather(_):
             return "http://api.k780.com/"
         case .futureWeather(let city):
             return "https://www.sojson.com/open/api/weather/json.shtml?city=\(city)"
-        }
-    }
+        }}
+    
     var orignParam:Dictionary<String,Any>{
         var param = Dictionary<String,Any>()
         switch self {
@@ -109,9 +109,26 @@ extension WTApiManager{
             param["format"] = "json"
         case .futureWeather(_):
             print("")
-//            param["city"] = loc
         }
-        return param
-    }
+        return param}
 }
 
+// MARK:  ---------------------   弹客接口   ---------------------
+enum TKApiManager : ApiManager{
+    
+    case manage
+    
+    var host: String {
+        return ""}
+    
+    var api: String {
+        switch self {
+        case .manage:
+            return "https://api.qingmang.me/ng/v1/timeline.page.get?page_id=10507&pub_id=4410&isTest=true&token=MWNjZGZhZDYtNTBmZS0xMWU5LWJjMWYtMDAxNjNlMzI2OTg3&app_id=wx1d58d9967cd24944&apivc=3&timeline_style=flat&platform=life_mina"
+        }}
+    
+    var orignParam:Dictionary<String,Any>{
+        var param = Dictionary<String,Any>()
+        return param}
+
+}

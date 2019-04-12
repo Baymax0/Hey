@@ -31,12 +31,7 @@ class MeVC: BaseVC {
         vc.param["include_fields"] = "sender,favroite_count,album,reply_count,like_count"
         present(vc, animated: true, completion: nil)
     }
-    // MARK: -  ---------------------- 工具 ------------------------
-    // 扫码
-    @IBAction func codeScanAction(_ sender: Any) {
-        let vc = ScanCodeVC.fromStoryboard() as! ScanCodeVC
-        present(vc, animated: true, completion: nil)
-    }
+
     
 
 }

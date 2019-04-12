@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 protocol CustomImageLoader {
     func loadImage(_ urlString:String, placeHolder:String?) ->  Void
@@ -16,7 +17,7 @@ protocol CustomImageLoader {
 extension UIImageView : CustomImageLoader{
     
     //普通加载图片  只缓存到内存  不存在本地
-    func loadImage(_ urlString:String, placeHolder:String? = nil) ->  Void{
+    func loadImage(_ urlString:String, placeHolder:String?){
 //        self.kf.setImage(
 //            with: urlString.resource,
 //            placeholder: placeHolder?.image,
@@ -28,7 +29,7 @@ extension UIImageView : CustomImageLoader{
 
     }
     //默认缓存在本地的
-    func loadDiskImage(_ urlString:String, placeHolder:String? = nil) -> Void {
+    func loadDiskImage(_ urlString:String, placeHolder:String?){
 //        self.kf.setImage(
 //            with: urlString.resource,
 //            placeholder: placeHolder?.image,
@@ -37,4 +38,5 @@ extension UIImageView : CustomImageLoader{
 //            completionHandler: nil
 //        )
     }
+            
 }

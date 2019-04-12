@@ -71,8 +71,11 @@ class BaseTableVC: BaseVC{
 
     func initTableView(rect:CGRect ,_ style:UITableView.Style = .plain) -> Void {
         tableview = UITableView.init(frame: rect, style: style)
-        tableview?.separatorStyle = .none
-        tableview?.backgroundColor = .white
+        tableview!.separatorStyle = .none
+        tableview!.backgroundColor = .white
+        tableview!.estimatedRowHeight = 0
+        tableview!.estimatedSectionHeaderHeight = 0
+        tableview!.estimatedSectionFooterHeight = 0
 
         if #available(iOS 11.0, *) {
             tableview?.contentInsetAdjustmentBehavior = .never
@@ -111,6 +114,9 @@ class BaseTableVC: BaseVC{
     func initMJFootView() -> Void {
         let foot = MJRefreshAutoNormalFooter()
         foot.setRefreshingTarget(self, refreshingAction: #selector(BaseTableVC.loadMoreData))
+        foot.triggerAutomaticallyRefreshPercent = -20
+        foot.setTitle("无更多数据", for: .noMoreData)
+        foot.stateLabel.textColor = KBlack_178
         tableview?.mj_footer = foot
     }
 

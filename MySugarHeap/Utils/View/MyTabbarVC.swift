@@ -28,9 +28,9 @@ class MyTabbarVC: BaseVC {
         tabbarH.constant = KTabBarH
 
         tabBarNums = 3
-        addTabbarItem("发现", "tabbar-find", MeVC.fromStoryboard())
-        addTabbarItem("音乐", "tabbar-music", MusicVC.fromStoryboard())
-        addTabbarItem("工具", "tabbar-tools", ToolsVC.fromStoryboard())
+        addTabbarItem(" ", "tabbar-find", MeVC.fromStoryboard())
+        addTabbarItem(" ", "tabbar-music", MusicVC.fromStoryboard())
+        addTabbarItem(" ", "tabbar-tools", ToolsVC.fromStoryboard())
         pushVC(lastBtn!)
 
         tabBar.hero.modifiers = [.translate(y:KTabBarH)]

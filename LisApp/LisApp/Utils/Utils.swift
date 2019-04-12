@@ -94,5 +94,9 @@ class Utils: NSObject {
         return false
     }
     
+    static func random(_ max:UInt32 = 10) -> Int {
+        return Int(arc4random() % max) + 1
+    }
+    
 }
 
