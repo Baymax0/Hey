@@ -9,11 +9,14 @@
 import UIKit
 
 class MeVC: BaseVC {
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideNav = true
     }
+    
     
     @IBAction func searchAction(_ sender: Any) {
         
@@ -31,7 +34,7 @@ class MeVC: BaseVC {
         vc.param["include_fields"] = "sender,favroite_count,album,reply_count,like_count"
         present(vc, animated: true, completion: nil)
     }
-
+    
     
 
 }

@@ -15,5 +15,23 @@ class MusicVC: BaseVC {
 
     }
     
+    //点击
+    @IBAction func touchDown(_ sender: UIButton) {
+        self.largeEffect(sender.superview, big: true)
+    }
+    
+    //点击 抬起
+    @IBAction func touchCancel(_ sender: UIButton) {
+        self.largeEffect(sender.superview, big: false)
 
+        
+        let vc = UkuleleVC.fromStoryboard() as! UkuleleVC
+        present(vc, animated: true, completion: nil)
+    }
+    
+    
+    func largeEffect(_ view:UIView?, big:Bool){
+        
+    }
+    
 }
