@@ -181,10 +181,6 @@ class ReviewVC: BaseVC {
         loadTag()
     }
     
-    
-    
-
-    
     @IBAction func frontAction(_ sender: Any) {
         if sc.direct != -1{
             sc.direct = -1

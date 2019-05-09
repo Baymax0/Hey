@@ -79,15 +79,21 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zrJ-Rl-oeT">
-                                <rect key="frame" x="30" y="64" width="315" height="100"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zrJ-Rl-oeT">
+                                <rect key="frame" x="30" y="59" width="315" height="100"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="IMG_3333" translatesAutoresizingMaskIntoConstraints="NO" id="j6k-HW-BZF">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="IMG_3330" translatesAutoresizingMaskIntoConstraints="NO" id="j6k-HW-BZF">
                                         <rect key="frame" x="0.0" y="0.0" width="315" height="100"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                <real key="value" value="10"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fkI-jo-dXM">
                                         <rect key="frame" x="0.0" y="0.0" width="315" height="100"/>
                                         <connections>
+                                            <action selector="touchCancel2:" destination="rEz-oQ-RxT" eventType="touchUpOutside" id="xy4-cn-8Tj"/>
                                             <action selector="touchCancel:" destination="rEz-oQ-RxT" eventType="touchUpInside" id="EW5-aj-eEv"/>
                                             <action selector="touchDown:" destination="rEz-oQ-RxT" eventType="touchDown" id="hdC-OD-vaR"/>
                                         </connections>
@@ -98,7 +104,7 @@
                                             <constraint firstAttribute="height" constant="32" id="gCg-Oh-lCP"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" name="Chalkduster" family="Chalkduster" pointSize="31"/>
-                                        <color key="textColor" red="0.14175893396548031" green="0.17512702337189198" blue="0.24248493020304573" alpha="0.66770119863013699" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="textColor" red="0.2299779834113084" green="0.29011112678287304" blue="0.45814165609137059" alpha="0.8377836044520548" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
@@ -119,20 +125,26 @@
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                        <real key="value" value="8"/>
+                                        <real key="value" value="10"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tM4-4Q-nVo">
-                                <rect key="frame" x="30" y="204" width="315" height="100"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tM4-4Q-nVo">
+                                <rect key="frame" x="30" y="184" width="315" height="100"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="IMG_3333" translatesAutoresizingMaskIntoConstraints="NO" id="Qlu-JU-xA0">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="IMG_3331" translatesAutoresizingMaskIntoConstraints="NO" id="Qlu-JU-xA0" userLabel="IMG_3331">
                                         <rect key="frame" x="0.0" y="0.0" width="315" height="100"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                <real key="value" value="10"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kzT-iL-hPa">
                                         <rect key="frame" x="0.0" y="0.0" width="315" height="100"/>
                                         <connections>
-                                            <action selector="touchCancel:" destination="rEz-oQ-RxT" eventType="touchUpInside" id="G9v-Y0-5dK"/>
+                                            <action selector="touchCancel2:" destination="rEz-oQ-RxT" eventType="touchUpOutside" id="OQW-4g-JkW"/>
+                                            <action selector="touchCancel:" destination="rEz-oQ-RxT" eventType="touchUpInside" id="Ejz-b5-Lew"/>
                                             <action selector="touchDown:" destination="rEz-oQ-RxT" eventType="touchDown" id="gia-OI-P6h"/>
                                         </connections>
                                     </button>
@@ -142,7 +154,7 @@
                                             <constraint firstAttribute="height" constant="32" id="1Ij-77-lZ8"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" name="Chalkduster" family="Chalkduster" pointSize="31"/>
-                                        <color key="textColor" red="0.141758934" green="0.1751270234" blue="0.2424849302" alpha="0.66770119859999999" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="textColor" red="0.2299779834" green="0.29011112680000001" blue="0.45814165610000002" alpha="0.8377836045" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
@@ -163,22 +175,50 @@
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                        <real key="value" value="8"/>
+                                        <real key="value" value="10"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ODQ-Oq-NqY">
+                                <rect key="frame" x="30" y="318" width="65" height="65"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="节拍器"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5T8-xf-hmo">
+                                <rect key="frame" x="133" y="306" width="100" height="99"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="调音器"/>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="metronome" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ebj-Zy-hma">
+                                <rect key="frame" x="10" y="381" width="115" height="24"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="Chalkduster" family="Chalkduster" pointSize="14"/>
+                                <color key="textColor" red="0.2299779834" green="0.29011112680000001" blue="0.45814165610000002" alpha="0.8377836045" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JKI-MO-Ypa">
+                                <rect key="frame" x="245" y="306" width="100" height="99"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="效果器"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="tM4-4Q-nVo" firstAttribute="top" secondItem="zrJ-Rl-oeT" secondAttribute="bottom" constant="40" id="G2B-Lq-PWY"/>
+                            <constraint firstItem="tM4-4Q-nVo" firstAttribute="top" secondItem="zrJ-Rl-oeT" secondAttribute="bottom" constant="25" id="G2B-Lq-PWY"/>
                             <constraint firstItem="tM4-4Q-nVo" firstAttribute="trailing" secondItem="zrJ-Rl-oeT" secondAttribute="trailing" id="IFc-BF-gQU"/>
                             <constraint firstItem="zrJ-Rl-oeT" firstAttribute="leading" secondItem="dkY-1h-Yzf" secondAttribute="leading" constant="30" id="KTb-B6-RMI"/>
-                            <constraint firstItem="zrJ-Rl-oeT" firstAttribute="top" secondItem="dkY-1h-Yzf" secondAttribute="top" constant="20" id="Ncs-gF-0oe"/>
+                            <constraint firstItem="zrJ-Rl-oeT" firstAttribute="top" secondItem="dkY-1h-Yzf" secondAttribute="top" constant="15" id="Ncs-gF-0oe"/>
+                            <constraint firstItem="p0m-dV-HMf" firstAttribute="leading" secondItem="uRH-Qh-KMI" secondAttribute="leading" constant="30" id="hIA-el-w1t"/>
+                            <constraint firstAttribute="trailing" secondItem="p0m-dV-HMf" secondAttribute="trailing" constant="38" id="ph8-m3-Ex4"/>
                             <constraint firstItem="tM4-4Q-nVo" firstAttribute="leading" secondItem="zrJ-Rl-oeT" secondAttribute="leading" id="uoA-uD-9Te"/>
                             <constraint firstItem="dkY-1h-Yzf" firstAttribute="trailing" secondItem="zrJ-Rl-oeT" secondAttribute="trailing" constant="30" id="vwC-Cs-Hnt"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="dkY-1h-Yzf"/>
                     </view>
+                    <connections>
+                        <outlet property="bgView1" destination="zrJ-Rl-oeT" id="5BW-Gy-CKt"/>
+                        <outlet property="bgView2" destination="tM4-4Q-nVo" id="cZu-i9-US8"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IY7-v6-m6z" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1698,7 +1738,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="IMG_3333" width="900" height="500"/>
+        <image name="IMG_3330" width="572" height="253"/>
+        <image name="IMG_3331" width="556" height="244"/>
         <image name="access-left" width="8" height="13.666666984558105"/>
         <image name="access-right" width="8" height="13.666666984558105"/>
         <image name="search" width="18" height="18"/>
@@ -1710,6 +1751,7 @@
         <image name="旋转" width="24" height="24"/>
         <image name="本地文件" width="42.666667938232422" height="42.666667938232422"/>
         <image name="水平翻转" width="30" height="30"/>
+        <image name="节拍器" width="237.83226013183594" height="237.83226013183594"/>
         <image name="裁剪" width="24" height="24"/>
         <image name="设置" width="42.666667938232422" height="42.666667938232422"/>
         <image name="还原" width="24" height="14.666666984558105"/>
