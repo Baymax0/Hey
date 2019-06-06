@@ -7,7 +7,7 @@ target 'LisApp' do
 pod 'Alamofire'
 pod 'Kingfisher'
 pod 'YYWebImage'
-pod 'HandyJSON', '~> 4.2.0'
+pod 'HandyJSON', git: 'https://github.com/alibaba/HandyJSON.git' , branch: 'dev_for_swift5.0' 
 pod 'MJRefresh'
 pod 'SwiftyUserDefaults'
 pod 'IQKeyboardManagerSwift'

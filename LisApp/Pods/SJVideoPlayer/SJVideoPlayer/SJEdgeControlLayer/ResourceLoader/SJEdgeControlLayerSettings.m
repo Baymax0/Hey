@@ -9,6 +9,11 @@
 #import "SJEdgeControlLayerSettings.h"
 #import <UIKit/UIKit.h>
 #import "SJEdgeControlLayerLoader.h"
+#if __has_include(<SJObserverHelper/NSObject+SJObserverHelper.h>)
+#import <SJObserverHelper/NSObject+SJObserverHelper.h>
+#else
+#import "NSObject+SJObserverHelper.h"
+#endif
 
 NSNotificationName const SJSettingsPlayerNotification = @"SJSettingsPlayerNotification";
 
@@ -19,7 +24,6 @@ NSNotificationName const SJSettingsPlayerNotification = @"SJSettingsPlayerNotifi
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _instance = [self new];
-        [_instance reset];
     });
     return _instance;
 }
@@ -35,6 +39,13 @@ NSNotificationName const SJSettingsPlayerNotification = @"SJSettingsPlayerNotifi
     };
 }
 
+- (instancetype)init {
+    self = [super init];
+    if ( !self ) return nil;
+    [self reset];
+    return self;
+}
+
 - (void)reset {
     _notReachablePrompt = [SJEdgeControlLayerLoader localizedStringForKey:SJVideoPlayer_NotReachablePrompt];
     _reachableViaWWANPrompt = [SJEdgeControlLayerLoader localizedStringForKey:SJVideoPlayer_ReachableViaWWANPrompt];
@@ -45,7 +56,6 @@ NSNotificationName const SJSettingsPlayerNotification = @"SJSettingsPlayerNotifi
     self.forwardImage = [SJEdgeControlLayerLoader imageNamed:@"sj_video_player_forward"];
     self.backBtnImage = [SJEdgeControlLayerLoader imageNamed:@"sj_video_player_back"];
     self.moreBtnImage = [SJEdgeControlLayerLoader imageNamed:@"sj_video_player_more"];
-    self.previewBtnImage = [SJEdgeControlLayerLoader imageNamed:@""];
     self.playBtnImage = [SJEdgeControlLayerLoader imageNamed:@"sj_video_player_play"];
     self.pauseBtnImage = [SJEdgeControlLayerLoader imageNamed:@"sj_video_player_pause"];
     self.fullBtnImage = [SJEdgeControlLayerLoader imageNamed:@"sj_video_player_fullscreen"];
@@ -72,8 +82,6 @@ NSNotificationName const SJSettingsPlayerNotification = @"SJSettingsPlayerNotifi
     _replayBtnTitle = [SJEdgeControlLayerLoader localizedStringForKey:SJVideoPlayer_ReplayText];
     self.replayBtnFont = [UIFont boldSystemFontOfSize:12];
     self.replayBtnTitleColor = [UIColor whiteColor];
-    _previewBtnTitle = [SJEdgeControlLayerLoader localizedStringForKey:SJVideoPlayer_PreviewText];
-    self.previewBtnFont = [UIFont boldSystemFontOfSize:12];
     self.filmEditingBtnImage = [SJEdgeControlLayerLoader imageNamed:@"sj_video_player_film_editing"];
     
 

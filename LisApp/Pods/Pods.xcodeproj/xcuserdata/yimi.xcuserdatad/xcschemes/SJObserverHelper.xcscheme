@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1CE6C86CEFB45831BBC4FDC5B180769E"
+               BlueprintIdentifier = "362F82C7A685BF8322F7DAD43BF4F22E"
+               BuildableName = "SJObserverHelper.framework"
                BlueprintName = "SJObserverHelper"
-               ReferencedContainer = "container:Pods.xcodeproj"
-               BuildableName = "SJObserverHelper.framework">
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

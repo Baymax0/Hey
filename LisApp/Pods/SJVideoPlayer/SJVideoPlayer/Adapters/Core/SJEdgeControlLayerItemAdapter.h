@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSArray<SJEdgeControlButtonItem *> *)itemsWithRange:(NSRange)range;
 - (BOOL)itemsIsHiddenWithRange:(NSRange)range; // 此范围的items是否已隐藏
 - (BOOL)itemContainsPoint:(CGPoint)point; // 某个点是否在item中
+- (nullable SJEdgeControlButtonItem *)itemAtPoint:(CGPoint)point;
+- (BOOL)containsItem:(SJEdgeControlButtonItem *)item;
 
 /// 添加
 /// - 注意: 添加后, 记得调用刷新
@@ -56,7 +58,5 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new  NS_UNAVAILABLE;
 @property (nonatomic, copy, nullable) void(^maxSizeDidUpdateOfFrameLayoutExeBlock)(CGSize size); // 只有在frameLayout布局时, 才会被调用
-
-@property (nonatomic, copy, nullable) void(^executedTargetActionExeBlock)(SJEdgeControlLayerItemAdapter *adapter);
 @end
 NS_ASSUME_NONNULL_END

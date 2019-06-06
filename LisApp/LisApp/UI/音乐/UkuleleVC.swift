@@ -24,9 +24,7 @@ class UkuleleVC: BaseTableVC {
         self.view.sendSubviewToBack(self.tableview!)
         magaView = UIView(frame: CGRect(x: 0, y: 0, width: KScreenWidth, height: 100))
         magaView.backgroundColor = KWhite
-        
-        let str = NSStringFromClass(self.superclass)
-//        magaView.backgroundColor = KBlack_153
+
         
         self.tableview?.addSubview(magaView)
         self.tableview?.delegate = self

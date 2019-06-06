@@ -20,13 +20,15 @@ inline static bool isFloatZero(float value) {
     return fabsf(value) <= 0.00001f;
 }
 
-static NSNotificationName const SJAVMediaPlayerItemDidPlayToEndTimeNotification = @"SJAVMediaPlayerItemDidPlayToEndTimeNotification";
-static NSNotificationName const SJAVMediaPlaybackTimeDidChangeNotification = @"SJAVMediaPlaybackTimeDidChangeNotification";
-static NSNotificationName const SJAVMediaPlaybackDurationDidChangeNotificationn = @"SJAVMediaPlaybackDurationDidChangeNotificationn";
-static NSNotificationName const SJAVMediaLoadedTimeRangesDidChangeNotification = @"SJAVMediaLoadedTimeRangesDidChangeNotification";
-static NSNotificationName const SJAVMediaPlaybackBufferStatusDidChangeNotification = @"SJAVMediaPlaybackBufferStatusDidChangeNotification";
-static NSNotificationName const SJAVMediakPresentationSizeDidChangeNotification = @"SJAVMediakPresentationSizeDidChangeNotification";
-static NSNotificationName const SJAVMediaPlayerItemStatusDidChangeNotification = @"SJAVMediaPlayerItemStatusDidChangeNotification";
+NSNotificationName const SJAVMediaDidPlayToEndTimeNotification = @"SJAVMediaDidPlayToEndTimeNotification";
+NSNotificationName const SJAVMediaPlaybackTimeDidChangeNotification = @"SJAVMediaPlaybackTimeDidChangeNotification";
+NSNotificationName const SJAVMediaPlaybackDurationDidChangeNotificationn = @"SJAVMediaPlaybackDurationDidChangeNotificationn";
+NSNotificationName const SJAVMediaBufferLoadedTimeRangesDidChangeNotification = @"SJAVMediaBufferLoadedTimeRangesDidChangeNotification";
+NSNotificationName const SJAVMediaBufferStatusDidChangeNotification = @"SJAVMediaBufferStatusDidChangeNotification";
+NSNotificationName const SJAVMediaBufferWatingTimeDidChangeNotification = @"SJAVMediaBufferWatingTimeDidChangeNotification";
+NSNotificationName const SJAVMediaPresentationSizeDidChangeNotification = @"SJAVMediaPresentationSizeDidChangeNotification";
+NSNotificationName const SJAVMediaPlayerItemStatusDidChangeNotification = @"SJAVMediaPlayerItemStatusDidChangeNotification";
+NSNotificationName const SJAVMediaPlaybackTypeLoadedNotification = @"SJAVMediaPlaybackTypeLoadedNotification";
 
 @interface SJAVMediaPlayAsset()
 @property (nonatomic, strong, nullable) AVURLAsset *URLAsset;
@@ -35,16 +37,18 @@ static NSNotificationName const SJAVMediaPlayerItemStatusDidChangeNotification =
 
 @property (nonatomic) CMTime duration;
 @property (nonatomic) CMTime currentTime;
-@property (nonatomic) CMTimeRange bufferLoadedTime;
 @property (nonatomic) SJPlayerBufferStatus bufferStatus;
+@property (nonatomic) NSTimeInterval bufferWatingTime;
+@property (nonatomic) CMTimeRange bufferLoadedTime;
 @property (nonatomic) CGSize presentationSize;
 @property (nonatomic) AVPlayerItemStatus playerItemStatus;
+@property (nonatomic) SJMediaPlaybackType playbackType;
 @end
 
 @implementation SJAVMediaPlayAsset {
-    id _noteToken;
     id _currentTimeNoteToken;
     id _AVPLayerItemDidPlayToEndNoteToken;
+    NSTimer *_Nullable _watingTimer;
 }
 
 - (instancetype)initWithURL:(NSURL *)URL {
@@ -75,7 +79,6 @@ static NSNotificationName const SJAVMediaPlayerItemStatusDidChangeNotification =
 
 - (void)dealloc {
     if ( _currentTimeNoteToken ) [_player removeTimeObserver:_currentTimeNoteToken];
-    if ( _noteToken ) [NSNotificationCenter.defaultCenter removeObserver:_noteToken];
     if ( _AVPLayerItemDidPlayToEndNoteToken ) [NSNotificationCenter.defaultCenter removeObserver:_AVPLayerItemDidPlayToEndNoteToken];
 #ifdef DEBUG
     NSLog(@"%d - %s", (int)__LINE__, __func__);
@@ -104,8 +107,8 @@ static NSNotificationName const SJAVMediaPlayerItemStatusDidChangeNotification =
     });
 }
 
-static NSString *kLoadedTimeRanges = @"loadedTimeRanges";
 static NSString *kDuration = @"duration";
+static NSString *kLoadedTimeRanges = @"loadedTimeRanges";
 static NSString *kPlaybackBufferEmpty = @"playbackBufferEmpty";
 static NSString *kPresentationSize = @"presentationSize";
 static NSString *kPlayerItemStatus = @"status";
@@ -124,10 +127,16 @@ static NSString *kRate = @"rate";
     [_playerItem sj_addObserver:self forKeyPath:kPlaybackBufferFull context:&kPlaybackBufferFull];
     [_player     sj_addObserver:self forKeyPath:kRate context:&kRate];
     
+    [self sj_observeWithNotification:AVPlayerItemNewAccessLogEntryNotification target:_playerItem usingBlock:^(SJAVMediaPlayAsset *self, NSNotification * _Nonnull note) {
+        [self _updatePlaybackType];
+    }];
+    
     __weak typeof(self) _self = self;
     _currentTimeNoteToken = [_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(0.5, NSEC_PER_SEC) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         __strong typeof(_self) self = _self;
         if ( !self ) return ;
+        if ( self.playerItem.status != AVPlayerItemStatusReadyToPlay )
+            return;
         [self _updateCurrentTime:time];
     }];
     
@@ -135,19 +144,20 @@ static NSString *kRate = @"rate";
     [NSNotificationCenter.defaultCenter addObserverForName:AVPlayerItemDidPlayToEndTimeNotification object:_playerItem queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
         __strong typeof(_self) self = _self;
         if ( !self ) return ;
-        [NSNotificationCenter.defaultCenter postNotificationName:SJAVMediaPlayerItemDidPlayToEndTimeNotification object:self];
+        [NSNotificationCenter.defaultCenter postNotificationName:SJAVMediaDidPlayToEndTimeNotification object:self];
     }];
 }
 
 - (void)observeValueForKeyPath:(nullable NSString *)keyPath ofObject:(nullable id)object change:(nullable NSDictionary<NSKeyValueChangeKey,id> *)change context:(nullable void *)context {
     id value_new = change[NSKeyValueChangeNewKey];
     id value_old = change[NSKeyValueChangeOldKey];
-    if ( value_new == value_old ) return;
+    if ( [value_new isKindOfClass:[NSNull class]] ) return;
+    if ( [value_new isEqual:value_old] ) return;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if ( context == &kLoadedTimeRanges ) {
             [self _updateBufferLoadedTime];
-            [self _updateBufferStatus];
+            [self updateBufferStatus];
         }
         else if ( context == &kPlayerItemStatus ) {
             [self _updatePlayerItemStatus];
@@ -162,25 +172,25 @@ static NSString *kRate = @"rate";
             [self _updatePresentationSize];
         }
         else if ( context == &kPlaybackBufferEmpty ) {
-            [self _updateBufferStatus];
+            [self updateBufferStatus];
 #ifdef SJ_MAC
             //printf("\n:--<%p>.kPlaybackBufferEmpty %d \n", self, _playerItem.isPlaybackBufferEmpty);
 #endif
         }
         else if ( context == &kPlaybackBufferFull ) {
-            [self _updateBufferStatus];
+            [self updateBufferStatus];
 #ifdef SJ_MAC
             //printf("\n:--<%p>.kPlaybackBufferFull %d \n", self, _playerItem.isPlaybackBufferFull);
 #endif
         }
         else if ( context == &kPlaybackLikelyToKeeyUp ) {
-            [self _updateBufferStatus];
+            [self updateBufferStatus];
 #ifdef SJ_MAC
             //printf("\n:--<%p>.kPlaybackLikelyToKeeyUp %d \n", self, _playerItem.isPlaybackLikelyToKeepUp);
 #endif
         }
         else if ( context == &kRate ) {
-            [self _updateBufferStatus];
+            [self updateBufferStatus];
             
 #ifdef SJ_MAC
             //printf("\n:--<%p>.kRate %lf \n", self, [change[NSKeyValueChangeNewKey] doubleValue]);
@@ -210,11 +220,11 @@ static NSString *kRate = @"rate";
     Boolean result = CMTimeRangeEqual(_bufferLoadedTime, range);
     if ( false == result ) {
         _bufferLoadedTime = range;
-        [NSNotificationCenter.defaultCenter postNotificationName:SJAVMediaLoadedTimeRangesDidChangeNotification object:self];
+        [NSNotificationCenter.defaultCenter postNotificationName:SJAVMediaBufferLoadedTimeRangesDidChangeNotification object:self];
     }
 }
 
-- (void)_updateBufferStatus {
+- (void)updateBufferStatus {
     SJPlayerBufferStatus status = SJPlayerBufferStatusUnknown;
     float rate = self.player.rate;
     if ( self.playerItem.status == AVPlayerItemStatusReadyToPlay ) {
@@ -238,7 +248,7 @@ static NSString *kRate = @"rate";
     
     if ( status != self.bufferStatus || ( status == SJPlayerBufferStatusPlayable && isFloatZero(rate)) ) {
         self.bufferStatus = status;
-        [NSNotificationCenter.defaultCenter postNotificationName:SJAVMediaPlaybackBufferStatusDidChangeNotification object:self];
+        [NSNotificationCenter.defaultCenter postNotificationName:SJAVMediaBufferStatusDidChangeNotification object:self];
     }
 }
 
@@ -246,7 +256,7 @@ static NSString *kRate = @"rate";
     CGSize size = _playerItem.presentationSize;
     if ( !CGSizeEqualToSize(_presentationSize, size) ) {
         _presentationSize = size;
-        [NSNotificationCenter.defaultCenter postNotificationName:SJAVMediakPresentationSizeDidChangeNotification object:self];
+        [NSNotificationCenter.defaultCenter postNotificationName:SJAVMediaPresentationSizeDidChangeNotification object:self];
     }
 }
 
@@ -256,6 +266,60 @@ static NSString *kRate = @"rate";
         _playerItemStatus = status;
         [NSNotificationCenter.defaultCenter postNotificationName:SJAVMediaPlayerItemStatusDidChangeNotification object:self];
     }
+}
+
+- (void)_updatePlaybackType {
+    AVPlayerItemAccessLogEvent *event = _playerItem.accessLog.events.firstObject;
+    SJMediaPlaybackType playbackType = SJMediaPlaybackTypeUnknown;
+    NSString *type = event.playbackType;
+    if ( [type isEqualToString:@"LIVE"] ) {
+        playbackType = SJMediaPlaybackTypeLIVE;
+    }
+    else if ( [type isEqualToString:@"VOD"] ) {
+        playbackType = SJMediaPlaybackTypeVOD;
+    }
+    else if ( [type isEqualToString:@"FILE"] ) {
+        playbackType = SJMediaPlaybackTypeFILE;
+    }
+    if ( _playbackType != playbackType ) {
+        _playbackType = playbackType;
+        [NSNotificationCenter.defaultCenter postNotificationName:SJAVMediaPlaybackTypeLoadedNotification object:self];
+    }
+}
+
+#pragma mark -
+- (void)setBufferStatus:(SJPlayerBufferStatus)bufferStatus {
+    if ( bufferStatus == _bufferStatus ) return;
+    _bufferStatus = bufferStatus;
+    switch ( bufferStatus ) {
+        case SJPlayerBufferStatusUnknown: break;
+        case SJPlayerBufferStatusUnplayable: {
+            [_watingTimer invalidate];
+            __weak typeof(self) _self = self;
+            _watingTimer = [NSTimer assetAdd_timerWithTimeInterval:1 block:^(NSTimer *timer) {
+                __strong typeof(_self) self = _self;
+                if ( !self ) {
+                    [timer invalidate];
+                    return ;
+                }
+                self.bufferWatingTime += timer.timeInterval;
+            } repeats:YES];
+            [_watingTimer assetAdd_fire];
+            [NSRunLoop.mainRunLoop addTimer:_watingTimer forMode:NSRunLoopCommonModes];
+        }
+            break;
+        case SJPlayerBufferStatusPlayable: {
+            [_watingTimer invalidate];
+            self.bufferWatingTime = 0;
+        }
+            break;
+    }
+}
+
+- (void)setBufferWatingTime:(NSTimeInterval)bufferWatingTime {
+    if ( bufferWatingTime == _bufferWatingTime ) return;
+    _bufferWatingTime = bufferWatingTime;
+    [NSNotificationCenter.defaultCenter postNotificationName:SJAVMediaBufferWatingTimeDidChangeNotification object:self];
 }
 @end
 
@@ -267,102 +331,70 @@ static NSString *kRate = @"rate";
 @property (nonatomic) SJPlayerBufferStatus bufferStatus;
 @end
 
-@implementation SJAVMediaPlayAssetPropertiesObserver {
-    id _playerItemDidPlayToEndTimeNoteToken;
-    id _playbackTimeDidChangeNoteToken;
-    id _durationDidChangeNoteToken;
-    id _loadedTimeRangesDidChangeNoteToken;
-    id _bufferStatusDidChangeNoteToken;
-    id _presentationSizeDidChangeNoteToken;
-    id _playerItemStatusDidChangeNoteToken;
-}
-
+@implementation SJAVMediaPlayAssetPropertiesObserver
 - (instancetype)initWithPlayerAsset:(SJAVMediaPlayAsset *)playerAsset {
     self = [super init];
     if ( !self ) return nil;
     _playerAsset = playerAsset;
     
-    __weak typeof(self) _self = self;
-    _playerItemDidPlayToEndTimeNoteToken = [NSNotificationCenter.defaultCenter addObserverForName:SJAVMediaPlayerItemDidPlayToEndTimeNotification object:playerAsset queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
-        __strong typeof(_self) self = _self;
-        if ( !self ) return ;
+    [self sj_observeWithNotification:SJAVMediaDidPlayToEndTimeNotification target:playerAsset usingBlock:^(SJAVMediaPlayAssetPropertiesObserver *_Nonnull self, NSNotification * _Nonnull note) {
         if ( [self.delegate respondsToSelector:@selector(playDidToEndForObserver:)] ) {
             [self.delegate playDidToEndForObserver:self];
         }
     }];
     
-    _playbackTimeDidChangeNoteToken = [NSNotificationCenter.defaultCenter addObserverForName:SJAVMediaPlaybackTimeDidChangeNotification object:playerAsset queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
-        __strong typeof(_self) self = _self;
-        if ( !self ) return ;
+    [self sj_observeWithNotification:SJAVMediaPlaybackTimeDidChangeNotification target:playerAsset usingBlock:^(SJAVMediaPlayAssetPropertiesObserver *_Nonnull self, NSNotification * _Nonnull note) {
         if ( [self.delegate respondsToSelector:@selector(observer:currentTimeDidChange:)] ) {
             [self.delegate observer:self currentTimeDidChange:self.currentTime];
         }
     }];
     
-    _durationDidChangeNoteToken = [NSNotificationCenter.defaultCenter addObserverForName:SJAVMediaPlaybackDurationDidChangeNotificationn object:playerAsset queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
-        __strong typeof(_self) self = _self;
-        if ( !self ) return ;
+    [self sj_observeWithNotification:SJAVMediaPlaybackDurationDidChangeNotificationn target:playerAsset usingBlock:^(SJAVMediaPlayAssetPropertiesObserver *_Nonnull self, NSNotification * _Nonnull note) {
         if ( [self.delegate respondsToSelector:@selector(observer:durationDidChange:)] ) {
             [self.delegate observer:self durationDidChange:self.duration];
         }
     }];
     
-    _loadedTimeRangesDidChangeNoteToken = [NSNotificationCenter.defaultCenter addObserverForName:SJAVMediaLoadedTimeRangesDidChangeNotification object:playerAsset queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
-        __strong typeof(_self) self = _self;
-        if ( !self ) return ;
+    [self sj_observeWithNotification:SJAVMediaBufferLoadedTimeRangesDidChangeNotification target:playerAsset usingBlock:^(SJAVMediaPlayAssetPropertiesObserver *_Nonnull self, NSNotification * _Nonnull note) {
         if ( [self.delegate respondsToSelector:@selector(observer:bufferLoadedTimeDidChange:)] ) {
             [self.delegate observer:self bufferLoadedTimeDidChange:self.bufferLoadedTime];
         }
     }];
     
-    _bufferStatusDidChangeNoteToken = [NSNotificationCenter.defaultCenter addObserverForName:SJAVMediaPlaybackBufferStatusDidChangeNotification object:playerAsset queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
-        __strong typeof(_self) self = _self;
-        if ( !self ) return ;
+    [self sj_observeWithNotification:SJAVMediaBufferStatusDidChangeNotification target:playerAsset usingBlock:^(SJAVMediaPlayAssetPropertiesObserver *_Nonnull self, NSNotification * _Nonnull note) {
         if ( [self.delegate respondsToSelector:@selector(observer:bufferStatusDidChange:)] ) {
             [self.delegate observer:self bufferStatusDidChange:self.bufferStatus];
         }
     }];
     
-    _presentationSizeDidChangeNoteToken = [NSNotificationCenter.defaultCenter addObserverForName:SJAVMediakPresentationSizeDidChangeNotification object:playerAsset queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
-        __strong typeof(_self) self = _self;
-        if ( !self ) return ;
+    [self sj_observeWithNotification:SJAVMediaPresentationSizeDidChangeNotification target:playerAsset usingBlock:^(SJAVMediaPlayAssetPropertiesObserver *_Nonnull self, NSNotification * _Nonnull note) {
         if ( [self.delegate respondsToSelector:@selector(observer:presentationSizeDidChange:)] ) {
             [self.delegate observer:self presentationSizeDidChange:self.presentationSize];
         }
     }];
     
-    _playerItemStatusDidChangeNoteToken = [NSNotificationCenter.defaultCenter addObserverForName:SJAVMediaPlayerItemStatusDidChangeNotification object:playerAsset queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
-        __strong typeof(_self) self = _self;
-        if ( !self ) return ;
+    [self sj_observeWithNotification:SJAVMediaPlayerItemStatusDidChangeNotification target:playerAsset usingBlock:^(SJAVMediaPlayAssetPropertiesObserver *_Nonnull self, NSNotification * _Nonnull note) {
         if ( [self.delegate respondsToSelector:@selector(observer:playerItemStatusDidChange:)] ) {
             [self.delegate observer:self playerItemStatusDidChange:self.playerItemStatus];
         }
     }];
-
+    
+    [self sj_observeWithNotification:SJAVMediaBufferWatingTimeDidChangeNotification target:playerAsset usingBlock:^(SJAVMediaPlayAssetPropertiesObserver *_Nonnull self, NSNotification * _Nonnull note) {
+        if ( [self.delegate respondsToSelector:@selector(observer:bufferWatingTimeDidChange:)] ) {
+            [self.delegate observer:self bufferWatingTimeDidChange:self.bufferWatingTime];
+        }
+    }];
+    
+    [self sj_observeWithNotification:SJAVMediaPlaybackTypeLoadedNotification target:playerAsset usingBlock:^(SJAVMediaPlayAssetPropertiesObserver *_Nonnull self, NSNotification * _Nonnull note) {
+        if ( [self.delegate respondsToSelector:@selector(observer:playbackTypeLoaded:)] ) {
+            [self.delegate observer:self playbackTypeLoaded:self.playbackType];
+        }
+        
+#ifdef DEBUG
+        NSLog(@"SJMediaPlaybackType: %d", (int)self.playbackType);
+#endif
+    }];
     return self;
-}
-
-- (void)dealloc {
-    if ( _playerItemDidPlayToEndTimeNoteToken )
-        [NSNotificationCenter.defaultCenter removeObserver:_playerItemDidPlayToEndTimeNoteToken];
-    
-    if ( _playbackTimeDidChangeNoteToken )
-        [NSNotificationCenter.defaultCenter removeObserver:_playbackTimeDidChangeNoteToken];
-    
-    if ( _durationDidChangeNoteToken )
-        [NSNotificationCenter.defaultCenter removeObserver:_durationDidChangeNoteToken];
-    
-    if ( _loadedTimeRangesDidChangeNoteToken )
-        [NSNotificationCenter.defaultCenter removeObserver:_loadedTimeRangesDidChangeNoteToken];
-    
-    if ( _bufferStatusDidChangeNoteToken )
-        [NSNotificationCenter.defaultCenter removeObserver:_bufferStatusDidChangeNoteToken];
-    
-    if ( _presentationSizeDidChangeNoteToken )
-        [NSNotificationCenter.defaultCenter removeObserver:_presentationSizeDidChangeNoteToken];
-    
-    if ( _playerItemStatusDidChangeNoteToken )
-        [NSNotificationCenter.defaultCenter removeObserver:_playerItemStatusDidChangeNoteToken];
 }
 
 - (AVPlayerItemStatus)playerItemStatus {
@@ -374,11 +406,15 @@ static NSString *kRate = @"rate";
 }
 
 - (NSTimeInterval)bufferLoadedTime {
+    if ( self.playerItemStatus != AVPlayerItemStatusReadyToPlay )
+        return 0;
     CMTimeRange range = _playerAsset.bufferLoadedTime;
     return CMTimeGetSeconds(range.start) + CMTimeGetSeconds(range.duration);
 }
 
 - (NSTimeInterval)currentTime {
+    if ( self.playerItemStatus != AVPlayerItemStatusReadyToPlay )
+        return 0;
     return CMTimeGetSeconds(_playerAsset.currentTime);
 }
 
@@ -388,6 +424,14 @@ static NSString *kRate = @"rate";
 
 - (CGSize)presentationSize {
     return _playerAsset.presentationSize;
+}
+
+- (NSTimeInterval)bufferWatingTime {
+    return _playerAsset.bufferWatingTime;
+}
+
+- (SJMediaPlaybackType)playbackType {
+    return _playerAsset.playbackType;
 }
 @end
 

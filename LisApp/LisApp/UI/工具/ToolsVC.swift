@@ -15,6 +15,4 @@ class ToolsVC: BaseVC {
 
     }
     
-
-
 }

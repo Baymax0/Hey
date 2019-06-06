@@ -46,6 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation SJProgressSlider {
     UILabel *_promptLabel;
     NSLayoutConstraint *_promptLabelBottomConstraint;
+    BOOL _isCancelled;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -98,6 +99,8 @@ NS_ASSUME_NONNULL_BEGIN
             }
         }
         case UIGestureRecognizerStateChanged: {
+            if ( _isCancelled )
+                return;
             if ( [self.delegate respondsToSelector:@selector(sliderDidDrag:)] ) {
                 [self.delegate sliderDidDrag:self];
             }
@@ -106,10 +109,11 @@ NS_ASSUME_NONNULL_BEGIN
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateFailed:
         case UIGestureRecognizerStateCancelled: {
-            if ( [self.delegate respondsToSelector:@selector(sliderDidEndDragging:)] ) {
+            if ( !_isCancelled && [self.delegate respondsToSelector:@selector(sliderDidEndDragging:)] ) {
                 [self.delegate sliderDidEndDragging:self];
             }
             _isDragging = NO;
+            _isCancelled = NO;
         }
             break;
         default:
@@ -123,6 +127,11 @@ NS_ASSUME_NONNULL_BEGIN
     CGFloat value = point / _containerView.frame.size.width * (_maxValue - _minValue);
     if ( _tappedExeBlock ) _tappedExeBlock(self, value);
     else [self setValue:value animated:YES];
+}
+
+- (void)cancelDragging {
+    _isCancelled = YES;
+    [_pan setValue:@(UIGestureRecognizerStateCancelled) forKey:@"state"];
 }
 
 #pragma mark -
@@ -180,6 +189,10 @@ NS_ASSUME_NONNULL_BEGIN
     }
     else {
         [self _needUpdateTraceLayout];
+    }
+    
+    if ( [self.delegate respondsToSelector:@selector(sliderValueDidChange:)] ) {
+        [self.delegate sliderValueDidChange:self];
     }
 }
 

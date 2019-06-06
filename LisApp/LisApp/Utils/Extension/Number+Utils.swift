@@ -21,7 +21,7 @@ extension Optional where Wrapped == Int{
 
 extension Int{
     func toString() -> String{
-        return String(stringInterpolationSegment: self)
+        return String(self)
     }
 }
 

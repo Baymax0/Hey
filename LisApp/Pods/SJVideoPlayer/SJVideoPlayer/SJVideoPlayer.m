@@ -89,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 + (NSString *)version {
-    return @"v2.4.0";
+    return @"v2.4.5";
 }
 
 + (instancetype)player {
@@ -101,7 +101,6 @@ NS_ASSUME_NONNULL_BEGIN
     if ( !self ) return nil;
     [self.switcher addControlLayer:self.defaultEdgeCarrier]; // 添加一个控制层
     [self.switcher switchControlLayerForIdentitfier:SJControlLayer_Edge]; // 切换到添加的控制层
-    
     self.showMoreItemForTopControlLayer = YES; // 显示更多按钮
     self.defaultEdgeControlLayer.hideBottomProgressSlider = NO; // 显示底部进度条
     return self;
@@ -111,13 +110,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)lightweightPlayer {
     SJVideoPlayer *videoPlayer = [[SJVideoPlayer alloc] _init];
     SJEdgeControlLayer *controlLayer = (id)videoPlayer.defaultEdgeCarrier.controlLayer;
-    controlLayer.generatePreviewImages = NO;
     controlLayer.hideBottomProgressSlider = NO;
     controlLayer.topContainerView.sjv_disappearDirection =
     controlLayer.leftContainerView.sjv_disappearDirection =
     controlLayer.bottomContainerView.sjv_disappearDirection =
     controlLayer.rightContainerView.sjv_disappearDirection = SJViewDisappearAnimation_None;
-    [controlLayer.topAdapter removeItemForTag:SJEdgeControlLayerTopItem_Preview];
     [controlLayer.topAdapter reload];
     
     [videoPlayer.switcher addControlLayer:videoPlayer.defaultEdgeCarrier];
@@ -128,17 +125,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)_init {
     self = [super init];
     if ( !self ) return nil;
-    [self _initializeSwitcher];
-    [self _initializeSettingsRecorder];
-    [self _initializePlayStatusObserver];
+    _switcher = [[SJControlLayerSwitcher alloc] initWithPlayer:self];
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        [self _initializeSwitcherObserver];
+        [self _initializeSettingsRecorder];
+        [self _initializePlayStatusObserver];
+    });
+    [self _updateCommonProperties];
     return self;
 }
 
 #pragma mark -
-- (void)_initializeSwitcher {
-    _switcher = [[SJControlLayerSwitcher alloc] initWithPlayer:self];
+- (void)_initializeSwitcherObserver {
     _switcherObserver = [_switcher getObserver];
-    
     __weak typeof(self) _self = self;
     _switcherObserver.playerWillBeginSwitchControlLayer = ^(id<SJControlLayerSwitcher>  _Nonnull switcher, id<SJControlLayer>  _Nonnull controlLayer) {
         __strong typeof(_self) self = _self;
@@ -406,7 +405,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 @implementation SJVideoPlayer (SettingDefaultControlLayer)
-
 - (void)setResumePlaybackWhenPlayerViewScrollAppears:(BOOL)resumePlaybackWhenPlayerViewScrollAppears {
     [self defaultEdgeControlLayer].resumePlaybackWhenPlayerViewScrollAppears = resumePlaybackWhenPlayerViewScrollAppears;
 }
@@ -426,13 +424,6 @@ NS_ASSUME_NONNULL_BEGIN
 }
 - (BOOL)showResidentBackButton {
     return self.defaultEdgeControlLayer.showResidentBackButton;
-}
-
-- (void)setGeneratePreviewImages:(BOOL)generatePreviewImages {
-    [self defaultEdgeControlLayer].generatePreviewImages = generatePreviewImages;
-}
-- (BOOL)generatePreviewImages {
-    return [self defaultEdgeControlLayer].generatePreviewImages;
 }
 
 - (void)setHideBackButtonWhenOrientationIsPortrait:(BOOL)hideBackButtonWhenOrientationIsPortrait {
@@ -466,15 +457,18 @@ NS_ASSUME_NONNULL_BEGIN
     if ( showMoreItemForTopControlLayer == _showMoreItemForTopControlLayer )
         return;
     _showMoreItemForTopControlLayer = showMoreItemForTopControlLayer;
-    if ( showMoreItemForTopControlLayer ) {
-        [self.defaultEdgeControlLayer.topAdapter addItem:[self moreItemDelegate].item];
-    }
-    else {
-        [self.defaultEdgeControlLayer.topAdapter removeItemForTag:SJEdgeControlLayerTopItem_More];
-        [self.switcher deleteControlLayerForIdentifier:SJControlLayer_MoreSettting];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ( showMoreItemForTopControlLayer ) {
+            [self.defaultEdgeControlLayer.topAdapter addItem:[self moreItemDelegate].item];
+        }
+        else {
+            [self.defaultEdgeControlLayer.topAdapter removeItemForTag:SJEdgeControlLayerTopItem_More];
+            [self.switcher deleteControlLayerForIdentifier:SJControlLayer_MoreSettting];
+        }
+        
+        [self.defaultEdgeControlLayer.topAdapter reload];
+    });
     
-    [self.defaultEdgeControlLayer.topAdapter reload];
 }
 - (BOOL)showMoreItemForTopControlLayer {
     return _showMoreItemForTopControlLayer;
@@ -588,6 +582,13 @@ SJEdgeControlButtonItemTag const SJEdgeControlLayerTopItem_More = LONG_MAX - 2; 
 }
 - (BOOL)disableNetworkStatusChangePrompt __deprecated_msg("use `disablePromptWhenNetworkStatusChanges`") {
     return [self disablePromptWhenNetworkStatusChanges];
+}
+
+
+- (void)setGeneratePreviewImages:(BOOL)generatePreviewImages __deprecated_msg("use `此功能已移除, 设置将无效`") {
+}
+- (BOOL)generatePreviewImages __deprecated_msg("use `此功能已移除, 设置将无效`") {
+    return NO;
 }
 
 - (nullable SJEdgeControlLayer *)defaultEdgeLightweightControlLayer __deprecated_msg("use `defaultEdgeControlLayer`") {

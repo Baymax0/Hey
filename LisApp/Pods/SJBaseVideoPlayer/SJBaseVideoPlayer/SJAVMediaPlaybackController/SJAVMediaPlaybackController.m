@@ -70,6 +70,12 @@ inline static bool isFloatZero(float value) {
     _rate = 1;
     _volume = 1;
     _presentView = [SJAVMediaPresentView new];
+    [self _setupMainPresenterObserver];
+    [self registrar];
+    return self;
+}
+
+- (void)_setupMainPresenterObserver {
     _mainPresenterObserver = [_presentView.mainPresenter getObserver];
     __weak typeof(self) _self = self;
     _mainPresenterObserver.isReadyForDisplayExeBlock = ^(id<SJAVPlayerLayerPresenter>  _Nonnull presenter) {
@@ -78,12 +84,10 @@ inline static bool isFloatZero(float value) {
         if ( [self.delegate respondsToSelector:@selector(playbackControllerIsReadyForDisplay:)] ) {
             [self.delegate playbackControllerIsReadyForDisplay:self];
         }
-    #ifdef SJ_MAC
+#ifdef SJ_MAC
         printf("\n_presentView.mainPresenter.isReadyForDisplay\n");
-    #endif
+#endif
     };
-    [self registrar];
-    return self;
 }
 
 - (UIView *)playerView {
@@ -95,6 +99,7 @@ inline static bool isFloatZero(float value) {
 }
 
 - (void)setMedia:(nullable id<SJMediaModelProtocol>)media {
+    [self _refreshForMedia:_media newAsset:nil];
     [_playAsset.player pause];
     [_presentView reset];
     [self _cancelOperations];
@@ -159,9 +164,8 @@ inline static bool isFloatZero(float value) {
 
 static const char *key = "kSJAVMediaPlayAsset";
 - (SJAVMediaPlayAsset *)_getPlayAssetForMedia:(id<SJMediaModelProtocol>)media {
-    id<SJMediaModelProtocol> other = media.otherMedia;
-    while ( other.otherMedia ) other = other.otherMedia;
-    SJAVMediaPlayAsset *playAsset = objc_getAssociatedObject(other?:media, key);
+    id<SJMediaModelProtocol> _Nullable other = media.otherMedia;
+    SJAVMediaPlayAsset *_Nullable playAsset = objc_getAssociatedObject(other?:media, key);
     if ( !playAsset ) {
         AVAsset *avAsset = nil;
         if ( [(id)media respondsToSelector:@selector(avAsset)] ) {
@@ -176,9 +180,9 @@ static const char *key = "kSJAVMediaPlayAsset";
     return playAsset;
 }
 
-- (void)_refreshForMedia:(id<SJMediaModelProtocol>)media newAsset:(SJAVMediaPlayAsset *)newAsset {
-    id<SJMediaModelProtocol> other = media.otherMedia;
-    while ( other.otherMedia ) other = other.otherMedia;
+- (void)_refreshForMedia:(id<SJMediaModelProtocol>)media newAsset:(nullable SJAVMediaPlayAsset *)newAsset {
+    if ( !media ) return;
+    id<SJMediaModelProtocol> _Nullable other = media.otherMedia;
     objc_setAssociatedObject(other?:media, key, newAsset, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -211,6 +215,7 @@ static const char *key = "kSJAVMediaPlayAsset";
             [self play];
             [self.presentView exchangePresenter];
             [self.presentView resetSubPresenter];
+            [self _setupMainPresenterObserver];
         #ifdef SJ_MAC
             printf("\n切换清晰度完成\n");
         #endif
@@ -233,6 +238,11 @@ static const char *key = "kSJAVMediaPlayAsset";
 - (void)observer:(SJAVMediaPlayAssetPropertiesObserver *)observer bufferStatusDidChange:(SJPlayerBufferStatus)bufferStatus {
     [self _updateBufferStatusIfNeeded];
 }
+- (void)observer:(SJAVMediaPlayAssetPropertiesObserver *)observer bufferWatingTimeDidChange:(NSTimeInterval)bufferWatingTime {
+    if ( [self.delegate respondsToSelector:@selector(playbackController:bufferWatingTimeDidChange:)] ) {
+        [self.delegate playbackController:self bufferWatingTimeDidChange:bufferWatingTime];
+    }
+}
 - (void)observer:(SJAVMediaPlayAssetPropertiesObserver *)observer presentationSizeDidChange:(CGSize)presentationSize {
     [self _updatePresentationSizeIfNeeded];
 }
@@ -245,7 +255,11 @@ static const char *key = "kSJAVMediaPlayAsset";
         [self.delegate mediaDidPlayToEndForPlaybackController:self];
     }
 }
-
+- (void)observer:(SJAVMediaPlayAssetPropertiesObserver *)observer playbackTypeLoaded:(SJMediaPlaybackType)playbackType {
+    if ( [self.delegate respondsToSelector:@selector(playbackController:playbackTypeLoaded:)] ) {
+        [self.delegate playbackController:self playbackTypeLoaded:playbackType];
+    }
+}
 - (void)_updateDurationIfNeeded {
     NSTimeInterval duration = _playAssetObserver.duration;
     if ( duration != _duration ) {
@@ -312,27 +326,21 @@ static const char *key = "kSJAVMediaPlayAsset";
         _error = _playAsset.playerItem.error;
         
         __weak typeof(self) _self = self;
-        void(^_inner_completionHandler)(void) = ^{
-            __strong typeof(_self) self = _self;
-            if ( !self ) return ;
-            if ( self.presentView.mainPresenter.player != self.playAsset.player ) {
-                self.presentView.mainPresenter.player = self.playAsset.player;
-            }
-            
-            if ( [self.delegate respondsToSelector:@selector(playbackController:prepareToPlayStatusDidChange:)] ) {
-                [self.delegate playbackController:self prepareToPlayStatusDidChange:(NSInteger)playerItemStatus];
-            }
-        };
-        
-        /// seek to specify start time
-        if ( _prepareStatus == SJMediaPlaybackPrepareStatusReadyToPlay &&
-             0 != self.media.specifyStartTime ) {
-            [self.playAsset.playerItem seekToTime:CMTimeMake(self.media.specifyStartTime * 1000, 1000) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
-                _inner_completionHandler();
+        if ( _prepareStatus == SJMediaPlaybackPrepareStatusReadyToPlay ) {
+            __weak SJAVMediaPlayAsset *_Nullable asset = self.playAsset;
+            _presentView.mainPresenter.player = asset.player;
+            [asset.playerItem seekToTime:CMTimeMakeWithSeconds(0.1, NSEC_PER_SEC) completionHandler:^(BOOL finished) {
+                [asset.playerItem seekToTime:CMTimeMakeWithSeconds(self.media.specifyStartTime, NSEC_PER_SEC) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+                    __strong typeof(_self) self = _self;
+                    if ( !self ) return;
+                    if ( self.playAsset == asset && [self.delegate respondsToSelector:@selector(playbackController:prepareToPlayStatusDidChange:)] )
+                        [self.delegate playbackController:self prepareToPlayStatusDidChange:(NSInteger)playerItemStatus];
+                }];
             }];
         }
         else {
-            _inner_completionHandler();
+            if ( [self.delegate respondsToSelector:@selector(playbackController:prepareToPlayStatusDidChange:)] )
+                [self.delegate playbackController:self prepareToPlayStatusDidChange:(NSInteger)playerItemStatus];
         }
     }
 }
@@ -387,7 +395,7 @@ static const char *key = "kSJAVMediaPlayAsset";
         return;
     }
 
-    [_playAsset.playerItem seekToTime:CMTimeMakeWithSeconds(secs, NSEC_PER_SEC) completionHandler:^(BOOL finished) {
+    [_playAsset.playerItem seekToTime:CMTimeMakeWithSeconds(secs, NSEC_PER_SEC) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
         if ( completionHandler ) completionHandler(finished);
     }];
 }
@@ -486,6 +494,18 @@ static const char *key = "kSJAVMediaPlayAsset";
         if ( !self ) return ;
         if ( failure ) failure(self, error);
     }];
+}
+
+- (NSTimeInterval)bufferWatingTime {
+    return _playAsset.bufferWatingTime;
+}
+
+- (void)updateBufferStatus {
+    [_playAsset updateBufferStatus];
+}
+
+- (SJMediaPlaybackType)playbackType {
+    return _playAsset.playbackType;
 }
 @end
 NS_ASSUME_NONNULL_END

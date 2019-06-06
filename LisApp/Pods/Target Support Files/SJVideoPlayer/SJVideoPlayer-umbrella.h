@@ -11,8 +11,8 @@
 #endif
 
 #import "SJVideoPlayer.h"
-#import "SJButtonItemCollectionViewCell.h"
 #import "SJEdgeControlButtonItem.h"
+#import "SJEdgeControlButtonItemCell.h"
 #import "SJEdgeControlLayerItemAdapter.h"
 #import "SJEdgeControlLayerAdapters.h"
 #import "SJVideoPlayerAnimationHeader.h"
@@ -26,8 +26,6 @@
 #import "SJLightweightTopItem.h"
 #import "UIView+SJVideoPlayerSetting.h"
 #import "SJVideoPlayerDraggingProgressView.h"
-#import "SJVideoPlayerPreviewCollectionViewCell.h"
-#import "SJVideoPlayerPreviewView.h"
 #import "SJFilmEditingControlLayer.h"
 #import "SJFilmEditingGenerateResultControlLayer.h"
 #import "SJFilmEditingInGIFRecordingsControlLayer.h"
