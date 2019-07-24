@@ -58,6 +58,32 @@ class MySiMiVC: BaseVC{
 
         KingfisherManager.shared.cache.diskStorage.config.sizeLimit        =  100 * 1024 * 1024
         KingfisherManager.shared.cache.memoryStorage.config.totalCostLimit = 30 * 1024
+        
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longHandle(_:)))
+        longPress.minimumPressDuration = 1
+        collectionView.addGestureRecognizer(longPress)
+    }
+    
+    @objc func longHandle(_ ges :UILongPressGestureRecognizer) {
+        if ges.state == UIGestureRecognizer.State.began{
+            print("1")
+            if let indexPath = self.collectionView.indexPathForItem(at: ges.location(in: self.collectionView)){
+                let alert = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+                
+                let deleteAction = UIAlertAction(title: "删除", style: UIAlertAction.Style.destructive){ (action:UIAlertAction)in
+                    let name = self.subFiles[indexPath.item]
+                    let path = String(format: "%@/%@", self.directPath, name)
+                    try? FileManager.default.removeItem(atPath: path)
+                    self.loadSubFile()
+                }
+                let cancelAction = UIAlertAction(title: "取消", style: UIAlertAction.Style.cancel,handler:nil)
+                
+                alert.addAction(deleteAction)
+                alert.addAction(cancelAction)
+                self.present(alert, animated: true, completion: nil)
+                
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

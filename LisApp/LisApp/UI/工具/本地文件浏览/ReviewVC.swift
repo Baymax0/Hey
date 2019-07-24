@@ -150,7 +150,8 @@ class ReviewVC: BaseVC {
     func getSaveKey(withName name:String) -> String {
         var path = directPath.components(separatedBy: "Documents").last!
         path = path + "/" + name
-        return path
+//        return path
+        return name
     }
     
     @objc func chooseTagBtn(_ btn:UIButton){
