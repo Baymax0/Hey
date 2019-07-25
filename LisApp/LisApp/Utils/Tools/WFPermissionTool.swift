@@ -65,6 +65,7 @@ enum WFPermissionType:String{
         })
         alertController.addAction(cancelAction)
         alertController.addAction(settingsAction)
+        
         UIApplication.shared.keyWindow?.rootViewController?.present(alertController, animated: true, completion: nil)
     }
 }

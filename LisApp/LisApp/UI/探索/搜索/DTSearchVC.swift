@@ -55,6 +55,8 @@ extension DTSearchVC{
         var row :CGFloat    = 0
         var x   :CGFloat    = 0
         let fontSize:CGFloat = 14
+        
+        
         for str in historySearch {
             var w = str.stringWidth(fontSize)+30
             w = w < (KScreenWidth-blank*2) ? w : KScreenWidth-blank*2-1

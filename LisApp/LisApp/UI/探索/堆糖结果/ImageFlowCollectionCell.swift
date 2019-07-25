@@ -74,7 +74,11 @@ class ImageFlowCollectionCell: UICollectionViewCell {
     }
 
     static func getHeight(_ mod:BMImage) -> CGFloat {
-        let w = (KScreenWidth-MyCollectionViewLayout().columnMargin*3)/2
+        var num:CGFloat = 2;
+        if KScreenWidth > 500{
+            num = 5;
+        }
+        let w = (KScreenWidth-MyCollectionViewLayout().columnMargin*(num+1))/num
         let imgW = mod.width ?? 1
         let imgH = mod.height ?? 1
         let h = (w / CGFloat(imgW) * CGFloat(imgH))

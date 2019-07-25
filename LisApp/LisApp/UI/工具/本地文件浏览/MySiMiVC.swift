@@ -10,8 +10,10 @@ import UIKit
 import Kingfisher
 import Hero
 
-let cellH:CGFloat = 120
-let rowNum:CGFloat = 3
+var cellH:CGFloat = 120
+var rowNum:CGFloat = 3
+var cellW:CGFloat = 180
+var blank:CGFloat = 8
 
 class MySiMiVC: BaseVC{
 
@@ -44,13 +46,25 @@ class MySiMiVC: BaseVC{
     @IBOutlet weak var contentModeSwitch: UISwitch!
     
     @IBOutlet weak var sortByTagSwitch: UISwitch!
+    var setting:FoldSetting!
     
     var tagDic:Dictionary<String,String>!
+    
+    @IBOutlet weak var maskBtn: UIButton!
+    @IBOutlet weak var imgBGVIew: UIView!
+    @IBOutlet weak var newImgView: UIImageView!
+    @IBOutlet weak var nameTF: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = KBGGray
         
+        self.coculate(size: CGSize(width: KScreenWidth, height: KScreenHeight - 64));
+        
+        setting = BMCache.getModel(.foldSetting, type: FoldSetting.self) ?? FoldSetting()
+        contentModeSwitch.isOn = setting.isAspectFit
+        sortByTagSwitch.isOn = setting.isSortByTag
+
         initUI()
         loadData()
         //侧滑返回
@@ -62,6 +76,15 @@ class MySiMiVC: BaseVC{
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longHandle(_:)))
         longPress.minimumPressDuration = 1
         collectionView.addGestureRecognizer(longPress)
+        
+        // 添加拖动
+        let dropInteraction = UIDropInteraction(delegate: self)
+        collectionView.addInteraction(dropInteraction)
+        
+        self.maskBtn.alpha = 0;
+        self.imgBGVIew.alpha = 0;
+        self.maskBtn.isHidden = true;
+        self.imgBGVIew.isHidden = true;
     }
     
     @objc func longHandle(_ ges :UILongPressGestureRecognizer) {
@@ -80,12 +103,35 @@ class MySiMiVC: BaseVC{
                 
                 alert.addAction(deleteAction)
                 alert.addAction(cancelAction)
+                if alert.popoverPresentationController != nil{
+                    alert.popoverPresentationController!.sourceView = self.bottomPopView;
+                    alert.popoverPresentationController!.sourceRect = self.view.bounds;
+                }
                 self.present(alert, animated: true, completion: nil)
                 
             }
         }
     }
+    // 方向改变回调
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        self.coculate(size: size);
+        self.collectionView.reloadData()
+    }
     
+    func coculate(size: CGSize) {
+        let n = Int(size.width / 180)
+        rowNum = CGFloat(n)
+        rowNum = max(rowNum, 2)
+        cellW = (size.width - blank * (rowNum + 1)) / rowNum - 1
+        cellH = cellW * 1.1
+    }
+    
+    // 分屏大小改变回调
+    override func viewDidLayoutSubviews() {
+//        print("\(self.view.mj_size)")
+        self.coculate(size: self.view.mj_size);
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tagDic = BMCache.getDic(.imageTagsDic) ?? Dictionary<String,String>()
@@ -97,7 +143,7 @@ class MySiMiVC: BaseVC{
         collectionView.backgroundColor = KBGGray
         collectionView.register(UINib(nibName: "CustomCell", bundle: nil), forCellWithReuseIdentifier: "Cell")
         collectionView.delaysContentTouches = false
-        self.view.addSubview(collectionView)
+//        self.view.addSubview(collectionView)
     }
     
     @IBAction func upAction(_ sender: Any) {
@@ -182,6 +228,11 @@ class MySiMiVC: BaseVC{
     
     // 改变现实mode
     @IBAction func changeContentModeAction(_ sender: UISwitch) {
+        
+        setting.isAspectFit = contentModeSwitch.isOn
+        setting.isSortByTag = sortByTagSwitch.isOn
+        BMCache.set(.foldSetting, value: setting)
+        setting = BMCache.getModel(.foldSetting, type: FoldSetting.self) ?? FoldSetting()
         self.collectionView.reloadData()
     }
     
@@ -203,18 +254,17 @@ class MySiMiVC: BaseVC{
 extension MySiMiVC:UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
     // ------------ layout
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize{
-        let itemW = (KScreenWidth - 5 * (rowNum - 1) - 10) / rowNum
-        let size = CGSize(width: itemW - 1, height: cellH)
+        let size = CGSize(width: cellW, height: cellH)
         return size
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        return UIEdgeInsets(top: blank, left: blank, bottom: blank, right: blank)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 5
+        return blank
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 5
+        return blank
     }
     
     // ------------ data
@@ -345,4 +395,67 @@ extension MySiMiVC{
     }
     
     
+}
+
+
+extension MySiMiVC:UIDropInteractionDelegate{
+    // 是否接收
+    func dropInteraction(_ interaction: UIDropInteraction, canHandle session: UIDropSession) -> Bool {
+        return YES
+    }
+    
+    //拖动
+    func dropInteraction(_ interaction: UIDropInteraction, sessionDidUpdate session: UIDropSession) -> UIDropProposal {
+        // // 外部Drag 目标
+        if (session.localDragSession == nil) {
+            return UIDropProposal(operation: .copy)
+        }
+        return UIDropProposal(operation: .move)
+    }
+    func dropInteraction(_ interaction: UIDropInteraction, performDrop session: UIDropSession) {
+        if (session.localDragSession == nil) {
+            for item in session.items{
+                item.itemProvider.loadObject(ofClass: UIImage.self) { (object, err) in
+                    if err == nil && object != nil{
+                        DispatchQueue.main.async {
+                            self.receiveImg(object as? UIImage)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func receiveImg(_ img:UIImage?){
+        self.maskBtn.isHidden = false;
+        self.imgBGVIew.isHidden = false;
+        newImgView.image = img;
+        nameTF.text = Date().toString("yyyy-MM-dd-HH:mm:ss")
+        UIView.animate(withDuration: 0.3, animations: {
+            self.maskBtn.alpha = 1;
+            self.imgBGVIew.alpha = 1;
+        }) { (_) in
+            
+        }
+    }
+    
+    @IBAction func addImgCancelAction(_ sender: Any) {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.maskBtn.alpha = 0;
+            self.imgBGVIew.alpha = 0;
+        }) { (_) in
+            self.maskBtn.isHidden = true;
+            self.imgBGVIew.isHidden = true;
+        }
+    }
+    
+    @IBAction func addImgConfirmAction(_ sender: Any) {
+        if newImgView.image != nil{
+            let path = String(format: "%@/%@", self.directPath, nameTF.text ?? "123")
+            try? newImgView.image!.pngData()?.write(to: URL(fileURLWithPath: path), options: .atomic)
+        }
+        self.addImgCancelAction("")
+        self.loadSubFile()
+    }
+
 }

@@ -8,14 +8,19 @@
 
 import UIKit
 import Hero
+import Masonry
 
 class MyTabbarVC: BaseVC {
 
-    @IBOutlet weak var tabBar: UIView!
+    @IBOutlet weak var tabBar: UIStackView!
     @IBOutlet weak var tabbarH: NSLayoutConstraint!
 
     let selectedColor = KRed
     let unSelectedColor = KBlack_178
+    
+    @IBOutlet weak var btn1: DOFavoriteButton!
+    @IBOutlet weak var btn2: DOFavoriteButton!
+    @IBOutlet weak var btn3: DOFavoriteButton!
 
 
     var tabBarNums = 0
@@ -25,7 +30,7 @@ class MyTabbarVC: BaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tabbarH.constant = KTabBarH
+        tabbarH.constant = KTabBarH + 15;
 
         tabBarNums = 3
         addTabbarItem(" ", "tabbar-find", MeVC.fromStoryboard())
@@ -34,57 +39,48 @@ class MyTabbarVC: BaseVC {
         pushVC(lastBtn!)
 
         tabBar.hero.modifiers = [.translate(y:KTabBarH)]
+        
+        btn1.imageColorOff = unSelectedColor
+        btn1.imageColorOn = selectedColor
+        btn1.circleColor = selectedColor
+        btn1.lineColor = KOrange
+        
+        btn2.imageColorOff = unSelectedColor
+        btn2.imageColorOn = selectedColor
+        btn2.circleColor = selectedColor
+        btn2.lineColor = KOrange
+        
+        btn3.imageColorOff = unSelectedColor
+        btn3.imageColorOn = selectedColor
+        btn3.circleColor = selectedColor
+        btn3.lineColor = KOrange
+        
+        
     }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        
+    }
+    
+    
+    
 
     // 添加items
     func addTabbarItem(_ titile:String,_ imgName:String, _ vc:BaseVC) -> Void {
-        let x = VCArray.count * Int(KScreenWidth)/tabBarNums
-
-        //背景按钮
-        let bgBtn = UIButton(frame: CGRect(x: x, y: 0, width: Int(KScreenWidth)/tabBarNums, height: 49))
-        bgBtn.tag = VCArray.count
-        bgBtn.addTarget(self, action: #selector(self.pushVC), for: .touchUpInside)
-        tabBar.addSubview(bgBtn)
-
-        //动画按钮
-        let btnw = 50
-        let btnH = 50
-        let btnX = (Int(KScreenWidth)/tabBarNums - btnw )/2
-        let btn = DOFavoriteButton(frame: CGRect(x: btnX, y: -5, width: btnw, height: btnH), image: UIImage(named: imgName))
-        btn.imageColorOff = unSelectedColor
-        btn.imageColorOn = selectedColor
-        btn.circleColor = selectedColor
-        btn.lineColor = KOrange
-
-        btn.tag = 1001
-        btn.isUserInteractionEnabled = NO
-        bgBtn.addSubview(btn)
-
-        // 标题
-        let lab = UILabel(frame: CGRect(x: 0, y: 33, width: Int(bgBtn.frame.size.width), height: 15))
-        lab.tag = 1002
-        lab.text = titile
-        lab.textColor = unSelectedColor
-        lab.font = UIFont.init(name: "PingFangTC-Regular", size: 12)
-        lab.font = UIFont.systemFont(ofSize: 12)
-        lab.textAlignment = .center
-        bgBtn.addSubview(lab)
-
-
-
-        vc.view.frame =  CGRect(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight - KTabBarH)
+        vc.view.frame =  CGRect(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight - tabbarH.constant)
         self.view.addSubview(vc.view)
         self.addChild(vc)
         VCArray.append(vc)
 
         //默认选择第一个
         if VCArray.count == 1{
-            lastBtn = bgBtn
+            lastBtn = btn1
         }
     }
-
+    
+    
     // 按钮点击事件
-    @objc func pushVC(_ btn:UIButton) -> Void {
+    @IBAction  func pushVC(_ btn:UIButton) -> Void {
         let vc = VCArray[btn.tag]
         self.view.bringSubviewToFront(vc.view)
         setBtnON(lastBtn,false)
@@ -98,14 +94,19 @@ class MyTabbarVC: BaseVC {
             return
         }
 
-        let animBtn = btn?.viewWithTag(1001) as! DOFavoriteButton
-        let lab = btn?.viewWithTag(1002) as! UILabel
+        var animBtn : DOFavoriteButton!
+        
+        if btn!.tag == 0{
+            animBtn = btn1}
+        if btn!.tag == 1{
+            animBtn = btn2}
+        if btn!.tag == 2{
+            animBtn = btn3}
+        
         if on {
             animBtn.select()
-            lab.textColor = selectedColor
         }else{
             animBtn.deselect()
-            lab.textColor = unSelectedColor
         }
     }
 

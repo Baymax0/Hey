@@ -243,6 +243,10 @@ extension ReviewVC: BMScrollViewDelegate{
         alert.addAction(editAction)
         alert.addAction(deleteAction)
         alert.addAction(cancelAction)
+        if alert.popoverPresentationController != nil{
+            alert.popoverPresentationController!.sourceView = self.bottomPopView;
+            alert.popoverPresentationController!.sourceRect = self.view.bounds;
+        }
         self.present(alert, animated: true, completion: nil)
     }
     func bm_scrollView(didScrollTo index: Int) {

@@ -22,6 +22,9 @@ enum CacheKey_String:String {
 
     
     case imageTagsDic    //
+    
+    case foldSetting    //
+
 
 }
 

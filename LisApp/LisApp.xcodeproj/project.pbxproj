@@ -108,6 +108,8 @@
 		2D8CA61F22253C21003C3B20 /* EditVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D8CA61B22253C20003C3B20 /* EditVC.xib */; };
 		2D8CA62022253C21003C3B20 /* EditVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D8CA61D22253C20003C3B20 /* EditVC.m */; };
 		2D9EE3CA22608DEA002F995C /* WebVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EE3C922608DEA002F995C /* WebVC.swift */; };
+		2DA20AE322E97AE000A8E3BF /* FoldSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA20AE222E97AE000A8E3BF /* FoldSetting.swift */; };
+		2DA20AE622E984D900A8E3BF /* ExploreVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA20AE522E984D900A8E3BF /* ExploreVC.swift */; };
 		2DC3108A225F14D40027BDF7 /* Array+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC31089225F14D40027BDF7 /* Array+Utils.swift */; };
 		2DC3108E225F1A770027BDF7 /* ukuleleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC3108C225F1A770027BDF7 /* ukuleleCell.swift */; };
 		2DC3108F225F1A770027BDF7 /* ukuleleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC3108D225F1A770027BDF7 /* ukuleleCell.xib */; };
@@ -229,6 +231,8 @@
 		2D8CA61D22253C20003C3B20 /* EditVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditVC.m; sourceTree = "<group>"; };
 		2D8CA62122253CCB003C3B20 /* LisApp-Brdging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LisApp-Brdging-Header.h"; sourceTree = "<group>"; };
 		2D9EE3C922608DEA002F995C /* WebVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebVC.swift; sourceTree = "<group>"; };
+		2DA20AE222E97AE000A8E3BF /* FoldSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldSetting.swift; sourceTree = "<group>"; };
+		2DA20AE522E984D900A8E3BF /* ExploreVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreVC.swift; sourceTree = "<group>"; };
 		2DC31089225F14D40027BDF7 /* Array+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Utils.swift"; sourceTree = "<group>"; };
 		2DC3108C225F1A770027BDF7 /* ukuleleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ukuleleCell.swift; sourceTree = "<group>"; };
 		2DC3108D225F1A770027BDF7 /* ukuleleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ukuleleCell.xib; sourceTree = "<group>"; };
@@ -306,6 +310,7 @@
 		2D2B44D1221BF21E00D0F19E /* 工具 */ = {
 			isa = PBXGroup;
 			children = (
+				2DA20AE422E982DB00A8E3BF /* New Group */,
 				2DD76019225606D5004BE906 /* ToolsVC.swift */,
 				2D27B3C4222FB426003457B7 /* 设置 */,
 				2D283ED922263C9F00BEE809 /* 二维码工具 */,
@@ -579,6 +584,7 @@
 			isa = PBXGroup;
 			children = (
 				2D315675221AB11300419C16 /* BMTag.swift */,
+				2DA20AE222E97AE000A8E3BF /* FoldSetting.swift */,
 				2D315676221AB11300419C16 /* BMFavorite.swift */,
 				2D315677221AB11300419C16 /* BMImage.swift */,
 			);
@@ -622,6 +628,14 @@
 			);
 			name = "编辑";
 			path = "../../../../../imageViewer/imageViewer/主页/编辑";
+			sourceTree = "<group>";
+		};
+		2DA20AE422E982DB00A8E3BF /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+				2DA20AE522E984D900A8E3BF /* ExploreVC.swift */,
+			);
+			path = "New Group";
 			sourceTree = "<group>";
 		};
 		2DC3108B225F1A520027BDF7 /* cell */ = {
@@ -856,6 +870,7 @@
 				2D315659221AACFB00419C16 /* ApiManager.swift in Sources */,
 				2D315685221AB11400419C16 /* DTBaseModel.swift in Sources */,
 				2D315657221AACFB00419C16 /* ResponseModel.swift in Sources */,
+				2DA20AE622E984D900A8E3BF /* ExploreVC.swift in Sources */,
 				2D315688221AB3C800419C16 /* ImageFlowCollectionCell.swift in Sources */,
 				2D315645221AACFB00419C16 /* ConstraintLayoutGuide.swift in Sources */,
 				2D315633221AACFB00419C16 /* DNSPageStyle.swift in Sources */,
@@ -910,6 +925,7 @@
 				2DD760152256041D004BE906 /* MyTabbarVC.swift in Sources */,
 				2D315650221AACFB00419C16 /* Constraint.swift in Sources */,
 				2DC3108E225F1A770027BDF7 /* ukuleleCell.swift in Sources */,
+				2DA20AE322E97AE000A8E3BF /* FoldSetting.swift in Sources */,
 				2D315638221AACFB00419C16 /* ConstraintMakerPriortizable.swift in Sources */,
 				2D31565F221AACFB00419C16 /* MyCollectionViewLayout.swift in Sources */,
 				2D31562E221AACFB00419C16 /* DNSPageHelper.swift in Sources */,
@@ -1093,7 +1109,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "LisApp/Supports/LisApp-Brdging-Header.h";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1113,7 +1129,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "LisApp/Supports/LisApp-Brdging-Header.h";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

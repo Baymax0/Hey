@@ -35,6 +35,11 @@ class MeVC: BaseVC {
         present(vc, animated: true, completion: nil)
     }
     
+    @IBAction func webViewAction(_ sender: Any) {
+        
+        let vc = ExploreVC()
+        present(vc, animated: true, completion: nil)
+    }
     
 
 }

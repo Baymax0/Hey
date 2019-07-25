@@ -99,6 +99,10 @@ class BaseCollectionVC: BaseVC,MyCollectionViewLayoutDelegate,UICollectionViewDa
         activityIndicatorLab?.isHidden = YES
         view.addSubview(activityIndicatorLab!)
     }
+    
+    override func orientationChanged() {
+        self.collectionView.reloadData()
+    }
 
     func haveMoreData(_ have:Bool){
         if have {
@@ -142,7 +146,11 @@ class BaseCollectionVC: BaseVC,MyCollectionViewLayoutDelegate,UICollectionViewDa
     }
 
     func columnCountOfWaterFallLayout(layout:UICollectionViewFlowLayout) ->NSInteger {
-        return 2
+        var num = 2;
+        if KScreenWidth > 500{
+            num = 5
+        }
+        return num
     }
 
     //////////////////

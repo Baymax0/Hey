@@ -55,7 +55,7 @@ class MyCollectionViewLayout: UICollectionViewFlowLayout {
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         let attribute = UICollectionViewLayoutAttributes(forCellWith: indexPath)
         let collectionViewWidth :CGFloat = self.collectionView!.frame.size.width
-        let width :CGFloat = (collectionViewWidth - self.edgeInsets.left - self.edgeInsets.right - (CGFloat(self.columnCount) - 1) * self.columnMargin) / CGFloat(self.columnCount);
+        let width :CGFloat = (collectionViewWidth - self.edgeInsets.left - self.edgeInsets.right - (CGFloat(self.columnCount) - 1) * self.columnMargin) / CGFloat(self.columnCount) - 2;
         // 计算当前item应该摆放在第几列(计算哪一列高度最短)
         var minColumn :Int = 0//默认是第0列
         var minHeight :Float = MAXFLOAT

@@ -58,6 +58,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        print(url)
+        return YES
+    }
 
     func applicationWillResignActive(_ application: UIApplication) {
         self.showMaskView(true)
@@ -70,6 +75,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // 显示 或 隐藏 mask
     func showMaskView(_ show:Bool) {
         if show{
+            maskView.frame = window!.bounds
+            for v in maskView.subviews{
+                v.frame = window!.bounds
+            }
+            
             if maskView.superview == nil{
                 maskView.alpha = 0
                 window?.addSubview(maskView)
@@ -83,6 +93,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.maskView.removeFromSuperview()
             }}
     }
+    
+    
     
     func applicationDidEnterBackground(_ application: UIApplication) {
         BMCache.saveWhenQuit()

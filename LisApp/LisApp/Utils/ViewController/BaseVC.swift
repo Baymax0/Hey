@@ -17,6 +17,12 @@ class BaseVC: UIViewController {
 
     var appearTimes:Int = 0
     
+    var bottomPopView:UIView = {
+        let v = UIView(frame: CGRect(x: 0, y: KScreenHeight-10, width: KScreenWidth, height: 1))
+        return v
+    }()
+
+    
     static var currentVC:String?
 
     lazy var maskView : UIButton = {
@@ -39,7 +45,6 @@ class BaseVC: UIViewController {
     
     override var preferredStatusBarStyle: UIStatusBarStyle{
         get{
-//            return .lightContent
             return .default
         }
     }
@@ -48,6 +53,17 @@ class BaseVC: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = KBGGray
         self.hero.isEnabled = true
+        self.view.addSubview(bottomPopView)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(orientationChangedBase(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
+    }
+    
+    @objc func orientationChangedBase( _ notification:Notification) {
+        self.orientationChanged()
+    }
+    
+    func orientationChanged() {
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -90,7 +106,6 @@ class BaseVC: UIViewController {
     @objc func closekeyboard(){
         self.view.endEditing(true)
     }
-    
     
     deinit {
         print(String(describing: self.classForCoder) + " is deinit")

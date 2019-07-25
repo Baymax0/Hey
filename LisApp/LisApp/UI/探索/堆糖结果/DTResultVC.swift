@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Masonry
 
 class DTResultVC: BaseCollectionVC {
     
@@ -25,9 +26,21 @@ class DTResultVC: BaseCollectionVC {
         self.hideNav = true
         titleLab.text = self.title
         initCollectionView(rect: CGRect(x: 0, y: 64, width: KScreenWidth, height: view.frame.height - 64))
+
         loadNewDataWithIndicator()
         addSlideBack(view)
     }
+    
+//    override func viewWillLayoutSubviews() {
+//        super.viewWillLayoutSubviews()
+//        self.collectionView.mas_makeConstraints { (make) in
+//            make?.top.offset()(64)
+//            make?.bottom.offset()(0)
+//            make?.width.equalTo()(KScreenWidth)
+//            make?.height.equalTo()(KScreenHeight)
+//        }
+//        self.collectionView.reloadData()
+//    }
     
     @objc override func loadMoreData() -> Void {
         loadData(start)
