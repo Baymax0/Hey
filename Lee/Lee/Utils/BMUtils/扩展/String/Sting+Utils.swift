@@ -11,49 +11,28 @@ import Foundation
 
 // MARK: -  ---------------------- protocol ------------------------
 
-protocol BMStringUtils {
-    func bm_count() -> Int
-    /// NSRange转化为range
-    func range(from nsRange: NSRange) -> Range<String.Index>?
-    //判断 是否 是 数字
-    var isPurnInt:Bool { get }
-    
-    var image:UIImage? { get }
-    
-    var urlEncode:String? { get }
-    
-    var md5: String { get }
-    
-    func substring(_ toIndex:Int) -> String
-    
-    func stringWidth(_ fontSize:CGFloat) -> CGFloat
-    
-    func stringHeight(_ fontSize:CGFloat, width:CGFloat) -> CGFloat
-}
+//protocol BMStringUtils {
+//    /// NSRange转化为range
+//    func range(from nsRange: NSRange) -> Range<String.Index>?
+//    //判断 是否 是 数字
+//    var isPurnInt:Bool { get }
+//
+//    var image:UIImage? { get }
+//
+//    var urlEncode:String? { get }
+//
+//    var md5: String { get }
+//
+//    func substring(_ toIndex:Int) -> String
+//
+//    func stringWidth(_ fontSize:CGFloat) -> CGFloat
+//
+//    func stringHeight(_ fontSize:CGFloat, width:CGFloat) -> CGFloat
+//}
 
 
 // MARK: -  ---------------------- implement ------------------------
-extension Optional where Wrapped == String{
-    /// if nil or "" return false
-    func notEmpty() -> Bool {
-        if self == nil{
-            return false
-        }else{
-            if self!.count == 0{
-                return false
-            }
-        }
-        return true
-    }
-    
-    /// if nil return 0
-    func bm_count() -> Int {
-        if self == nil{
-            return 0
-        }else{
-            return self!.count
-        }
-    }
+extension Optional where Wrapped : StringProtocol{
     
     func  toInt() -> Int{
         if self == nil{
@@ -93,17 +72,14 @@ extension Optional where Wrapped == String{
 }
 
 
-extension String :BMStringUtils {
+extension String {
+//extension String :BMStringUtils {
     /// if nil or "" return false
-    func notEmpty() -> Bool {
+    func notEmptyStringString() -> Bool {
         if self.count == 0{
             return false
         }
         return true
-    }
-    
-    func bm_count() -> Int {
-        return self.count
     }
     
     subscript (i:Int)->String{
@@ -179,11 +155,15 @@ extension String :BMStringUtils {
     }
     
     func stringHeight(_ fontSize:CGFloat, width:CGFloat) -> CGFloat{
-        let font:UIFont = UIFont.systemFont(ofSize: fontSize)
+        return self.stringHeight(UIFont.systemFont(ofSize: fontSize), width: width)
+    }
+    
+    func stringHeight(_ font:UIFont, width:CGFloat) -> CGFloat{
+//        let font:UIFont = UIFont.systemFont(ofSize: fontSize)
         let attributes = [NSAttributedString.Key.font:font]
         let option = NSStringDrawingOptions.usesLineFragmentOrigin
         var rect:CGRect!
-
+        
         if self.count != 0 {
             rect = self.boundingRect(with: CGSize(width: width, height: 2000), options: option, attributes: attributes, context: nil)
         }else{

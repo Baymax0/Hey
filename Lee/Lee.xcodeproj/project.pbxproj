@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D036F9F2379102100C4E391 /* NewsDetailVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D036F9D2379102100C4E391 /* NewsDetailVC.xib */; };
+		2D036FA123795C4A00C4E391 /* NewsDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D036FA023795C4A00C4E391 /* NewsDetailVC.swift */; };
+		2D036FA323795C5900C4E391 /* NewsDetailCollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D036FA223795C5900C4E391 /* NewsDetailCollectionVC.swift */; };
+		2D036FA52379617A00C4E391 /* MyConst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D036FA42379617A00C4E391 /* MyConst.swift */; };
+		2D6532BF237560A9002718A9 /* MyCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6532BE237560A9002718A9 /* MyCache.swift */; };
 		2D7483B6237114690001EB40 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7483B5237114690001EB40 /* AppDelegate.swift */; };
 		2D7483B8237114690001EB40 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7483B7237114690001EB40 /* ViewController.swift */; };
 		2D7483BB237114690001EB40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D7483B9237114690001EB40 /* Main.storyboard */; };
@@ -70,13 +75,16 @@
 		2D74846D23714E890001EB40 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D74846C23714E890001EB40 /* Api.swift */; };
 		2D74847423716F9E0001EB40 /* NewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D74847223716F9E0001EB40 /* NewsCell.swift */; };
 		2D74847523716F9E0001EB40 /* NewsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D74847323716F9E0001EB40 /* NewsCell.xib */; };
-		2D7D232823726797001A282F /* NewsDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7D232623726797001A282F /* NewsDetailVC.swift */; };
-		2D7D232923726797001A282F /* NewsDetailVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D7D232723726797001A282F /* NewsDetailVC.xib */; };
 		958F81E0848EE4149B162B09 /* Pods_Lee.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB15577B5C75980B45825B33 /* Pods_Lee.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2091470FCFA4D837C232CDE7 /* Pods-Lee.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lee.release.xcconfig"; path = "Target Support Files/Pods-Lee/Pods-Lee.release.xcconfig"; sourceTree = "<group>"; };
+		2D036F9D2379102100C4E391 /* NewsDetailVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewsDetailVC.xib; sourceTree = "<group>"; };
+		2D036FA023795C4A00C4E391 /* NewsDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailVC.swift; sourceTree = "<group>"; };
+		2D036FA223795C5900C4E391 /* NewsDetailCollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailCollectionVC.swift; sourceTree = "<group>"; };
+		2D036FA42379617A00C4E391 /* MyConst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyConst.swift; sourceTree = "<group>"; };
+		2D6532BE237560A9002718A9 /* MyCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCache.swift; sourceTree = "<group>"; };
 		2D7483B2237114690001EB40 /* Lee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7483B5237114690001EB40 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2D7483B7237114690001EB40 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -142,8 +150,6 @@
 		2D74846C23714E890001EB40 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		2D74847223716F9E0001EB40 /* NewsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsCell.swift; sourceTree = "<group>"; };
 		2D74847323716F9E0001EB40 /* NewsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewsCell.xib; sourceTree = "<group>"; };
-		2D7D232623726797001A282F /* NewsDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailVC.swift; sourceTree = "<group>"; };
-		2D7D232723726797001A282F /* NewsDetailVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewsDetailVC.xib; sourceTree = "<group>"; };
 		4A3657294220CDADD3F3C75C /* Pods-Lee.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lee.debug.xcconfig"; path = "Target Support Files/Pods-Lee/Pods-Lee.debug.xcconfig"; sourceTree = "<group>"; };
 		CB15577B5C75980B45825B33 /* Pods_Lee.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Lee.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -449,6 +455,8 @@
 			children = (
 				2D748441237117480001EB40 /* BubbleTabBar */,
 				2D74846C23714E890001EB40 /* Api.swift */,
+				2D6532BE237560A9002718A9 /* MyCache.swift */,
+				2D036FA42379617A00C4E391 /* MyConst.swift */,
 			);
 			path = CustomUtils;
 			sourceTree = "<group>";
@@ -549,8 +557,9 @@
 		2D7D232523726782001A282F /* detail */ = {
 			isa = PBXGroup;
 			children = (
-				2D7D232623726797001A282F /* NewsDetailVC.swift */,
-				2D7D232723726797001A282F /* NewsDetailVC.xib */,
+				2D036F9D2379102100C4E391 /* NewsDetailVC.xib */,
+				2D036FA023795C4A00C4E391 /* NewsDetailVC.swift */,
+				2D036FA223795C5900C4E391 /* NewsDetailCollectionVC.swift */,
 			);
 			path = detail;
 			sourceTree = "<group>";
@@ -639,7 +648,7 @@
 			files = (
 				2D74841E237115B90001EB40 /* BMImgItems_UploadImg@3x.png in Resources */,
 				2D74840C237115B90001EB40 /* BMback_Icon@3x.png in Resources */,
-				2D7D232923726797001A282F /* NewsDetailVC.xib in Resources */,
+				2D036F9F2379102100C4E391 /* NewsDetailVC.xib in Resources */,
 				2D7483C02371146C0001EB40 /* LaunchScreen.storyboard in Resources */,
 				2D748416237115B90001EB40 /* city_db.sqlite in Resources */,
 				2D74844F237118B90001EB40 /* 613779.gif in Resources */,
@@ -754,13 +763,14 @@
 				2D74846623711AA90001EB40 /* FourVC.swift in Sources */,
 				2D748414237115B90001EB40 /* MBProgressHud.swift in Sources */,
 				2D748449237117480001EB40 /* BubbleTabBar.swift in Sources */,
-				2D7D232823726797001A282F /* NewsDetailVC.swift in Sources */,
+				2D036FA123795C4A00C4E391 /* NewsDetailVC.swift in Sources */,
 				2D74842A237115B90001EB40 /* TableViewCell+Utils.swift in Sources */,
 				2D74841F237115B90001EB40 /* BMIndicatorView.swift in Sources */,
 				2D74840E237115B90001EB40 /* BaseTabbarVC.swift in Sources */,
 				2D74847423716F9E0001EB40 /* NewsCell.swift in Sources */,
 				2D74840D237115B90001EB40 /* WebVC.swift in Sources */,
 				2D74841D237115B90001EB40 /* MultiImgChooseView.swift in Sources */,
+				2D036FA52379617A00C4E391 /* MyConst.swift in Sources */,
 				2D74841B237115B90001EB40 /* BMPicker.swift in Sources */,
 				2D748422237115B90001EB40 /* ResponseModel.swift in Sources */,
 				2D74842E237115B90001EB40 /* String+Substring.swift in Sources */,
@@ -791,9 +801,11 @@
 				2D7483B6237114690001EB40 /* AppDelegate.swift in Sources */,
 				2D748412237115B90001EB40 /* Hud.swift in Sources */,
 				2D74841A237115B90001EB40 /* BMSinglePicker.swift in Sources */,
+				2D036FA323795C5900C4E391 /* NewsDetailCollectionVC.swift in Sources */,
 				2D748421237115B90001EB40 /* BMScaleView.swift in Sources */,
 				2D748433237115B90001EB40 /* BMCache.swift in Sources */,
 				2D748415237115B90001EB40 /* BMCityPicker.swift in Sources */,
+				2D6532BF237560A9002718A9 /* MyCache.swift in Sources */,
 				2D748423237115B90001EB40 /* Network.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

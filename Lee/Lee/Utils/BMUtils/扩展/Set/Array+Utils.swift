@@ -8,16 +8,50 @@
 
 import Foundation
 
-extension Optional where Wrapped == Array<Any>{
-    /// if nil return 0
-    func bm_count() -> Int {
+
+///// if nil or "" return false
+//func notEmptyString() -> Bool {
+//    if self == nil{
+//        return false
+//    }else{
+//        if self!.count == 0{
+//            return false
+//        }
+//    }
+//    return true
+//}
+//
+///// if nil return 0
+//func bm_length() -> Int {
+//    if self == nil{
+//        return 0
+//    }else{
+//        return self!.count
+//    }
+//}
+
+extension Optional where Wrapped : Collection{
+    /// if nil or "" or [] return 0
+    func  bm_count() -> Int{
         if self == nil{
             return 0
         }else{
             return self!.count
         }
     }
+    
+    /// if nil or "" or [] return false
+    func  notEmpty() -> Bool{
+        if self == nil{
+            return false
+        }else{
+            return self!.count != 0
+        }
+    }
 }
+
+
+
 
 extension Array{
     
@@ -28,8 +62,6 @@ extension Array{
             return self[at]
         }
     }
-    
-    
     
     func getJsonStr() -> String?{
         let data = try? JSONSerialization.data(withJSONObject: self, options: [])

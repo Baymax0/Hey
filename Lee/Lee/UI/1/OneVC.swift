@@ -21,9 +21,11 @@ class CardView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         clipsToBounds = true
-        
+        self.backgroundColor = #colorLiteral(red: 0.1450774968, green: 0.1451098621, blue: 0.1450754404, alpha: 1)
+        self.layer.cornerRadius = 16
+
         titleLabel.font = UIFont.boldSystemFont(ofSize: 15)
-        subtitleLabel.font = UIFont.systemFont(ofSize: 12)
+        subtitleLabel.font = UIFont.systemFont(ofSize: 14)
         imageView.contentMode = .scaleAspectFill
         
         addSubview(imageView)
@@ -31,6 +33,7 @@ class CardView: UIView {
         addSubview(titleLabel)
         addSubview(subtitleLabel)
     }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         imageView.frame = bounds
@@ -56,7 +59,6 @@ class RoundedCardWrapperView: UIView {
     required init?(coder aDecoder: NSCoder) { fatalError() }
     override init(frame: CGRect) {
         super.init(frame: frame)
-        cardView.layer.cornerRadius = 16
         addSubview(cardView)
     }
     override func layoutSubviews() {
@@ -66,7 +68,6 @@ class RoundedCardWrapperView: UIView {
             // we don't want cardView to be resized when Hero is using it for transition
             cardView.frame = bounds
         }
-        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius).cgPath
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
@@ -102,36 +103,49 @@ class OneVC: BaseVC{
     }
     
     func loadData(){
-        let dataSource = ArrayDataSource<Int>(data: Array(0..<10))
-        
-        let viewSource = ClosureViewSource(viewUpdater: { (view: RoundedCardWrapperView, data: Int, index: Int) in
-            let model = self.newsArr.bm_object(index)
-
-            view.cardView.titleLabel.text = model?.ui_sets["caption_subtitle"] ?? ""
-            view.cardView.subtitleLabel.text = model?.location ?? ""
-            view.cardView.imageView.kf.setImage(with: model?.bigImg.resource, placeholder: UIImage(named: "temp"), options: [.transition(.fade(0.5))])
-        })
-        
-        let sizeSource = { (index: Int, data: Int, collectionSize: CGSize) -> CGSize in
-            let w = (KScreenWidth-24)/2-10
-            return CGSize(width: w, height: w+20)
+        if newsCollection.provider == nil{
+            let dataSource = ArrayDataSource<Int>(data: Array(0..<30))
+            let viewSource = ClosureViewSource(viewUpdater: { (view: RoundedCardWrapperView, data: Int, index: Int) in
+                let model = self.newsArr.bm_object(index)
+                view.cardView.titleLabel.text = model?.ui_sets["caption_subtitle"] ?? ""
+                view.cardView.subtitleLabel.text = model?.location ?? ""
+                view.cardView.imageView.kf.setImage(with: model?.bigImg.resource, placeholder: UIImage(named: "temp"), options: [.transition(.fade(0.5))])
+            })
+            
+            let sizeSource = { (index: Int, data: Int, collectionSize: CGSize) -> CGSize in
+                let w = (KScreenWidth-24)/2-10
+                return CGSize(width: w, height: w+20)
+            }
+            
+            let provider = BasicProvider<Int, RoundedCardWrapperView>(
+                dataSource: dataSource,
+                viewSource: viewSource,
+                sizeSource: sizeSource
+            )
+            
+            provider.tapHandler = { (context) in
+                self.cellTapped(cell: context.view, data: context.data)
+            }
+            provider.layout = RowLayout("RowLayout", spacing: 10)
+            newsCollection.provider = provider
+        }else{
+            newsCollection.reloadData()
         }
-        let provider = BasicProvider<Int, RoundedCardWrapperView>(
-            dataSource: dataSource,
-            viewSource: viewSource,
-            sizeSource: sizeSource
-        )
-        
-        provider.tapHandler = { (context) in
-            self.cellTapped(cell: context.view, data: context.data)
-        }
-        
-        provider.layout = RowLayout("RowLayout", spacing: 10)
-
-        newsCollection.provider = provider
     }
 
     func requestNews(){
+        let list = Cache[.newsList]
+        if list.notEmpty(){
+            self.newsArr = list
+            self.loadData()
+            if let first = self.newsArr.first{
+                let date = (first.pubdate_timestamp + 24*60*60).toDate()
+                let now = Date()
+                if date.toString("yyyy-MM-dd") == now.toString("yyyy-MM-dd"){
+                    return
+                }
+            }
+        }
         var param = [String : Any]()
         param["page"] = 1
         param["ver"] = "iphone"
@@ -141,12 +155,12 @@ class OneVC: BaseVC{
             self.newsArr = resp;
             for i in (0..<self.newsArr.count).reversed(){
                 let m = self.newsArr[i]
-                if m.cat == "14"{
+                if m.cat == "14" || m.cat == "16" {
                     self.newsArr.remove(at: i)
                 }
             }
+            Cache[.newsList] = self.newsArr
             self.loadData()
-//            self.newsCollection.reloadData()
         }
     }
     
@@ -154,14 +168,31 @@ class OneVC: BaseVC{
         // MARK: Hero configuration
         let model = self.newsArr.bm_object(data)
         let cardHeroId = "card\(model!.guid ?? 1)"
-        let vc = NewsDetailVC.init(nibName: "NewsDetailVC", bundle: nil)
-        vc.model = model
         
-        cell.cardView.hero.modifiers = [.useNoSnapshot, .spring(stiffness: 150, damping: 25)]
+        cell.cardView.hero.modifiers = [.useNoSnapshot, .spring(stiffness: stiffness, damping: damping)]
         cell.cardView.hero.id = cardHeroId
+
+//        let vc = NewsDetailVC()
+//        vc.loadData(model)
+//        vc.hero.isEnabled = true
+//        vc.hero.modalAnimationType = .none
+//
+//        vc.cardView.hero.id = cardHeroId
+//        vc.cardView.hero.modifiers = [.useNoSnapshot, .spring(stiffness: stiffness, damping: damping)]
+//        vc.cardView.imageView.image = cell.cardView.imageView.image
+//        vc.bgView.hero.modifiers = [.source(heroID: cardHeroId), .fade, .spring(stiffness: stiffness, damping: damping)]
+//
+//        vc.visualEffectView.hero.modifiers = [.fade, .useNoSnapshot]
+//        present(vc, animated: true, completion: nil)
         
+        let vc = NewsDetailCollectionVC()
+        vc.selectedIndex = data
+        vc.loadData(self.newsArr)
         vc.hero.isEnabled = true
         vc.hero.modalAnimationType = .none
+        vc.visualEffectView.hero.modifiers = [.fade, .useNoSnapshot]
         present(vc, animated: true, completion: nil)
     }
+    
+    
 }

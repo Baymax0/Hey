@@ -100,3 +100,10 @@ extension String : BMDateUtils_String{
     }
 }
 
+
+extension Int{
+    func toDate() -> Date{
+        let data = Date(timeIntervalSince1970: TimeInterval(self))
+        return data
+    }
+}

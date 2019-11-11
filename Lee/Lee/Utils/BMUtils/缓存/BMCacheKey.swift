@@ -21,6 +21,7 @@ extension BMDefaultsKeys{
     static let sessionId = BMCacheKey<String?>("sessionId")
     
     static let p = BMCacheKey<Person?>("sessionId2")
+    static let pList = BMCacheKey<Array<Person>?>("sessionId2")
 
 }
 
