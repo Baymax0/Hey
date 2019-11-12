@@ -9,6 +9,7 @@
 import UIKit
 import HandyJSON
 
+
 class IdailyNewsModel: HandyJSON {
     
     var guid : Int!     // 118294,
@@ -33,8 +34,8 @@ class IdailyNewsModel: HandyJSON {
     
     var bigImg:String!{
         get{
-            if cover_sq_hd != nil{ return cover_sq_hd }
             if cover_landscape_hd != nil{ return cover_landscape_hd }
+            if cover_sq_hd != nil{ return cover_sq_hd }
             if cover_sq != nil{ return cover_sq }
             if cover_landscape != nil{ return cover_landscape }
             return cover_thumb
@@ -62,6 +63,12 @@ class IdailyNewsModel: HandyJSON {
 //    "name": "SPOT NEWS · 全球焦点",
 //    "focus": 1}]
     var tags :Array<Dictionary<String,Any>>!
+    
+    var heroId:String{
+        get{
+            return "card\(guid ?? 1)"
+        }
+    }
 
     required init() {}
     

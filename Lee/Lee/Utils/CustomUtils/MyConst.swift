@@ -9,6 +9,6 @@
 import Foundation
 import UIKit
 
-let stiffness:CGFloat = 229
+let stiffness:CGFloat = 230
 let damping:CGFloat = 23
 

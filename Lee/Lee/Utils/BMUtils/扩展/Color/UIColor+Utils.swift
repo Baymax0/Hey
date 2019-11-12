@@ -25,6 +25,7 @@ extension UIColor {
 
 extension UIColor {
     open class var KBlue: UIColor       { return #colorLiteral(red: 0.1274686485, green: 0.5686141059, blue: 0.9647058824, alpha: 1) }
+    open class var KBlueDark: UIColor   { return #colorLiteral(red: 0.1238686371, green: 0.2051057638, blue: 0.3147215498, alpha: 1) }
     open class var KRed: UIColor        { return #colorLiteral(red: 0.9803921569, green: 0.333299367, blue: 0.3461571215, alpha: 1) }
     open class var KOrange: UIColor     { return #colorLiteral(red: 1, green: 0.3843137255, blue: 0.231372549, alpha: 1) }
     

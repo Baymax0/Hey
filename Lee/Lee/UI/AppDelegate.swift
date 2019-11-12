@@ -45,28 +45,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        let one = OneVC()
-        one.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-dashboard"), selectedImage: nil, color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1))
-
-        let two = TwoVC()
-        two.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-clock"), selectedImage: nil, color: #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1))
-
-        let three = ThreeVC()
-        three.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-folder"), selectedImage: nil, color: #colorLiteral(red: 0.3647058904, green: 0.06666667014, blue: 0.9686274529, alpha: 1))
-
-        let four = FourVC()
-        four.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-menu"), selectedImage: nil, color: #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1))
-        
         let tabBarController = BubbleTabBarController()
-        tabBarController.viewControllers = [one, two, three, four]
         tabBarController.tabBar.tintColor = #colorLiteral(red: 0.1579992771, green: 0.1818160117, blue: 0.5072338581, alpha: 1)
         tabBarController.tabBar.backgroundColor = .KBGGray
-
-        
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.backgroundColor = .white
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
+        
+        let one = OneVC()
+        one.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-dashboard"), selectedImage: nil, color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1))
+        
+        let two = TwoVC()
+        two.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-clock"), selectedImage: nil, color: #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1))
+        
+        let three = ThreeVC()
+        three.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-folder"), selectedImage: nil, color: #colorLiteral(red: 0.3647058904, green: 0.06666667014, blue: 0.9686274529, alpha: 1))
+        
+        let four = FourVC()
+        four.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-menu"), selectedImage: nil, color: #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1))
+        tabBarController.viewControllers = [one, two, three, four]
+        
         return true
     }
     

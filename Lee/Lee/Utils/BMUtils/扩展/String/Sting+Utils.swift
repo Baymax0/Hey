@@ -148,9 +148,13 @@ extension String {
 
     func stringWidth(_ fontSize:CGFloat) -> CGFloat{
         let font:UIFont = UIFont.systemFont(ofSize: fontSize)
+        return stringWidth(font)
+    }
+    
+    func stringWidth(_ font:UIFont) -> CGFloat{
         let attributes = [NSAttributedString.Key.font:font]
         let option = NSStringDrawingOptions.usesLineFragmentOrigin
-        let rect:CGRect = self.boundingRect(with: CGSize(width: 2000.0, height: fontSize*1.4), options: option, attributes: attributes, context: nil)
+        let rect:CGRect = self.boundingRect(with: CGSize(width: 2000.0, height: font.pointSize * 1.4), options: option, attributes: attributes, context: nil)
         return rect.size.width
     }
     

@@ -12,7 +12,7 @@ import Foundation
 import SwiftyUserDefaults
 
 class Utils: NSObject {
-
+    
     static let appCurVersion:String = {
         let s = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
         let arr = s.components(separatedBy: ".")

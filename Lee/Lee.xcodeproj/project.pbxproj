@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2D036F9F2379102100C4E391 /* NewsDetailVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D036F9D2379102100C4E391 /* NewsDetailVC.xib */; };
-		2D036FA123795C4A00C4E391 /* NewsDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D036FA023795C4A00C4E391 /* NewsDetailVC.swift */; };
 		2D036FA323795C5900C4E391 /* NewsDetailCollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D036FA223795C5900C4E391 /* NewsDetailCollectionVC.swift */; };
 		2D036FA52379617A00C4E391 /* MyConst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D036FA42379617A00C4E391 /* MyConst.swift */; };
 		2D6532BF237560A9002718A9 /* MyCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6532BE237560A9002718A9 /* MyCache.swift */; };
@@ -80,8 +78,6 @@
 
 /* Begin PBXFileReference section */
 		2091470FCFA4D837C232CDE7 /* Pods-Lee.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lee.release.xcconfig"; path = "Target Support Files/Pods-Lee/Pods-Lee.release.xcconfig"; sourceTree = "<group>"; };
-		2D036F9D2379102100C4E391 /* NewsDetailVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewsDetailVC.xib; sourceTree = "<group>"; };
-		2D036FA023795C4A00C4E391 /* NewsDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailVC.swift; sourceTree = "<group>"; };
 		2D036FA223795C5900C4E391 /* NewsDetailCollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailCollectionVC.swift; sourceTree = "<group>"; };
 		2D036FA42379617A00C4E391 /* MyConst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyConst.swift; sourceTree = "<group>"; };
 		2D6532BE237560A9002718A9 /* MyCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCache.swift; sourceTree = "<group>"; };
@@ -557,8 +553,6 @@
 		2D7D232523726782001A282F /* detail */ = {
 			isa = PBXGroup;
 			children = (
-				2D036F9D2379102100C4E391 /* NewsDetailVC.xib */,
-				2D036FA023795C4A00C4E391 /* NewsDetailVC.swift */,
 				2D036FA223795C5900C4E391 /* NewsDetailCollectionVC.swift */,
 			);
 			path = detail;
@@ -648,7 +642,6 @@
 			files = (
 				2D74841E237115B90001EB40 /* BMImgItems_UploadImg@3x.png in Resources */,
 				2D74840C237115B90001EB40 /* BMback_Icon@3x.png in Resources */,
-				2D036F9F2379102100C4E391 /* NewsDetailVC.xib in Resources */,
 				2D7483C02371146C0001EB40 /* LaunchScreen.storyboard in Resources */,
 				2D748416237115B90001EB40 /* city_db.sqlite in Resources */,
 				2D74844F237118B90001EB40 /* 613779.gif in Resources */,
@@ -763,7 +756,6 @@
 				2D74846623711AA90001EB40 /* FourVC.swift in Sources */,
 				2D748414237115B90001EB40 /* MBProgressHud.swift in Sources */,
 				2D748449237117480001EB40 /* BubbleTabBar.swift in Sources */,
-				2D036FA123795C4A00C4E391 /* NewsDetailVC.swift in Sources */,
 				2D74842A237115B90001EB40 /* TableViewCell+Utils.swift in Sources */,
 				2D74841F237115B90001EB40 /* BMIndicatorView.swift in Sources */,
 				2D74840E237115B90001EB40 /* BaseTabbarVC.swift in Sources */,

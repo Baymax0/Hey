@@ -15,32 +15,57 @@ class CardView: UIView {
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
     let imageView = UIImageView(image: #imageLiteral(resourceName: "montreal"))
-    let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-    
+    let locImg = UIImageView()
+
     required init?(coder aDecoder: NSCoder) { fatalError() }
     override init(frame: CGRect) {
         super.init(frame: frame)
         clipsToBounds = true
-        self.backgroundColor = #colorLiteral(red: 0.1450774968, green: 0.1451098621, blue: 0.1450754404, alpha: 1)
-        self.layer.cornerRadius = 16
+        self.cornerRadius = 6
+        self.backgroundColor = .clear
 
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 15)
-        subtitleLabel.font = UIFont.systemFont(ofSize: 14)
         imageView.contentMode = .scaleAspectFill
+        imageView.cornerRadius = 6
+        
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 15)
+        titleLabel.textColor = .KBlueDark
+        
+        subtitleLabel.font = UIFont.boldSystemFont(ofSize: 13)
+        subtitleLabel.textAlignment = .right
+        subtitleLabel.textColor = #colorLiteral(red: 0.685315609, green: 0.7131230235, blue: 0.754701674, alpha: 1)
+
+        locImg.contentMode = .scaleAspectFit
+        locImg.image = #imageLiteral(resourceName: "location").withRenderingMode(.alwaysTemplate)
+        locImg.tintColor = #colorLiteral(red: 0.685315609, green: 0.7131230235, blue: 0.754701674, alpha: 1)
         
         addSubview(imageView)
-        addSubview(visualEffectView)
         addSubview(titleLabel)
         addSubview(subtitleLabel)
+        addSubview(locImg)
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        imageView.frame = bounds
-        visualEffectView.frame = CGRect(x: 0, y: bounds.height-50, width: bounds.width, height: 50)
-        titleLabel.frame = CGRect(x: 8, y: visualEffectView.y + 5, width: bounds.width - 16, height: 25)
-        subtitleLabel.frame = CGRect(x: 8, y: visualEffectView.y + 30, width: bounds.width - 16, height: 16)
+        self.updateFrame()
     }
+    
+    func updateFrame(){
+        let h:CGFloat = w / 2
+        imageView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: h)
+        titleLabel.frame = CGRect(x: 0, y: h+6, width: bounds.width, height: 24)
+        
+        let subtitleLabelW = subtitleLabel.text!.stringWidth(UIFont.boldSystemFont(ofSize: 13))+5
+        subtitleLabel.frame = CGRect(x: bounds.width-subtitleLabelW, y: titleLabel.y , width: subtitleLabelW, height: 24)
+        locImg.frame = CGRect(x: subtitleLabel.x-20, y: subtitleLabel.y, width: 16, height: 24)
+    }
+    
+    static var viewH:CGFloat = {
+        var h:CGFloat = (KScreenWidth-40)/2
+        h = h + 6 + 24
+        h = h + 15
+        return h
+    }()
+    
 }
 
 class RoundedCardWrapperView: UIView {
@@ -64,23 +89,20 @@ class RoundedCardWrapperView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         if cardView.superview == self {
-            // this is necessary because we used `.useNoSnapshot` modifier on cardView.
-            // we don't want cardView to be resized when Hero is using it for transition
-            cardView.frame = bounds
-        }
+            cardView.frame = bounds}
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
-        isTouched = true
-    }
+        isTouched = true}
+    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
-        isTouched = false
-    }
+        isTouched = false}
+    
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesCancelled(touches, with: event)
-        isTouched = false
-    }
+        isTouched = false}
+    
 }
 
 class OneVC: BaseVC{
@@ -92,11 +114,12 @@ class OneVC: BaseVC{
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        newsCollection = CollectionView(frame: CGRect(x: 0, y: 0, width: KScreenWidth-24, height: (KScreenWidth-24-12)/2+20))
+        self.view.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        
+        newsCollection = CollectionView(frame: CGRect(x: 20, y: 0, width: KScreenWidth-40, height: (KScreenHeight-130)-KTabBarH))
         newsCollection.showsHorizontalScrollIndicator = false
-        newsCollection.isPagingEnabled = true
         newsCollection.delaysContentTouches = false
-        newsCollection.backgroundColor = .KBGGray
+        newsCollection.backgroundColor = .clear
         newsBGView.addSubview(newsCollection);
         
         self.requestNews()
@@ -110,23 +133,22 @@ class OneVC: BaseVC{
                 view.cardView.titleLabel.text = model?.ui_sets["caption_subtitle"] ?? ""
                 view.cardView.subtitleLabel.text = model?.location ?? ""
                 view.cardView.imageView.kf.setImage(with: model?.bigImg.resource, placeholder: UIImage(named: "temp"), options: [.transition(.fade(0.5))])
+                view.cardView.updateFrame()
             })
             
             let sizeSource = { (index: Int, data: Int, collectionSize: CGSize) -> CGSize in
-                let w = (KScreenWidth-24)/2-10
-                return CGSize(width: w, height: w+20)
-            }
+                let w = KScreenWidth-40
+                let h = CardView.viewH
+                return CGSize(width: w, height: h)}
             
             let provider = BasicProvider<Int, RoundedCardWrapperView>(
                 dataSource: dataSource,
                 viewSource: viewSource,
-                sizeSource: sizeSource
-            )
+                sizeSource: sizeSource)
             
             provider.tapHandler = { (context) in
-                self.cellTapped(cell: context.view, data: context.data)
-            }
-            provider.layout = RowLayout("RowLayout", spacing: 10)
+                self.cellTapped(cell: context.view, data: context.data)}
+            
             newsCollection.provider = provider
         }else{
             newsCollection.reloadData()
@@ -155,8 +177,9 @@ class OneVC: BaseVC{
             self.newsArr = resp;
             for i in (0..<self.newsArr.count).reversed(){
                 let m = self.newsArr[i]
-                if m.cat == "14" || m.cat == "16" {
+                if m.ui_sets == nil{
                     self.newsArr.remove(at: i)
+                    continue
                 }
             }
             Cache[.newsList] = self.newsArr
@@ -167,16 +190,16 @@ class OneVC: BaseVC{
     func cellTapped(cell: RoundedCardWrapperView, data: Int) {
         // MARK: Hero configuration
         let model = self.newsArr.bm_object(data)
-        let cardHeroId = "card\(model!.guid ?? 1)"
+//        cell.cardView.hero.id = model!.heroId
         
         cell.cardView.hero.modifiers = [.useNoSnapshot, .spring(stiffness: stiffness, damping: damping)]
-        cell.cardView.hero.id = cardHeroId
+        cell.cardView.imageView.hero.id = model!.heroId + "image"
+        cell.cardView.titleLabel.hero.id = model!.heroId + "title"
+        cell.cardView.locImg.hero.id = model!.heroId + "locImg"
+        cell.cardView.subtitleLabel.hero.id = model!.heroId + "subtitleLabel"
 
-//        let vc = NewsDetailVC()
-//        vc.loadData(model)
-//        vc.hero.isEnabled = true
-//        vc.hero.modalAnimationType = .none
-//
+
+
 //        vc.cardView.hero.id = cardHeroId
 //        vc.cardView.hero.modifiers = [.useNoSnapshot, .spring(stiffness: stiffness, damping: damping)]
 //        vc.cardView.imageView.image = cell.cardView.imageView.image
@@ -190,7 +213,7 @@ class OneVC: BaseVC{
         vc.loadData(self.newsArr)
         vc.hero.isEnabled = true
         vc.hero.modalAnimationType = .none
-        vc.visualEffectView.hero.modifiers = [.fade, .useNoSnapshot]
+        vc.visualEffectView.hero.modifiers = [.fade, .useNoSnapshot, .spring(stiffness: stiffness, damping: damping)]
         present(vc, animated: true, completion: nil)
     }
     
