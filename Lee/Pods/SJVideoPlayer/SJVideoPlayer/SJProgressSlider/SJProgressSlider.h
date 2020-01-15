@@ -2,8 +2,8 @@
 //  SJProgressSlider.h
 //  Pods-SJProgressSlider_Example
 //
-//  Created by 畅三江 on 2017/11/20.
-//  Copyright © 2017年 changsanjiang. All rights reserved.
+//  Created by BlueDancer on 2017/11/20.
+//  Copyright © 2017年 SanJiang. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -179,8 +179,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)sliderWillBeginDragging:(SJProgressSlider *)slider;
 
-
-- (void)slider:(SJProgressSlider *)slider valueDidChange:(CGFloat)value;
+/*!
+ *  正在滑动
+ */
+- (void)sliderDidDrag:(SJProgressSlider *)slider;
 
 /*!
  *  滑动完成
@@ -188,7 +190,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)sliderDidEndDragging:(SJProgressSlider *)slider;
 
 
-
-- (void)sliderDidDrag:(SJProgressSlider *)slider __deprecated_msg("use `slider:valueDidChange:`");
+- (void)sliderValueDidChange:(SJProgressSlider *)slider;
 @end
 NS_ASSUME_NONNULL_END

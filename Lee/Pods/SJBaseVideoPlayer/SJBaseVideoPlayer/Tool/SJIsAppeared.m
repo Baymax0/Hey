@@ -2,7 +2,7 @@
 //  SJIsAppeared.m
 //  Masonry
 //
-//  Created by 畅三江 on 2018/7/10.
+//  Created by BlueDancer on 2018/7/10.
 //
 
 #import "SJIsAppeared.h"
@@ -10,9 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-__kindof UIView *_Nullable sj_getTarget(UIScrollView *scrollView, NSIndexPath *viewAtIndexPath, NSInteger viewTag) {
-    if ( !viewAtIndexPath || !scrollView )
-        return nil;
+__kindof UIView *sj_getTarget(UIScrollView *scrollView, NSIndexPath *viewAtIndexPath, NSInteger viewTag) {
     UIView *target = nil;
     if ( [scrollView isKindOfClass:[UITableView class]] ) {
         UITableViewCell *cell = [(UITableView *)scrollView cellForRowAtIndexPath:viewAtIndexPath];
@@ -29,17 +27,16 @@ bool sj_isAppeared1(NSInteger viewTag, NSIndexPath *viewAtIndexPath, UIScrollVie
     return sj_isAppeared2(sj_getTarget(scrollView, viewAtIndexPath, viewTag), scrollView);
 }
 
-bool sj_isAppeared2(UIView *_Nullable childView, UIView *_Nullable rootView) {
-    return !CGRectIsEmpty(sj_intersection(childView, rootView));
+bool sj_isAppeared2(UIView *_Nullable childView, UIScrollView *_Nullable scrollView) {
+    return !CGRectIsEmpty(sj_intersection(childView, scrollView));
 }
 
-CGRect sj_intersection(UIView *_Nullable childView, UIView *_Nullable rootView) {
-    __unsafe_unretained UIWindow *_Nullable window = rootView.window;
-    if ( childView == nil || rootView == nil || window == nil )
+extern CGRect sj_intersection(UIView *_Nullable childView, UIScrollView *_Nullable scrollView) {
+    if ( !childView || !scrollView || !scrollView.window )
         return CGRectZero;
-    CGRect child = [childView convertRect:childView.bounds toView:window];
-    CGRect root = [rootView convertRect:rootView.bounds toView:window];
-    CGRect ist = CGRectIntersection(child, root);
+    CGRect rect = [childView.superview convertRect:childView.frame toView:scrollView];
+    CGRect rect_max = (CGRect){scrollView.contentOffset, scrollView.frame.size};
+    CGRect ist = CGRectIntersection(rect, rect_max);
     if ( CGRectIsEmpty(ist) || CGRectIsNull(ist) )
         return CGRectZero;
     return ist;

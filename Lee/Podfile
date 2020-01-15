@@ -22,8 +22,8 @@ pod 'LTMorphingLabel'
 pod 'Charts'
 pod 'CollectionKit'
 
-pod 'SJVideoPlayer'
-pod 'SJBaseVideoPlayer'
+pod 'SJVideoPlayer', '2.4.7' 
+pod 'SJBaseVideoPlayer', '2.2.3'
 pod 'Masonry'
 
 end

@@ -220,11 +220,11 @@ extension ReviewVC: BMScrollViewDelegate{
     func bm_scrollView(didSelected index: Int) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
         let editAction = UIAlertAction(title: "编辑", style: UIAlertAction.Style.default){ (action:UIAlertAction)in
-//            let vc = EditImageVC.fromStoryboard() as! EditImageVC
-//            vc.path = self.subFilesUrl[index]
+            let vc = EditImageVC.fromStoryboard() as! EditImageVC
+            vc.path = self.subFilesUrl[index]
             
-            let vc = EditVC()
-            vc.imgPath = self.subFilesUrl[index]
+//            let vc = EditVC()
+//            vc.imgPath = self.subFilesUrl[index]
             self.present(vc, animated: false, completion: nil)
         }
         

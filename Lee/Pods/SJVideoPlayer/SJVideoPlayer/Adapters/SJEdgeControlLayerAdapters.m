@@ -2,7 +2,7 @@
 //  SJEdgeControlLayerAdapters.m
 //  SJVideoPlayer
 //
-//  Created by 畅三江 on 2018/10/24.
+//  Created by BlueDancer on 2018/10/24.
 //  Copyright © 2018 畅三江. All rights reserved.
 //
 
@@ -11,10 +11,10 @@
 #else
 #import "Masonry.h"
 #endif
-#if __has_include(<SJUIKit/SJAttributesFactory.h>)
-#import <SJUIKit/SJAttributesFactory.h>
+#if __has_include(<SJAttributesFactory/SJAttributeWorker.h>)
+#import <SJAttributesFactory/SJAttributeWorker.h>
 #else
-#import "SJAttributesFactory.h"
+#import "SJAttributeWorker.h"
 #endif
 
 #import "SJVideoPlayerControlMaskView.h"

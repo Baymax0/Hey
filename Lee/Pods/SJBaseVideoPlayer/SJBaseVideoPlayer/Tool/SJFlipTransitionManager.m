@@ -2,15 +2,18 @@
 //  SJFlipTransitionManager.h
 //  SJVideoPlayerProject
 //
-//  Created by 畅三江 on 2018/2/2.
-//  Copyright © 2018年 changsanjiang. All rights reserved.
+//  Created by BlueDancer on 2018/2/2.
+//  Copyright © 2018年 SanJiang. All rights reserved.
 //
 
 #import "SJFlipTransitionManager.h"
+#if __has_include(<SJObserverHelper/NSObject+SJObserverHelper.h>)
+#import <SJObserverHelper/NSObject+SJObserverHelper.h>
+#else
+#import "NSObject+SJObserverHelper.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
-static NSNotificationName const SJFlipTransitionManagerTransitioningValueDidChangeNotification = @"SJFlipTransitionManagerTransitioningValueDidChange";
-
 @interface SJFlipTransitionManagerObserver : NSObject<SJFlipTransitionManagerObserver>
 - (instancetype)initWithManager:(id<SJFlipTransitionManager>)mgr;
 @end
@@ -23,22 +26,20 @@ static NSNotificationName const SJFlipTransitionManagerTransitioningValueDidChan
     self = [super init];
     if ( !self )
         return nil;
-    
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(transitioningValueDidChange:) name:SJFlipTransitionManagerTransitioningValueDidChangeNotification object:mgr];
+    [(id)mgr sj_addObserver:self forKeyPath:@"state"];
     return self;
 }
 
-- (void)dealloc {
-    [NSNotificationCenter.defaultCenter removeObserver:self];
-}
-
-- (void)transitioningValueDidChange:(NSNotification *)note {
-    id<SJFlipTransitionManager> mgr = note.object;
-    if ( mgr.isTransitioning ) {
+- (void)observeValueForKeyPath:(NSString *_Nullable)keyPath ofObject:(id _Nullable)object change:(NSDictionary<NSKeyValueChangeKey,id> *_Nullable)change context:(void *_Nullable)context {
+    if ( [change[NSKeyValueChangeOldKey] integerValue] == [change[NSKeyValueChangeNewKey] integerValue] )
+        return;
+    
+    id<SJFlipTransitionManager> mgr = object;
+    if ( mgr.state == SJFlipTransitionStateStart ) {
         if ( _flipTransitionDidStartExeBlock )
             _flipTransitionDidStartExeBlock(mgr);
     }
-    else {
+    else if ( mgr.state == SJFlipTransitionStateEnd ) {
         if ( _flipTransitionDidStopExeBlock )
             _flipTransitionDidStopExeBlock(mgr);
     }
@@ -48,7 +49,7 @@ static NSNotificationName const SJFlipTransitionManagerTransitioningValueDidChan
 @interface SJFlipTransitionManager ()<CAAnimationDelegate>
 @property (nonatomic) SJViewFlipTransition innerFlipTransition;
 @property (nonatomic, strong, readonly) UIView *target;
-@property (nonatomic, getter=isTransitioning) BOOL transitioning;
+@property (nonatomic) SJFlipTransitionState state;
 @end
 
 @implementation SJFlipTransitionManager {
@@ -56,6 +57,7 @@ static NSNotificationName const SJFlipTransitionManagerTransitioningValueDidChan
 }
 
 @synthesize duration = _duration;
+@synthesize state = _state;
 
 - (instancetype)initWithTarget:(UIView *)target {
     self = [super init];
@@ -63,11 +65,18 @@ static NSNotificationName const SJFlipTransitionManagerTransitioningValueDidChan
         return nil;
     _target = target;
     _duration = 1.0;
+    _state = SJFlipTransitionStateEnd;
     return self;
 }
 
 - (id<SJFlipTransitionManagerObserver>)getObserver {
     return [[SJFlipTransitionManagerObserver alloc] initWithManager:self];
+}
+
+- (void)setState:(SJFlipTransitionState)state {
+    if ( state == _state )
+        return;
+    _state = state;
 }
 
 - (SJViewFlipTransition)flipTransition {
@@ -86,11 +95,11 @@ static NSNotificationName const SJFlipTransitionManagerTransitioningValueDidChan
     if ( t == _innerFlipTransition )
         return;
     
-    if ( self.isTransitioning )
+    if ( _state == SJFlipTransitionStateStart )
         return;
     
     _innerFlipTransition = t;
-    self.transitioning = YES;
+    self.state = SJFlipTransitionStateStart;
     
     CATransform3D transform = CATransform3DIdentity;
     switch ( t ) {
@@ -118,17 +127,12 @@ static NSNotificationName const SJFlipTransitionManagerTransitioningValueDidChan
 - (void)animationDidStart:(CAAnimation *)anim { }
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
-    self.transitioning = NO;
+    _state = SJFlipTransitionStateEnd;
     
     if ( _completionHandler ) {
         _completionHandler(self);
         _completionHandler = nil;
     }
-}
-
-- (void)setTransitioning:(BOOL)transitioning {
-    _transitioning = transitioning;
-    [NSNotificationCenter.defaultCenter postNotificationName:SJFlipTransitionManagerTransitioningValueDidChangeNotification object:self];
 }
 @end
 NS_ASSUME_NONNULL_END

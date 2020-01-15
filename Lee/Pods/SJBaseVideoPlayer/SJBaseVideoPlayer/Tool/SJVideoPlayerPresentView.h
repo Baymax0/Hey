@@ -2,23 +2,18 @@
 //  SJVideoPlayerPresentView.h
 //  SJVideoPlayerProject
 //
-//  Created by 畅三江 on 2017/11/29.
-//  Copyright © 2017年 changsanjiang. All rights reserved.
+//  Created by BlueDancer on 2017/11/29.
+//  Copyright © 2017年 SanJiang. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "SJVideoPlayerPresentViewDefines.h"
-#import "SJPlayerGestureControlDefines.h"
-@protocol SJVideoPlayerPresentViewDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
-@interface SJVideoPlayerPresentView : UIView<SJVideoPlayerPresentView, SJPlayerGestureControl>
-@property (nonatomic, weak, nullable) id<SJVideoPlayerPresentViewDelegate> delegate;
-@end
+@interface SJVideoPlayerPresentView : UIView
+@property (nonatomic, strong, readonly) UIImageView *placeholderImageView;
 
-@protocol SJVideoPlayerPresentViewDelegate <NSObject>
-@optional
-- (void)presentViewDidLayoutSubviews:(SJVideoPlayerPresentView *)presentView;
-- (void)presentViewWillMoveToWindow:(nullable UIWindow *)window;
+@property (nonatomic, readonly) BOOL placeholderImageViewIsHidden;
+- (void)showPlaceholder;
+- (void)hiddenPlaceholder;
 @end
 NS_ASSUME_NONNULL_END

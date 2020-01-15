@@ -10,16 +10,15 @@ import UIKit
 import Hero
 import Kingfisher
 import CollectionKit
+import LTMorphingLabel
 
 class NewsCollectView: UIView {
     
     let timeLabel = UILabel()
-
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
-    let imageView = UIImageView(image: #imageLiteral(resourceName: "montreal"))
+    let imageView = UIImageView()
     let locImg = UIImageView()
-    
     let contentTV = UITextView()
 
     required init?(coder aDecoder: NSCoder) { fatalError() }
@@ -27,11 +26,10 @@ class NewsCollectView: UIView {
         super.init(frame: frame)
         clipsToBounds = true
         self.backgroundColor = #colorLiteral(red: 0.1450774968, green: 0.1451098621, blue: 0.1450754404, alpha: 1)
-        layer.cornerRadius = 3;
-        
+        self.backgroundColor = .clear
         timeLabel.font = UIFont(name: "Futura-Medium", size: 14)
         timeLabel.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-
+        
         titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
         titleLabel.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         subtitleLabel.font = UIFont.boldSystemFont(ofSize: 13)
@@ -47,13 +45,12 @@ class NewsCollectView: UIView {
         contentTV.isEditable = false
         contentTV.backgroundColor = .clear
         
-        addSubview(timeLabel)
+//      addSubview(timeLabel)
         addSubview(imageView)
         addSubview(titleLabel)
         addSubview(subtitleLabel)
         addSubview(locImg)
         addSubview(contentTV)
-
     }
     
     override func layoutSubviews() {
@@ -65,7 +62,7 @@ class NewsCollectView: UIView {
         let bound = bounds
         if let _ = imageView.image{
             //shijian
-            timeLabel.frame = CGRect(x: 20, y: 50, width: bound.width, height:  30)
+            timeLabel.frame = CGRect(x: 20, y: 50, width: 140, height:  30)
             // 图片
             imageView.frame = CGRect(x: 0, y: 80, width: bound.width, height:  bound.width * 2 / 3)
             // 标题
@@ -74,14 +71,20 @@ class NewsCollectView: UIView {
             let subtitleLabelW = subtitleLabel.text!.stringWidth(UIFont.boldSystemFont(ofSize: 13))+5
             subtitleLabel.frame = CGRect(x: bounds.width-subtitleLabelW-20, y: titleLabel.y , width: subtitleLabelW, height: 24)
             locImg.frame = CGRect(x: subtitleLabel.x-20, y: subtitleLabel.y, width: 16, height: 24)
-            
+
             let contentTVY = titleLabel.maxY+1
             contentTV.frame = CGRect(x: 13, y: contentTVY, width: KScreenWidth-26, height: KScreenHeight-contentTVY)
         }
     }
 }
 
+
 class NewsDetailCollectionVC: BaseVC {
+    
+    var titleView = UIView()
+//    let timeLabel = UILabel()
+    let timeLabel = LTMorphingLabel()
+    let tagLab = LTMorphingLabel()
 
     // 背景 过度中虚化用
     let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
@@ -94,11 +97,9 @@ class NewsDetailCollectionVC: BaseVC {
     override var preferredStatusBarStyle: UIStatusBarStyle{
         return .lightContent}
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .clear
-        
     }
     
     func loadData(_ modelArr : Array<IdailyNewsModel>!){
@@ -107,8 +108,15 @@ class NewsDetailCollectionVC: BaseVC {
     }
     
     func initUI(){
+        self.view.backgroundColor = .clear
+
         visualEffectView.frame = CGRect(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight)
         view.insertSubview(visualEffectView, at: 0)
+        
+        let v = UIView(frame: self.view.bounds)
+        v.backgroundColor = #colorLiteral(red: 0.1450774968, green: 0.1451098621, blue: 0.1450754404, alpha: 1)
+        v.hero.modifiers = [.fade, .spring(stiffness: stiffness, damping: damping)]
+        view.addSubview(v)
         
         newsCollection = CollectionView(frame: CGRect(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight))
         newsCollection.showsHorizontalScrollIndicator = false
@@ -145,6 +153,7 @@ class NewsDetailCollectionVC: BaseVC {
             view.contentTV.attributedText = attributedString
 
             view.updateFrame()
+            
             //-------- 转场动画 --------
             view.hero.modifiers = [.fade, .spring(stiffness: stiffness, damping: damping)]
 //            view.hero.id = model!.heroId
@@ -161,8 +170,6 @@ class NewsDetailCollectionVC: BaseVC {
             
             view.subtitleLabel.hero.id = model!.heroId + "subtitleLabel" //title
             view.subtitleLabel.hero.modifiers = [.fade, .spring(stiffness: stiffness, damping: damping)]
-            
-            
         })
         
         let sizeSource = { (index: Int, data: Int, collectionSize: CGSize) -> CGSize in
@@ -177,13 +184,44 @@ class NewsDetailCollectionVC: BaseVC {
         newsCollection.provider = provider
         newsCollection.reloadData()
         newsCollection.setContentOffset(CGPoint(x: KScreenWidth * CGFloat(selectedIndex), y: 0), animated: false)
+        
+        // 头部
+        let model = self.newsArr.bm_object(selectedIndex)
+
+        titleView.frame = CGRect(x: 0, y: 0, width: KScreenWidth, height: 80)
+        titleView.backgroundColor = .clear
+        titleView.hero.modifiers = [.fade, .cascade, .spring(stiffness: stiffness, damping: damping),]
+        self.view.addSubview(titleView)
+        
+        timeLabel.font = UIFont(name: "Futura-Medium", size: 13)
+        timeLabel.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        timeLabel.morphingEffect = .evaporate
+        timeLabel.frame = CGRect(x: 20, y: 50+5, width: 140, height:  22)
+        titleView.addSubview(timeLabel)
+        
+        tagLab.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        tagLab.font = UIFont.boldSystemFont(ofSize: 12)
+        tagLab.layer.borderColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        tagLab.layer.borderWidth = 1
+        tagLab.layer.cornerRadius = 4
+        tagLab.textAlignment = .center
+        tagLab.morphingEffect = .evaporate
+        tagLab.frame = CGRect(x: 20, y: 50 + 8, width: KScreenWidth, height:  16)
+        tagLab.hero.modifiers = [.fade, .spring(stiffness: stiffness, damping: damping),]
+        titleView.addSubview(tagLab)
+        
+        timeLabel.hero.id = model!.heroId + "time"
+        timeLabel.hero.modifiers = [.source(heroID: timeLabel.hero.id!), .spring(stiffness: stiffness, damping: damping),]
+        tagLab.hero.id = model!.heroId + "tag"
+        tagLab.hero.modifiers = [.source(heroID: tagLab.hero.id!), .spring(stiffness: stiffness, damping: damping),]
+        
+        showInfo(selectedIndex)
+        
+        newsCollection.delegate = self
     }
     
-
     @objc func handleBackGes(gr: UIScreenEdgePanGestureRecognizer) {
-        if finishHero{
-            return
-        }
+        if finishHero{  return  }
         switch gr.state {
         case .began:
             dismiss(animated: true, completion: nil)
@@ -205,5 +243,36 @@ class NewsDetailCollectionVC: BaseVC {
             }
         }
     }
-
 }
+
+
+
+
+extension NewsDetailCollectionVC:UIScrollViewDelegate{
+    
+    
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        let i = Int((targetContentOffset.pointee.x + 1) / KScreenWidth)
+        self.showInfo(i)
+    }
+    
+    
+    func showInfo(_ i:Int){
+        let model = self.newsArr.bm_object(i)
+        timeLabel.text = model?.title ?? ""
+        
+        tagLab.text = model?.tags.bm_object(0)?["name"] as? String
+        var r = self.tagLab.frame
+        r.size.width = CGFloat(self.tagLab.text!.stringWidth(UIFont.boldSystemFont(ofSize: 12)) + 10)
+        r.origin.x = KScreenWidth - r.size.width - 20
+        UIView.animate(withDuration: 0.15) {
+            self.tagLab.frame = r
+        }
+    }
+    
+    
+    
+    
+}
+

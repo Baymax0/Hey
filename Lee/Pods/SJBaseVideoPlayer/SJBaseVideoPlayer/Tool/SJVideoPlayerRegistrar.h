@@ -2,8 +2,8 @@
 //  SJVideoPlayerRegistrar.h
 //  SJVideoPlayerProject
 //
-//  Created by 畅三江 on 2017/12/5.
-//  Copyright © 2017年 changsanjiang. All rights reserved.
+//  Created by BlueDancer on 2017/12/5.
+//  Copyright © 2017年 SanJiang. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -11,8 +11,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSUInteger, SJVideoPlayerAppState) {
-    SJVideoPlayerAppState_Active,
-    SJVideoPlayerAppState_Inactive,
+    SJVideoPlayerAppState_ResignActive,
+    SJVideoPlayerAppState_BecomeActive,
+    SJVideoPlayerAppState_Forground,  // 从后台进入前台
     SJVideoPlayerAppState_Background, // 从前台进入后台
 };
 

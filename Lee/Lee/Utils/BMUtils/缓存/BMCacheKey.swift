@@ -19,6 +19,11 @@ extension BMDefaultsKeys{
     // userId 和 sessionId 已封装进 请求库
     static let userId = BMCacheKey<String?>("userId")
     static let sessionId = BMCacheKey<String?>("sessionId")
+    static let foldSetting = BMCacheKey<FoldSetting?>("foldSetting")
+    static let ImgTags = BMCacheKey<String?>("ImgTags")
+
+    
+    static let imageTagsDic = BMCacheKey<Dictionary<String,Any>?>("imageTagsDic")
     
     static let p = BMCacheKey<Person?>("sessionId2")
     static let pList = BMCacheKey<Array<Person>?>("sessionId2")

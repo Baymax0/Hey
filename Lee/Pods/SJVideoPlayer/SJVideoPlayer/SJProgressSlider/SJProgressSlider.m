@@ -2,8 +2,8 @@
 //  SJProgressSlider.m
 //  Pods-SJProgressSlider_Example
 //
-//  Created by 畅三江 on 2017/11/20.
-//  Copyright © 2017年 changsanjiang. All rights reserved.
+//  Created by BlueDancer on 2017/11/20.
+//  Copyright © 2017年 SanJiang. All rights reserved.
 //
 
 #import "SJProgressSlider.h"
@@ -86,21 +86,26 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)handlePanGR:(UIPanGestureRecognizer *)pan {
-    if ( pan.state == UIGestureRecognizerStateBegan ) {
-        _isDragging = YES;
-        if ( [self.delegate respondsToSelector:@selector(sliderWillBeginDragging:)] ) {
-            [self.delegate sliderWillBeginDragging:self];
-        }
-    }
-    
-    if ( _isCancelled == NO ) {
-        CGFloat offset = [pan translationInView:pan.view].x;
-        CGFloat add = ( offset / _containerView.bounds.size.width) * ( _maxValue - _minValue );
-        [self setValue:self.value + add animated:YES];
-        [pan setTranslation:CGPointZero inView:pan.view];
-    }
+    CGFloat offset = [pan translationInView:pan.view].x;
+    CGFloat add = ( offset / _containerView.bounds.size.width) * ( _maxValue - _minValue );
+    [self setValue:self.value + add animated:YES];
+    [pan setTranslation:CGPointZero inView:pan.view];
     
     switch ( pan.state ) {
+        case UIGestureRecognizerStateBegan: {
+            _isDragging = YES;
+            if ( [self.delegate respondsToSelector:@selector(sliderWillBeginDragging:)] ) {
+                [self.delegate sliderWillBeginDragging:self];
+            }
+        }
+        case UIGestureRecognizerStateChanged: {
+            if ( _isCancelled )
+                return;
+            if ( [self.delegate respondsToSelector:@selector(sliderDidDrag:)] ) {
+                [self.delegate sliderDidDrag:self];
+            }
+        }
+            break;
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateFailed:
         case UIGestureRecognizerStateCancelled: {
@@ -111,7 +116,8 @@ NS_ASSUME_NONNULL_BEGIN
             _isCancelled = NO;
         }
             break;
-        default: break;
+        default:
+            break;
     }
 }
 
@@ -185,8 +191,8 @@ NS_ASSUME_NONNULL_BEGIN
         [self _needUpdateTraceLayout];
     }
     
-    if ( [self.delegate respondsToSelector:@selector(slider:valueDidChange:)] ) {
-        [self.delegate slider:self valueDidChange:_value];
+    if ( [self.delegate respondsToSelector:@selector(sliderValueDidChange:)] ) {
+        [self.delegate sliderValueDidChange:self];
     }
 }
 

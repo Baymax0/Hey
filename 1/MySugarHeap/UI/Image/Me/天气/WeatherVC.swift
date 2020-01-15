@@ -82,7 +82,6 @@ class WeatherVC: BaseVC , ChartViewDelegate {
             return
         }
         self.nowWenduLab.text = (weatherModel?.temp_curr)! + "°"
-
         futureWeather = BMCache.getModel(.futureWeather, type: WeatherBase3.self)
 
         if futureWeather != nil && futureWeather.date != nil{

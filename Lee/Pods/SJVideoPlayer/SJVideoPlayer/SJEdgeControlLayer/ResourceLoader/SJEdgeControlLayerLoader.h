@@ -2,8 +2,8 @@
 //  SJEdgeControlLayerLoader.h
 //  SJVideoPlayerProject
 //
-//  Created by 畅三江 on 2017/11/29.
-//  Copyright © 2017年 changsanjiang. All rights reserved.
+//  Created by BlueDancer on 2017/11/29.
+//  Copyright © 2017年 SanJiang. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -17,7 +17,6 @@ UIKIT_EXTERN NSString *const SJVideoPlayer_NotReachablePrompt;
 UIKIT_EXTERN NSString *const SJVideoPlayer_ReachableViaWWANPrompt;
 UIKIT_EXTERN NSString *const SJVideoPlayer_NotReachableText;
 UIKIT_EXTERN NSString *const SJVideoPlayer_NotReachableButtonText;
-UIKIT_EXTERN NSString *const SJVideoPlayer_LiveText;
 
 @interface SJEdgeControlLayerLoader : NSObject
 

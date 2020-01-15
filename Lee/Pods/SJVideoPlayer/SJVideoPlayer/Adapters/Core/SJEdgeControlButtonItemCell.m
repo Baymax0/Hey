@@ -2,7 +2,7 @@
 //  SJEdgeControlButtonItemCell.m
 //  SJVideoPlayer
 //
-//  Created by 畅三江 on 2018/10/20.
+//  Created by BlueDancer on 2018/10/20.
 //  Copyright © 2018 畅三江. All rights reserved.
 //
 
@@ -10,11 +10,38 @@
 #import "SJEdgeControlButtonItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
-@interface _SJEdgeControlButtonItemCell_CustomView : SJEdgeControlButtonItemCell
+@interface _SJEdgeControlButtonItemCell_Blank : SJEdgeControlButtonItemCell
+@property (nonatomic, strong, readonly) UIButton *backgroundButton;
+@end
+@implementation _SJEdgeControlButtonItemCell_Blank
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if ( !self ) return nil;
+    _backgroundButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_backgroundButton addTarget:self action:@selector(clickedBackgroundBtn:) forControlEvents:UIControlEventTouchUpInside];
+    _backgroundButton.frame = self.contentView.bounds;
+    _backgroundButton.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    [self.contentView addSubview:_backgroundButton];
+    return self;
+}
+
+- (void)clickedBackgroundBtn:(UIButton *)btn {
+    if ( self.item.hidden )
+        return;
+    [self.item performAction];
+}
+@end
+
+@interface _SJEdgeControlButtonItemCell_CustomView : _SJEdgeControlButtonItemCell_Blank
 @end
 
 @implementation _SJEdgeControlButtonItemCell_CustomView
 - (void)setItem:(SJEdgeControlButtonItem *_Nullable)item {
+    SJEdgeControlButtonItem *oldItem = self.item;
+    if ( oldItem.customView != item.customView ) {
+        [oldItem.customView removeFromSuperview];
+    }
+    item.customView.userInteractionEnabled = (nil == item.target);
     item.customView.frame = self.contentView.bounds;
     item.customView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.contentView addSubview:item.customView];
@@ -22,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 @end
 
-@interface _SJEdgeControlButtonItemCell_Title : SJEdgeControlButtonItemCell
+@interface _SJEdgeControlButtonItemCell_Title : _SJEdgeControlButtonItemCell_Blank
 @property (nonatomic, strong, readonly) UILabel *titleLabel;
 @end
 @implementation _SJEdgeControlButtonItemCell_Title
@@ -47,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 @end
 
-@interface _SJEdgeControlButtonItemCell_Image : SJEdgeControlButtonItemCell
+@interface _SJEdgeControlButtonItemCell_Image : _SJEdgeControlButtonItemCell_Blank
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 @end
 @implementation _SJEdgeControlButtonItemCell_Image
@@ -79,8 +106,12 @@ static NSString *kEmpty = @"A";
 static NSString *kImage = @"B";
 static NSString *kTitle = @"C";
 static NSString *kCustomView = @"D";
+static NSString *kBlank = @"E";
 + (instancetype)cellWithCollectionView:(UICollectionView *)collectionView forIndexPath:(NSIndexPath *)indexPath willSetItem:(SJEdgeControlButtonItem *)item {
-    if ( item.image )
+    if ( item.hidden )
+        return [collectionView dequeueReusableCellWithReuseIdentifier:kEmpty
+                                                         forIndexPath:indexPath];
+    else if ( item.image )
         return [collectionView dequeueReusableCellWithReuseIdentifier:kImage
                                                          forIndexPath:indexPath];
     else if ( item.title )
@@ -90,7 +121,7 @@ static NSString *kCustomView = @"D";
         return [collectionView dequeueReusableCellWithReuseIdentifier:kCustomView
                                                          forIndexPath:indexPath];
     else
-        return [collectionView dequeueReusableCellWithReuseIdentifier:kEmpty
+        return [collectionView dequeueReusableCellWithReuseIdentifier:kBlank
                                                          forIndexPath:indexPath];
 }
 
@@ -103,6 +134,7 @@ static NSString *kCustomView = @"D";
     [collectionView registerClass:[_SJEdgeControlButtonItemCell_Image class] forCellWithReuseIdentifier:kImage];
     [collectionView registerClass:[_SJEdgeControlButtonItemCell_Title class] forCellWithReuseIdentifier:kTitle];
     [collectionView registerClass:[_SJEdgeControlButtonItemCell_CustomView class] forCellWithReuseIdentifier:kCustomView];
+    [collectionView registerClass:[_SJEdgeControlButtonItemCell_Blank class] forCellWithReuseIdentifier:kBlank];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {

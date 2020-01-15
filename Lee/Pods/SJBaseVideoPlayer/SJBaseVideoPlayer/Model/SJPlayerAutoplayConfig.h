@@ -2,7 +2,7 @@
 //  SJPlayerAutoplayConfig.h
 //  Masonry
 //
-//  Created by 畅三江 on 2018/7/10.
+//  Created by BlueDancer on 2018/7/10.
 //
 
 #import <Foundation/Foundation.h>
@@ -28,7 +28,7 @@ typedef enum : NSUInteger {
 /// 滚动的动画类型
 /// default is .Middle;
 @property (nonatomic) SJAutoplayScrollAnimationType animationType;
-/// default is .Middle;
+/// default is .Top
 @property (nonatomic) SJAutoplayPosition autoplayPosition;
 
 @property (nonatomic, readonly) NSInteger playerSuperviewTag;

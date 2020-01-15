@@ -40,6 +40,11 @@ extension UIColor {
         return UIColor.init(red: red/255.0, green: green/255.0, blue: blue/255.0, alpha: 1)
     }
     
+    /// RGB 0～255
+    open class func rgbGray(_ same:CGFloat) -> UIColor {
+        return UIColor.init(red: same/255.0, green: same/255.0, blue: same/255.0, alpha: 1)
+    }
+    
     
     /// 支持“#”， 三位"FFF"，六位"FFFFFF"
     open class func hex(_ hex:String) -> UIColor {

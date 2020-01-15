@@ -14,13 +14,10 @@
 #endif
 #if __has_include(<SJBaseVideoPlayer/SJBaseVideoPlayer.h>)
 #import <SJBaseVideoPlayer/SJBaseVideoPlayer.h>
+#import <SJBaseVideoPlayer/SJBaseVideoPlayer+PlayStatus.h>
 #else
-#import "SJBaseVideoPlayer.h"  
-#endif
-#if __has_include(<SJUIKit/SJAttributesFactory.h>)
-#import <SJUIKit/SJAttributesFactory.h>
-#else
-#import "SJAttributesFactory.h"
+#import "SJBaseVideoPlayer.h"
+#import "SJBaseVideoPlayer+PlayStatus.h"
 #endif
 
 #import "UIView+SJAnimationAdded.h"
@@ -49,12 +46,12 @@ static SJControlLayerIdentifier SJFilmEditingGenerateResultControlLayerIdentifie
 @interface SJFilmEditingControlLayer ()
 @property (nonatomic, strong, readonly) SJFilmEditingSettingsUpdatedObserver *settingsUpdatedObserver;
 @property (nonatomic, strong, nullable) SJControlLayerSwitcher *switcher;
-@property (nonatomic, weak, nullable) __kindof SJBaseVideoPlayer *player;
+@property (nonatomic, strong, readonly) UITapGestureRecognizer *tap;
+@property (nonatomic, weak, nullable) SJBaseVideoPlayer *player;
 @end
 
 @implementation SJFilmEditingControlLayer 
 @synthesize restarted = _restarted;
-
 - (void)restartControlLayer {
     _restarted = YES;
     
@@ -76,16 +73,16 @@ static SJControlLayerIdentifier SJFilmEditingGenerateResultControlLayerIdentifie
     if (self) {
         [self _setupViews];
         [self _initializeObserver];
+        [self _initializeTapGesture];
     }
     return self;
 }
 
 - (void)clickedScreenshotItem {
-    if ( _player.assetStatus != SJAssetStatusReadyToPlay ) {
-        [self.player.prompt show:[NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-            make.append(@"开启失败");
-            make.textColor(UIColor.whiteColor);
-        }]];
+    if ( [self.player playStatus_isUnknown] ||
+         [self.player playStatus_isPrepare] ||
+         [self.player playStatus_isInactivity_ReasonPlayFailed] ) {
+        [self.player showTitle:@"开启失败"];
         return;
     }
     
@@ -95,7 +92,7 @@ static SJControlLayerIdentifier SJFilmEditingGenerateResultControlLayerIdentifie
         }
     }
     
-//    [self exitControlLayer];
+    [self exitControlLayer];
     
     [self _generateResultWithParameters:[self _createParametersWithOperation:SJVideoPlayerFilmEditingOperation_Screenshot range:kCMTimeRangeZero]];
 }
@@ -107,8 +104,34 @@ static SJControlLayerIdentifier SJFilmEditingGenerateResultControlLayerIdentifie
         }
     }
     
-//    [self exitControlLayer];
-
+    [self exitControlLayer];
+    
+    if ( ![self.switcher controlLayerForIdentifier:SJFilmEditingInVideoRecordingsControlLayerIdentifier] ) {
+        SJFilmEditingInVideoRecordingsControlLayer *controlLayer = [SJFilmEditingInVideoRecordingsControlLayer new];
+        SJControlLayerCarrier *carrier = [[SJControlLayerCarrier alloc] initWithIdentifier:SJFilmEditingInVideoRecordingsControlLayerIdentifier controlLayer:controlLayer];
+        [self.switcher addControlLayer:carrier];
+        
+        __weak typeof(self) _self = self;
+        controlLayer.statusDidChangeExeBlock = ^(SJFilmEditingInVideoRecordingsControlLayer * _Nonnull control) {
+            __strong typeof(_self) self = _self;
+            if ( !self ) return ;
+            switch ( control.status ) {
+                case SJFilmEditingStatus_Unknown:
+                case SJFilmEditingStatus_Recording:
+                case SJFilmEditingStatus_Paused:
+                    break;
+                case SJFilmEditingStatus_Cancelled: {
+                    [self cancel];
+                }
+                    break;
+                case SJFilmEditingStatus_Finished: {
+                    [self _generateResultWithParameters:[self _createParametersWithOperation:SJVideoPlayerFilmEditingOperation_Export range:control.range]];
+                }
+                    break;
+            }
+        };
+    }
+    
     [self.switcher switchControlLayerForIdentitfier:SJFilmEditingInVideoRecordingsControlLayerIdentifier];
 }
 
@@ -119,13 +142,47 @@ static SJControlLayerIdentifier SJFilmEditingGenerateResultControlLayerIdentifie
         }
     }
     
-//    [self exitControlLayer];
+    [self exitControlLayer];
+    
+    if ( ![self.switcher controlLayerForIdentifier:SJFilmEditingInGIFRecordingsControlLayerIdentifier] ) {
+        SJFilmEditingInGIFRecordingsControlLayer *controlLayer = [SJFilmEditingInGIFRecordingsControlLayer new];
+        SJControlLayerCarrier *carrier = [[SJControlLayerCarrier alloc] initWithIdentifier:SJFilmEditingInGIFRecordingsControlLayerIdentifier controlLayer:controlLayer];
+        [self.switcher addControlLayer:carrier];
+        
+        __weak typeof(self) _self = self;
+        controlLayer.statusDidChangeExeBlock = ^(SJFilmEditingInGIFRecordingsControlLayer * _Nonnull control) {
+            __strong typeof(_self) self = _self;
+            if ( !self ) return ;
+            switch ( control.status ) {
+                case SJFilmEditingStatus_Unknown:
+                case SJFilmEditingStatus_Recording:
+                case SJFilmEditingStatus_Paused:
+                    break;
+                case SJFilmEditingStatus_Cancelled: {
+                    [self cancel];
+                }
+                    break;
+                case SJFilmEditingStatus_Finished: {
+                    [self _generateResultWithParameters:[self _createParametersWithOperation:SJVideoPlayerFilmEditingOperation_GIF range:control.range]];
+                }
+                    break;
+            }
+        };
+    }
     
     [self.switcher switchControlLayerForIdentitfier:SJFilmEditingInGIFRecordingsControlLayerIdentifier];
 }
 
+- (void)tapHandler:(UITapGestureRecognizer *)tap {
+    CGPoint location = [tap locationInView:tap.view];
+    if ( ![self.rightAdapter itemContainsPoint:location] ) {
+        if ( _cancelledOperationExeBlock )
+            _cancelledOperationExeBlock(self);
+    }
+}
+
 - (void)cancel {
-//    [[self.switcher controlLayerForIdentifier:self.switcher.currentIdentifier] exitControlLayer];
+    [[self.switcher controlLayerForIdentifier:self.switcher.currentIdentifier].controlLayer exitControlLayer];
     _switcher = nil;
     if ( self.cancelledOperationExeBlock ) {
         self.cancelledOperationExeBlock(self);
@@ -142,12 +199,24 @@ static SJControlLayerIdentifier SJFilmEditingGenerateResultControlLayerIdentifie
 
 - (void)_generateResultWithParameters:(id<SJVideoPlayerFilmEditingParameters>)parameters {
     [_player pause];
+    if ( ![self.switcher controlLayerForIdentifier:SJFilmEditingGenerateResultControlLayerIdentifier] ) {
+        SJFilmEditingGenerateResultControlLayer *controlLayer = [SJFilmEditingGenerateResultControlLayer new];
+        SJControlLayerCarrier *carrier = [[SJControlLayerCarrier alloc] initWithIdentifier:SJFilmEditingGenerateResultControlLayerIdentifier controlLayer:controlLayer];
+        [self.switcher addControlLayer:carrier];
+        
+        __weak typeof(self) _self = self;
+        controlLayer.cancelledOperationExeBlock = ^(SJFilmEditingGenerateResultControlLayer * _Nonnull control) {
+            __strong typeof(_self) self = _self;
+            if ( !self ) return ;
+            [self cancel];
+        };
+    }
     
-    [self.switcher switchControlLayerForIdentitfier:SJFilmEditingGenerateResultControlLayerIdentifier];
-    SJFilmEditingGenerateResultControlLayer *control = (id)[self.switcher controlLayerForIdentifier:SJFilmEditingGenerateResultControlLayerIdentifier];
+    SJFilmEditingGenerateResultControlLayer *control = (id)[self.switcher controlLayerForIdentifier:SJFilmEditingGenerateResultControlLayerIdentifier].controlLayer;
     control.parameters = parameters;
     control.shareItems = self.config.resultShareItems;
     control.clickedResultShareItemExeBlock = self.config.clickedResultShareItemExeBlock;
+    [self.switcher switchControlLayerForIdentitfier:SJFilmEditingGenerateResultControlLayerIdentifier];
 }
 #pragma mark -
 
@@ -202,66 +271,11 @@ static SJControlLayerIdentifier SJFilmEditingGenerateResultControlLayerIdentifie
 
 - (void)_initializeSwitcher:(__kindof SJBaseVideoPlayer *)videoPlayer {
     _switcher = [[SJControlLayerSwitcher alloc] initWithPlayer:videoPlayer];
-    __weak typeof(self) _self = self;
-    _switcher.resolveControlLayer = ^id<SJControlLayer> _Nullable(SJControlLayerIdentifier identifier) {
-        __strong typeof(_self) self = _self;
-        if ( !self ) return nil;
-        if ( identifier == SJFilmEditingInGIFRecordingsControlLayerIdentifier ) {
-            SJFilmEditingInGIFRecordingsControlLayer *controlLayer = [SJFilmEditingInGIFRecordingsControlLayer new];
-            controlLayer.statusDidChangeExeBlock = ^(SJFilmEditingInGIFRecordingsControlLayer * _Nonnull control) {
-                __strong typeof(_self) self = _self;
-                if ( !self ) return ;
-                switch ( control.status ) {
-                    case SJFilmEditingStatus_Unknown:
-                    case SJFilmEditingStatus_Recording:
-                    case SJFilmEditingStatus_Paused:
-                        break;
-                    case SJFilmEditingStatus_Cancelled: {
-                        [self cancel];
-                    }
-                        break;
-                    case SJFilmEditingStatus_Finished: {
-                        [self _generateResultWithParameters:[self _createParametersWithOperation:SJVideoPlayerFilmEditingOperation_GIF range:control.range]];
-                    }
-                        break;
-                }
-            };
-            return controlLayer;
-        }
-        else if ( identifier == SJFilmEditingInVideoRecordingsControlLayerIdentifier ) {
-            SJFilmEditingInVideoRecordingsControlLayer *controlLayer = [SJFilmEditingInVideoRecordingsControlLayer new];
-            controlLayer.statusDidChangeExeBlock = ^(SJFilmEditingInVideoRecordingsControlLayer * _Nonnull control) {
-                __strong typeof(_self) self = _self;
-                if ( !self ) return ;
-                switch ( control.status ) {
-                    case SJFilmEditingStatus_Unknown:
-                    case SJFilmEditingStatus_Recording:
-                    case SJFilmEditingStatus_Paused:
-                        break;
-                    case SJFilmEditingStatus_Cancelled: {
-                        [self cancel];
-                    }
-                        break;
-                    case SJFilmEditingStatus_Finished: {
-                        [self _generateResultWithParameters:[self _createParametersWithOperation:SJVideoPlayerFilmEditingOperation_Export range:control.range]];
-                    }
-                        break;
-                }
-            };
-            return controlLayer;
-        }
-        else if ( identifier == SJFilmEditingGenerateResultControlLayerIdentifier ) {
-            SJFilmEditingGenerateResultControlLayer *controlLayer = [SJFilmEditingGenerateResultControlLayer new];
-            controlLayer.cancelledOperationExeBlock = ^(SJFilmEditingGenerateResultControlLayer * _Nonnull control) {
-                __strong typeof(_self) self = _self;
-                if ( !self ) return ;
-                [self cancel];
-            };
-            return controlLayer;
-        }
+}
 
-        return nil;
-    };
+- (void)_initializeTapGesture {
+    _tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandler:)];
+    [self.controlView addGestureRecognizer:_tap];
 }
 
 - (void)setConfig:(nullable SJVideoPlayerFilmEditingConfig *)config {
@@ -287,12 +301,6 @@ static SJControlLayerIdentifier SJFilmEditingGenerateResultControlLayerIdentifie
 }
 
 - (BOOL)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer gestureRecognizerShouldTrigger:(SJPlayerGestureType)type location:(CGPoint)location {
-    if ( type == SJPlayerGestureType_SingleTap ) {
-        if ( ![self.rightAdapter itemContainsPoint:location] ) {
-            if ( _cancelledOperationExeBlock )
-                _cancelledOperationExeBlock(self);
-        }
-    }
     return NO;
 }
 - (void)controlLayerNeedAppear:(__kindof SJBaseVideoPlayer *)videoPlayer { }

@@ -7,8 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-
-NS_ASSUME_NONNULL_BEGIN
 extern NSNotificationName const SJFilmEditingSettingsUpdatedNotification;
 @class UIImage;
 
@@ -32,7 +30,7 @@ extern NSString *const SJFilmEditing_uploadSuccessText;
 /// shared
 + (instancetype)commonSettings;
 - (void)reset;
-- (void)postUpdateNotify;
+
 @property (class, nonatomic, copy, readonly) void(^update)(void(^block)(SJFilmEditingSettings *settings));
 
 @property (nonatomic, strong) UIImage *screenshotBtnImage;
@@ -97,4 +95,3 @@ extern NSString *const SJFilmEditing_uploadSuccessText;
 @interface SJFilmEditingSettingsUpdatedObserver : NSObject
 @property (nonatomic, copy, nullable) void(^updatedExeBlock)(SJFilmEditingSettings *settings);
 @end
-NS_ASSUME_NONNULL_END

@@ -14,6 +14,7 @@ protocol ApiManager {
     var api: String {get}
     var orignParam:Dictionary<String,Any>{get}
 }
+
 extension ApiManager{
     var url: URL {
         return "\(self.host)\(self.api)".url()!

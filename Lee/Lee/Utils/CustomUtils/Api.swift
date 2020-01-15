@@ -20,3 +20,20 @@ enum NewsApi:String, ApiManager{
     var method: HTTPMethod { return .get}
 }
 
+enum WeatherApi: ApiManager{
+    // 同域名的 添加枚举类型  值为路由名称
+    case city(String)
+    
+    //域名
+    var host: String { return "http://t.weather.sojson.com/api/weather/city/" }
+    var api: String {
+        switch self {
+        case .city(let cityId):
+            return cityId
+        default:
+            return "101030100"
+        }
+    }
+    var url: URL { return URL.init(string: "\(self.host)\(self.api)")! }
+    var method: HTTPMethod { return .get}
+}

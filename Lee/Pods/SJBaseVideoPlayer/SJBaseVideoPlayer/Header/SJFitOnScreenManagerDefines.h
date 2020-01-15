@@ -2,7 +2,7 @@
 //  SJFitOnScreenManagerDefines.h
 //  SJBaseVideoPlayer
 //
-//  Created by 畅三江 on 2018/12/31.
+//  Created by BlueDancer on 2018/12/31.
 //
 
 #ifndef SJFitOnScreenManagerProtocol_h
@@ -10,17 +10,19 @@
 #import <UIKit/UIKit.h>
 @protocol SJFitOnScreenManagerObserver;
 
-NS_ASSUME_NONNULL_BEGIN
+typedef enum : NSUInteger {
+    SJFitOnScreenStateStart,
+    SJFitOnScreenStateEnd,
+} SJFitOnScreenState;
+
 @protocol SJFitOnScreenManager <NSObject>
 - (instancetype)initWithTarget:(__strong UIView *)target targetSuperview:(__strong UIView *)superview;
 - (id<SJFitOnScreenManagerObserver>)getObserver;
 
-@property (nonatomic, readonly, getter=isTransitioning) BOOL transitioning;
+@property (nonatomic, readonly) SJFitOnScreenState state;
 @property (nonatomic) NSTimeInterval duration;
 
-///
-/// 是否已充满屏幕
-///
+/// Fit On Screen
 @property (nonatomic, getter=isFitOnScreen) BOOL fitOnScreen;
 - (void)setFitOnScreen:(BOOL)fitOnScreen animated:(BOOL)animated;
 - (void)setFitOnScreen:(BOOL)fitOnScreen animated:(BOOL)animated completionHandler:(nullable void(^)(id<SJFitOnScreenManager> mgr))completionHandler;
@@ -34,5 +36,4 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) void(^fitOnScreenWillBeginExeBlock)(id<SJFitOnScreenManager> mgr);
 @property (nonatomic, copy, nullable) void(^fitOnScreenDidEndExeBlock)(id<SJFitOnScreenManager> mgr);
 @end
-NS_ASSUME_NONNULL_END
 #endif /* SJFitOnScreenManagerProtocol_h */

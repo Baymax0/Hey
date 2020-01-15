@@ -2,7 +2,7 @@
 //  UIScrollView+ListViewAutoplaySJAdd.h
 //  Masonry
 //
-//  Created by 畅三江 on 2018/7/9.
+//  Created by BlueDancer on 2018/7/9.
 //
 
 #import <UIKit/UIKit.h>
@@ -24,9 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 关闭
 - (void)sj_disenableAutoplay;
 
-/// 播放下一个(在已显示的cell中查找)
-- (void)sj_playNextVisibleAsset;
-
+- (void)sj_needPlayNextAsset;
 @end
 
 
@@ -35,10 +33,5 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UIScrollView (SJPlayerCurrentPlayingIndexPath)
 @property (nonatomic, strong, nullable, readonly) NSIndexPath *sj_currentPlayingIndexPath;
 - (void)setSj_currentPlayingIndexPath:(nullable NSIndexPath *)sj_currentPlayingIndexPath;
-@end
-
-
-@interface UIScrollView (SJAutoplayDeprecated)
-- (void)sj_needPlayNextAsset __deprecated_msg("use `sj_playNextVisibleAsset`");
 @end
 NS_ASSUME_NONNULL_END

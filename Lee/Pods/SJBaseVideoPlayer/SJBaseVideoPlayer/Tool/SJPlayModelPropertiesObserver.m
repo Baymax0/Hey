@@ -3,21 +3,16 @@
 //  SJVideoPlayerAssetCarrier
 //
 //  Created by 畅三江 on 2018/6/29.
-//  Copyright © 2018年 changsanjiang. All rights reserved.
+//  Copyright © 2018年 SanJiang. All rights reserved.
 //
 
 #import "SJPlayModelPropertiesObserver.h"
 #import <objc/message.h>
 #import <UIKit/UIKit.h>
 #import "SJIsAppeared.h"
-#if __has_include(<SJUIKit/SJRunLoopTaskQueue.h>)
-#import <SJUIKit/SJRunLoopTaskQueue.h>
-#else
-#import "SJRunLoopTaskQueue.h"
-#endif
 
-#if __has_include(<SJUIKit/NSObject+SJObserverHelper.h>)
-#import <SJUIKit/NSObject+SJObserverHelper.h>
+#if __has_include(<SJObserverHelper/NSObject+SJObserverHelper.h>)
+#import <SJObserverHelper/NSObject+SJObserverHelper.h>
 #else
 #import "NSObject+SJObserverHelper.h"
 #endif
@@ -27,8 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) id<SJPlayModel> playModel;
 @property (nonatomic) CGPoint beforeOffset;
 @property (nonatomic) BOOL isAppeared;
-@property (nonatomic, strong, readonly) SJRunLoopTaskQueue *taskQueue;
-@property (nonatomic) BOOL isScrolling;
 @end
 
 @implementation SJPlayModelPropertiesObserver
@@ -39,8 +32,6 @@ NS_ASSUME_NONNULL_BEGIN
     self = [super init];
     if ( !self ) return nil;
     _playModel = playModel;
-    _taskQueue = SJRunLoopTaskQueue.queue(@"SJPlayModelObserverRunLoopTaskQueue").delay(3);
-    
     if ( [playModel isMemberOfClass:[SJPlayModel class]] ) {
         _isAppeared = YES;
     }
@@ -49,7 +40,6 @@ NS_ASSUME_NONNULL_BEGIN
     }
     
     [self refreshAppearState];
-    
     return self;
 }
 
@@ -101,10 +91,7 @@ static NSString *kState = @"state";
                         change:(nullable NSDictionary<NSKeyValueChangeKey,id> *)change
                        context:(nullable void *)context {
     if ( &kContentOffset == context ) {
-        __weak typeof(self) _self = self;
-        _taskQueue.empty().enqueue(^{
-            [_self _scrollViewDidScroll:object];
-        });
+        [self _scrollViewDidScroll:object];
     }
     else if ( &kState == context ) {
         [self _panGestureStateDidChange:object];
@@ -181,7 +168,7 @@ static NSString *kState = @"state";
             [self _observeScrollView:playModel.collectionView];
         }
     }
-    
+
     self.isAppeared = [self _isAppearedInTheScrollingView:scrollView];
     _beforeOffset = scrollView.contentOffset;
 }
@@ -211,7 +198,6 @@ static NSString *kState = @"state";
 }
 
 - (void)refreshAppearState {
-    _isAppeared = NO;
     if ( [_playModel isMemberOfClass:[SJPlayModel class]] ) {
         self.isAppeared = YES;
         return;
@@ -223,41 +209,6 @@ static NSString *kState = @"state";
         return;
     }
     self.isAppeared = [self _isAppearedInTheScrollingView:superview];
-}
-
-- (BOOL)isScrolling {
-    if ( [_playModel isKindOfClass:[SJUITableViewCellPlayModel class]] ) {
-        SJUITableViewCellPlayModel *playModel = _playModel;
-        return playModel.tableView.isDragging || playModel.tableView.isDecelerating;
-    }
-    else if ( [_playModel isKindOfClass:[SJUICollectionViewCellPlayModel class]] ) {
-        SJUICollectionViewCellPlayModel *playModel = _playModel;
-        return playModel.collectionView.isDragging || playModel.collectionView.isDecelerating;
-    }
-    else if ( [_playModel isKindOfClass:[SJUITableViewHeaderViewPlayModel class]] ) {
-        SJUITableViewHeaderViewPlayModel *playModel = _playModel;
-        return playModel.tableView.isDragging || playModel.tableView.isDecelerating;
-    }
-    else if ( [_playModel isKindOfClass:[SJUICollectionViewNestedInUITableViewHeaderViewPlayModel class]] ) {
-        SJUICollectionViewNestedInUITableViewHeaderViewPlayModel *playModel = _playModel;
-        return playModel.collectionView.isDragging || playModel.collectionView.isDecelerating ||
-        playModel.tableView.isDragging || playModel.tableView.isDecelerating;
-    }
-    else if ( [_playModel isKindOfClass:[SJUICollectionViewNestedInUITableViewCellPlayModel class]] ) {
-        SJUICollectionViewNestedInUITableViewCellPlayModel *playModel = _playModel;
-        return playModel.collectionView.isDragging || playModel.collectionView.isDecelerating ||
-        playModel.tableView.isDragging || playModel.tableView.isDecelerating;
-    }
-    else if ( [_playModel isKindOfClass:[SJUICollectionViewNestedInUICollectionViewCellPlayModel class]] ) {
-        SJUICollectionViewNestedInUICollectionViewCellPlayModel *playModel = _playModel;
-        return playModel.collectionView.isDragging || playModel.collectionView.isDecelerating ||
-        playModel.rootCollectionView.isDragging || playModel.rootCollectionView.isDecelerating;
-    }
-    else if ( [_playModel isKindOfClass:[SJUITableViewHeaderFooterViewPlayModel class]] ) {
-        SJUITableViewHeaderFooterViewPlayModel *playModel = _playModel;
-        return playModel.tableView.isDragging || playModel.tableView.isDecelerating;
-    }
-    return NO;
 }
 @end
 NS_ASSUME_NONNULL_END

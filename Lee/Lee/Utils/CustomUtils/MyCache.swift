@@ -13,7 +13,6 @@ import HandyJSON
 extension BMDefaultsKeys{
     // userId 和 sessionId 已封装进 请求库
     static let newsList = BMCacheKey<Array<IdailyNewsModel>?>("newsList")
-
     
 }
 

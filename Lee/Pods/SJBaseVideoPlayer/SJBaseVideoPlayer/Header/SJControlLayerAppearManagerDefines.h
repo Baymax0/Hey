@@ -2,7 +2,7 @@
 //  SJControlLayerAppearManagerDefines.h
 //  SJBaseVideoPlayer
 //
-//  Created by 畅三江 on 2018/12/31.
+//  Created by BlueDancer on 2018/12/31.
 //
 
 #ifndef SJControlLayerAppearManagerProtocol_h
@@ -13,7 +13,7 @@
 NS_ASSUME_NONNULL_BEGIN
 @protocol SJControlLayerAppearManager
 - (id<SJControlLayerAppearManagerObserver>)getObserver;
-@property (nonatomic, getter=isDisabled) BOOL disabled;         ///< 是否禁用显示管理类
+@property (nonatomic, getter=isDisabled) BOOL disabled;
 @property (nonatomic) NSTimeInterval interval;
 
 /// Appear state

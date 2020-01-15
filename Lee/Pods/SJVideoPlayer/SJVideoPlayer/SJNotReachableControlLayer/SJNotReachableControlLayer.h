@@ -2,26 +2,15 @@
 //  SJNotReachableControlLayer.h
 //  SJVideoPlayer
 //
-//  Created by 畅三江 on 2019/1/15.
+//  Created by BlueDancer on 2019/1/15.
 //  Copyright © 2019 畅三江. All rights reserved.
 //
 
 #import "SJEdgeControlLayerAdapters.h"
-#import "SJControlLayerDefines.h"
-@protocol SJNotReachableControlLayerDelegate;
-@class SJButtonContainerView;
+#import "SJControlLayerCarrier.h"
 
 NS_ASSUME_NONNULL_BEGIN
 extern SJEdgeControlButtonItemTag const SJNotReachableControlLayerTopItem_Back;
-
-
-@interface SJNotReachableControlLayer : SJEdgeControlLayerAdapters<SJControlLayer>
-@property (nonatomic, weak, nullable) id<SJNotReachableControlLayerDelegate> delegate;
-@property (nonatomic, strong, readonly) UILabel *promptLabel;
-@property (nonatomic, strong, readonly) SJButtonContainerView *reloadView;
-@property (nonatomic) BOOL hiddenBackButtonWhenOrientationIsPortrait;
-@end
-
 
 @interface SJButtonContainerView : UIView
 - (instancetype)initWithEdgeInsets:(UIEdgeInsets)insets;
@@ -30,9 +19,14 @@ extern SJEdgeControlButtonItemTag const SJNotReachableControlLayerTopItem_Back;
 @property (nonatomic, strong, readonly) UIButton *button;
 @end
 
+@interface SJNotReachableControlLayer : SJEdgeControlLayerAdapters<SJControlLayer>
+@property (nonatomic, strong, readonly) UILabel *promptLabel;
+@property (nonatomic, strong, readonly) SJButtonContainerView *reloadView;
+@property (nonatomic) BOOL hideBackButtonWhenOrientationIsPortrait;
 
-@protocol SJNotReachableControlLayerDelegate <NSObject>
-- (void)backItemWasTappedForControlLayer:(id<SJControlLayer>)controlLayer;
-- (void)reloadItemWasTappedForControlLayer:(id<SJControlLayer>)controlLayer;
+@property (nonatomic, copy, nullable) void(^clickedBackButtonExeBlock)(__kindof SJNotReachableControlLayer *control);
+@property (nonatomic, copy, nullable) void(^clickedReloadButtonExeBlock)(__kindof SJNotReachableControlLayer *control);
+@property (nonatomic, copy, nullable) void(^prepareToPlayNewAssetExeBlock)(__kindof SJNotReachableControlLayer *control);
+@property (nonatomic, copy, nullable) void(^playStatusDidChangeExeBlock)(__kindof SJNotReachableControlLayer *control);
 @end
 NS_ASSUME_NONNULL_END

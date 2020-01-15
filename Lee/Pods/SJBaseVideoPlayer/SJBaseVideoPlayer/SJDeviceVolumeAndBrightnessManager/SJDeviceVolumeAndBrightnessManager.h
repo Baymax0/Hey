@@ -2,8 +2,8 @@
 //  SJDeviceVolumeAndBrightnessManagerDefines.h
 //  SJDeviceVolumeAndBrightnessManager
 //
-//  Created by 畅三江 on 2017/12/10.
-//  Copyright © 2017年 changsanjiang. All rights reserved.
+//  Created by BlueDancer on 2017/12/10.
+//  Copyright © 2017年 SanJiang. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -12,9 +12,6 @@
 NS_ASSUME_NONNULL_BEGIN
 @interface SJDeviceVolumeAndBrightnessManager : NSObject<SJDeviceVolumeAndBrightnessManager>
 + (instancetype)shared;
-
-@property (nonatomic, strong, null_resettable) UIColor *traceColor;
-@property (nonatomic, strong, null_resettable) UIColor *trackColor;
 @end
 NS_ASSUME_NONNULL_END
 

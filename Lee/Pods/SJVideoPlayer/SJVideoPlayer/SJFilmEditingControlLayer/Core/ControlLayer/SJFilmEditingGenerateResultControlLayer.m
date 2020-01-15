@@ -29,17 +29,16 @@
 #import "SJBaseVideoPlayer.h"
 #endif
 
-#if __has_include(<SJUIKit/SJAttributesFactory.h>)
-#import <SJUIKit/SJAttributesFactory.h>
+#if __has_include(<SJAttributesFactory/SJAttributeWorker.h>)
+#import <SJAttributesFactory/SJAttributeWorker.h>
 #else
-#import "SJAttributesFactory.h"
+#import "SJAttributeWorker.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 static SJEdgeControlButtonItemTag SJTopItem_Back = 1;
 
 @interface SJFilmEditingGenerateResultControlLayer ()
-@property (nonatomic, weak, nullable) __kindof SJBaseVideoPlayer *player;
 @property (nonatomic, strong, readonly) SJFilmEditingSaveResultToAlbumHandler *saveHandler;
 @property (nonatomic, strong, readonly) SJFilmEditingSettingsUpdatedObserver *settingsUpdatedObserver;
 @property (nonatomic, strong, readonly) SJFilmEditingButtonContainerView *backButtonContainerView;
@@ -47,6 +46,7 @@ static SJEdgeControlButtonItemTag SJTopItem_Back = 1;
 
 @property (nonatomic, strong, readonly) UILabel *promptLabel;
 @property (nonatomic, strong, readonly) UIImageView *coverImageView;
+@property (nonatomic, weak, nullable) SJBaseVideoPlayer *player;
 
 @property (nonatomic, strong, nullable) SJVideoPlayerFilmEditingGeneratedResult *result;
 @property (nonatomic, strong, readonly) SJBaseVideoPlayer *exportedVideoPlayer;
@@ -122,15 +122,12 @@ static SJEdgeControlButtonItemTag SJTopItem_Back = 1;
         if ( block ) block(self.player.screenshot);
     }
     else {
-        [self.player.prompt show:[NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-            make.append(@"处理中");
-            make.textColor(UIColor.whiteColor);
-        }] duration:-1];
+        [self.player showTitle:@"处理中" duration:-1];
         __weak typeof(self) _self = self;
         [self.player screenshotWithTime:self.player.currentTime completion:^(__kindof SJBaseVideoPlayer * _Nonnull videoPlayer, UIImage * _Nullable image, NSError * _Nullable error) {
             __strong typeof(_self) self = _self;
             if ( !self ) return;
-            [videoPlayer.prompt hidden];
+            [videoPlayer hiddenTitle];
             if ( block ) block(image);
         }];
     }
@@ -218,27 +215,18 @@ static SJEdgeControlButtonItemTag SJTopItem_Back = 1;
                  [self _uploadResultIfNeeded];
                 
                 if ( self.parameters.saveResultToAlbumWhenExportSuccess ) {
-                    [self.player.prompt show:[NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-                        make.append(settings.savingToAlbumText);
-                        make.textColor(UIColor.whiteColor);
-                    }] duration:-1];
+                    [self.player showTitle:settings.savingToAlbumText duration:-1];
                     [self.saveHandler saveResult:result completionHandler:^(BOOL r, id<SJFilmEditingSaveResultFailed>  _Nonnull failed) {
                         __strong typeof(_self) self = _self;
                         if ( !self ) return ;
                         if ( r ) {
-                            [self.player.prompt show:[NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-                                make.append(settings.saveToAlbumSuccessText);
-                                make.textColor(UIColor.whiteColor);
-                            }]];
+                            [self.player showTitle:settings.saveToAlbumSuccessText];
                             if ( !self.parameters.resultNeedUpload ) {
                                 [self _updatePromptLabelText:settings.saveToAlbumSuccessText];
                             }
                         }
                         else {
-                            [self.player.prompt show:[NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-                                make.append(failed.toString);
-                                make.textColor(UIColor.whiteColor);
-                            }]];
+                            [self.player showTitle:failed.toString];
                             if ( !self.parameters.resultNeedUpload ) {
                                 [self _updatePromptLabelText:settings.albumAuthDeniedText];
                             }
@@ -307,9 +295,9 @@ static SJEdgeControlButtonItemTag SJTopItem_Back = 1;
     _result.exportProgress = 0.001;
     
     NSTimeInterval begin = CMTimeGetSeconds(_parameters.range.start);
-    NSTimeInterval duration = CMTimeGetSeconds(_parameters.range.duration);
+    NSTimeInterval endTime = begin + CMTimeGetSeconds(_parameters.range.duration);
     __weak typeof(self) _self = self;
-    [_player exportWithBeginTime:begin duration:duration presetName:nil progress:^(__kindof SJBaseVideoPlayer * _Nonnull videoPlayer, float progress) {
+    [_player exportWithBeginTime:begin endTime:endTime presetName:nil progress:^(__kindof SJBaseVideoPlayer * _Nonnull videoPlayer, float progress) {
         __strong typeof(_self) self = _self;
         if ( !self ) return ;
         self.result.exportProgress = progress;
@@ -382,14 +370,11 @@ static SJEdgeControlButtonItemTag SJTopItem_Back = 1;
 }
 
 - (void)_updatePromptLabelText:(NSString *)text {
-    _promptLabel.attributedText = [NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
+    _promptLabel.attributedText = sj_makeAttributesString(^(SJAttributeWorker * _Nonnull make) {
         make.font([UIFont systemFontOfSize:12]).textColor([UIColor whiteColor]);
         make.append(text);
-        make.shadow(^(NSShadow * _Nonnull make) {
-            make.shadowColor = UIColor.blackColor;
-            make.shadowOffset = CGSizeMake(0, 0.5);
-        });
-    }];
+        make.shadow(CGSizeMake(0.5, 0.5), 1, [UIColor blackColor]);
+    });
 }
 
 - (void)_cancel {
@@ -427,18 +412,12 @@ static SJEdgeControlButtonItemTag SJTopItem_Back = 1;
         case SJFilmEditingExportStateUnknown:
         case SJFilmEditingExportStateCancelled: return;
         case SJFilmEditingExportStateFailed: {
-            [_player.prompt show:[NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-                make.append(settings.exportFailedText);
-                make.textColor(UIColor.whiteColor);
-            }]];
+            [_player showTitle:settings.exportFailedText];
         }
             return;
             
         case SJFilmEditingExportStateExporting: {
-            [_player.prompt show:[NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-                make.append(settings.exportingText);
-                make.textColor(UIColor.whiteColor);
-            }]];
+            [_player showTitle:settings.exportingText];
         }
             return;
     }
@@ -453,10 +432,7 @@ static SJEdgeControlButtonItemTag SJTopItem_Back = 1;
         case SJFilmEditingResultUploadStateUnknown: break;
         case SJFilmEditingResultUploadStateCancelled: break;
         case SJFilmEditingResultUploadStateFailed: {
-            [_player.prompt show:[NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-                make.append(settings.uploadFailedText);
-                make.textColor(UIColor.whiteColor);
-            }]];
+            [_player showTitle:settings.uploadFailedText];
         }
             break;
         case SJFilmEditingResultUploadStateSuccessful: {
@@ -464,10 +440,7 @@ static SJEdgeControlButtonItemTag SJTopItem_Back = 1;
         }
             break;
         case SJFilmEditingResultUploadStateUploading: {
-            [_player.prompt show:[NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-                make.append(settings.uploadingText);
-                make.textColor(UIColor.whiteColor);
-            }]];
+            [_player showTitle:settings.uploadingText];
         }
             break;
     }
@@ -568,15 +541,14 @@ static SJEdgeControlButtonItemTag SJTopItem_Back = 1;
 - (SJBaseVideoPlayer *)exportedVideoPlayer {
     if ( _exportedVideoPlayer ) return _exportedVideoPlayer;
     _exportedVideoPlayer = [SJBaseVideoPlayer player];
-    _exportedVideoPlayer.pauseWhenAppDidEnterBackground = YES;
     _exportedVideoPlayer.resumePlaybackWhenAppDidEnterForeground = YES;
     _exportedVideoPlayer.view.backgroundColor = [UIColor clearColor];
     for ( UIView *view in _exportedVideoPlayer.view.subviews ) {
         view.backgroundColor = [UIColor clearColor];
     }
-    _exportedVideoPlayer.gestureControl.supportedGestureTypes = SJPlayerGestureTypeMask_None;
-    _exportedVideoPlayer.rotationManager.disabledAutorotation = YES;
-    _exportedVideoPlayer.playbackObserver.didPlayToEndTimeExeBlock = ^(__kindof SJBaseVideoPlayer * _Nonnull player) {
+    _exportedVideoPlayer.disabledGestures = SJPlayerDisabledGestures_All;
+    _exportedVideoPlayer.disableAutoRotation = YES;
+    _exportedVideoPlayer.playDidToEndExeBlock = ^(__kindof SJBaseVideoPlayer * _Nonnull player) {
         [player replay];
     };
     return _exportedVideoPlayer;
@@ -607,9 +579,6 @@ static SJEdgeControlButtonItemTag SJTopItem_Back = 1;
     return NO;
 }
 
-- (BOOL)canPerformPlayForVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer {
-    return NO;
-}
 - (void)controlLayerNeedAppear:(__kindof SJBaseVideoPlayer *)videoPlayer { }
 - (void)controlLayerNeedDisappear:(__kindof SJBaseVideoPlayer *)videoPlayer { }
 @end

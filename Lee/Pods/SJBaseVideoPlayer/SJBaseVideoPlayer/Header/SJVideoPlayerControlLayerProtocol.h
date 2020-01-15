@@ -3,7 +3,7 @@
 //  Project
 //
 //  Created by 畅三江 on 2018/6/1.
-//  Copyright © 2018年 changsanjiang. All rights reserved.
+//  Copyright © 2018年 SanJiang. All rights reserved.
 //
 
 #ifndef SJVideoPlayerControlLayerProtocol_h
@@ -11,10 +11,11 @@
 #import <UIKit/UIKit.h>
 #import "SJReachabilityDefines.h"
 #import "SJVideoPlayerPlayStatusDefines.h"
-#import "SJVideoPlayerPlaybackControllerDefines.h"
+#import "SJMediaPlaybackProtocol.h"
 #import "SJPlayerGestureControlDefines.h"
 
-@protocol SJPlaybackInfoDelegate,
+@protocol SJPlayStatusControlDelegate,
+SJBufferControlDelegate,
 SJNetworkStatusControlDelegate,
 SJLockScreenStateControlDelegate,
 SJAppActivityControlDelegate,
@@ -22,8 +23,7 @@ SJVolumeBrightnessRateControlDelegate,
 SJGestureControlDelegate,
 SJRotationControlDelegate,
 SJFitOnScreenControlDelegate,
-SJSwitchVideoDefinitionControlDelegate,
-SJPlaybackControlDelegate;
+SJSwitchVideoDefinitionControlDelegate;
 
 @class SJBaseVideoPlayer, SJVideoPlayerURLAsset;
 
@@ -44,7 +44,8 @@ SJPlaybackControlDelegate;
 
 
 @protocol SJVideoPlayerControlLayerDelegate <
-    SJPlaybackInfoDelegate, 
+    SJPlayStatusControlDelegate,
+    SJBufferControlDelegate,
     SJRotationControlDelegate,
     SJGestureControlDelegate,
     SJNetworkStatusControlDelegate,
@@ -52,10 +53,9 @@ SJPlaybackControlDelegate;
     SJLockScreenStateControlDelegate,
     SJAppActivityControlDelegate,
     SJFitOnScreenControlDelegate,
-    SJSwitchVideoDefinitionControlDelegate,
-    SJPlaybackControlDelegate
+    SJSwitchVideoDefinitionControlDelegate
 >
-@optional
+@required
 /// This method will be called when the control layer needs to be appear.
 /// You should do some appear work here.
 /// 控制层需要显示. 你应该在这里做一些显示的工作
@@ -66,6 +66,7 @@ SJPlaybackControlDelegate;
 /// 控制层需要隐藏. 你应该在这个做一些隐藏的工作
 - (void)controlLayerNeedDisappear:(__kindof SJBaseVideoPlayer *)videoPlayer;
 
+@optional
 /// Asks the delegate if the control layer can automatically disappear.
 /// 控制层是否可以自动隐藏
 - (BOOL)controlLayerOfVideoPlayerCanAutomaticallyDisappear:(__kindof SJBaseVideoPlayer *)videoPlayer;
@@ -77,41 +78,37 @@ SJPlaybackControlDelegate;
 /// Call it when `tableView` or` collectionView` is about to disappear. Because scrollview may be scrolled.
 /// 当滚动scrollView时, 播放器即将消失时会回调这个方法
 - (void)videoPlayerWillDisappearInScrollView:(__kindof SJBaseVideoPlayer *)videoPlayer;
-@end
 
+// deprecated methods
 
-@protocol SJPlaybackControlDelegate <NSObject>
-@optional
-- (BOOL)canPerformPlayForVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer;
-- (BOOL)canPerformPauseForVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer;
-- (BOOL)canPerformStopForVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer;
+- (BOOL)controlLayerDisappearCondition __deprecated_msg("use `controlLayerOfVideoPlayerCanAutomaticallyDisappear:`");
 @end
 
 
 
-@protocol SJPlaybackInfoDelegate <NSObject>
+@protocol SJPlayStatusControlDelegate <NSObject>
 @optional
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer playbackTypeLoaded:(SJMediaPlaybackType)playbackType;
 
 /// When the player is prepare to play a new asset, this method will be called.
 /// 当播放器准备播放一个新的资源时, 会回调这个方法
 - (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer prepareToPlay:(SJVideoPlayerURLAsset *)asset;
 
-///
-/// 播放状态改变后的回调
-///
-///     以下状态发生变更时将会触发该回调
-///     1.  timeControlStatus
-///     2.  assetStatus
-///     3.  播放完毕
-///
-- (void)videoPlayerPlaybackStatusDidChange:(__kindof SJBaseVideoPlayer *)videoPlayer;
+/// 播放状态改变的回调
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer statusDidChanged:(SJVideoPlayerPlayStatus)status;
 
-- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer currentTimeDidChange:(NSTimeInterval)currentTime;
-- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer durationDidChange:(NSTimeInterval)duration;
-- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer playableDurationDidChange:(NSTimeInterval)duration;
+/// 时间改变的回调
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer
+        currentTime:(NSTimeInterval)currentTime currentTimeStr:(NSString *)currentTimeStr
+          totalTime:(NSTimeInterval)totalTime totalTimeStr:(NSString *)totalTimeStr;
 
-- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer playbackTypeDidChange:(SJPlaybackType)playbackType;
-- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer presentationSizeDidChange:(CGSize)size;
+/// 获取到视频宽高的回调
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer presentationSize:(CGSize)size;
+
+
+// deprecated methods
+
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer stateChanged:(SJVideoPlayerPlayState)state __deprecated_msg("已弃用, 请使用`videoPlayer:statusDidChanged:`;");
 @end
 
 
@@ -123,6 +120,23 @@ SJPlaybackControlDelegate;
 - (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer brightnessChanged:(float)brightness;
 - (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer rateChanged:(float)rate;
 @end
+
+
+
+@protocol SJBufferControlDelegate <NSObject>
+@optional
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer bufferTimeDidChange:(NSTimeInterval)bufferTime;
+
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer bufferStatusDidChange:(SJPlayerBufferStatus)bufferStatus;
+
+// deprecated methods
+
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer loadedTimeProgress:(float)progress __deprecated_msg("use `videoPlayer:bufferTimeDidChange:`");
+- (void)startLoading:(__kindof SJBaseVideoPlayer *)videoPlayer __deprecated_msg("use `videoPlayer:bufferStatusDidChange:`");
+- (void)cancelLoading:(__kindof SJBaseVideoPlayer *)videoPlayer __deprecated_msg("use `videoPlayer:bufferStatusDidChange:`");
+- (void)loadCompletion:(__kindof SJBaseVideoPlayer *)videoPlayer __deprecated_msg("use `videoPlayer:bufferStatusDidChange:`");
+@end
+
 
 
 @protocol SJRotationControlDelegate <NSObject>
@@ -161,6 +175,14 @@ SJPlaybackControlDelegate;
 - (BOOL)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer gestureRecognizerShouldTrigger:(SJPlayerGestureType)type location:(CGPoint)location;
 
 - (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer panGestureTriggeredInTheHorizontalDirection:(SJPanGestureRecognizerState)state progressTime:(NSTimeInterval)progressTime;
+
+// deprecated methods
+
+- (BOOL)triggerGesturesCondition:(CGPoint)location __deprecated_msg("use `videoPlayer:gestureRecognizerShouldTrigger:location:`");
+- (void)horizontalDirectionWillBeginDragging:(__kindof SJBaseVideoPlayer *)videoPlayer __deprecated_msg("use `videoPlayer:panGestureTriggeredInTheHorizontalDirection:progressTime:`");
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer horizontalDirectionDidMove:(CGFloat)progress __deprecated_msg("use `videoPlayer:panGestureTriggeredInTheHorizontalDirection:progressTime:`");
+- (void)horizontalDirectionDidEndDragging:(__kindof SJBaseVideoPlayer *)videoPlayer __deprecated_msg("use `videoPlayer:panGestureTriggeredInTheHorizontalDirection:progressTime:`");
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer horizontalDirectionDidDrag:(CGFloat)translation __deprecated_msg("use `videoPlayer:horizontalDirectionDidMove:`;");
 @end
 
 
@@ -195,16 +217,16 @@ SJPlaybackControlDelegate;
 
 @protocol SJSwitchVideoDefinitionControlDelegate <NSObject>
 @optional
-- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer switchingDefinitionStatusDidChange:(SJDefinitionSwitchStatus)status media:(id<SJMediaModelProtocol>)media;
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer switchVideoDefinitionByURL:(NSURL *)URL statusDidChange:(SJMediaPlaybackSwitchDefinitionStatus)status;
 @end
 
 
 
 @protocol SJAppActivityControlDelegate <NSObject>
 @optional
-- (void)receivedApplicationWillResignActiveNotification:(__kindof SJBaseVideoPlayer *)videoPlayer;
-- (void)receivedApplicationDidBecomeActiveNotification:(__kindof SJBaseVideoPlayer *)videoPlayer;
-- (void)receivedApplicationWillEnterForegroundNotification:(__kindof SJBaseVideoPlayer *)videoPlayer;
-- (void)receivedApplicationDidEnterBackgroundNotification:(__kindof SJBaseVideoPlayer *)videoPlayer;
+- (void)appWillResignActive:(__kindof SJBaseVideoPlayer *)videoPlayer;
+- (void)appDidBecomeActive:(__kindof SJBaseVideoPlayer *)videoPlayer;
+- (void)appWillEnterForeground:(__kindof SJBaseVideoPlayer *)videoPlayer;
+- (void)appDidEnterBackground:(__kindof SJBaseVideoPlayer *)videoPlayer;
 @end
 #endif /* SJVideoPlayerControlLayerProtocol_h */

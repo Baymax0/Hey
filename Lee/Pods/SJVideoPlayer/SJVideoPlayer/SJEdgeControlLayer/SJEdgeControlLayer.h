@@ -2,14 +2,12 @@
 //  SJEdgeControlLayer.h
 //  SJVideoPlayer
 //
-//  Created by 畅三江 on 2018/10/24.
+//  Created by BlueDancer on 2018/10/24.
 //  Copyright © 2018 畅三江. All rights reserved.
 //
 
 #import "SJEdgeControlLayerAdapters.h"
-#import "SJControlLayerDefines.h"
-#import "SJEdgeControlLayerLoadingViewDefines.h"
-@protocol SJEdgeControlLayerDelegate;
+#import "SJControlLayerCarrier.h"
 
 NS_ASSUME_NONNULL_BEGIN
 // - Top Items -
@@ -35,50 +33,16 @@ extern SJEdgeControlButtonItemTag const SJEdgeControlLayerCenterItem_Replay;    
 
 
 @interface SJEdgeControlLayer : SJEdgeControlLayerAdapters<SJControlLayer>
+@property (nonatomic, copy, nullable) void(^clickedBackItemExeBlock)(SJEdgeControlLayer *control);
 
-///
-/// loading 视图
-///
-///     当需要自定义时, 可以实现指定的协议赋值给该控制层
-///
-@property (nonatomic, strong, null_resettable) id<SJEdgeControlLayerLoadingViewProtocol> loadingView;
-
-///
-/// 是否竖屏时隐藏返回按钮
-///
-@property (nonatomic, getter=isHiddenBackButtonWhenOrientationIsPortrait) BOOL hiddenBackButtonWhenOrientationIsPortrait;
-
-///
-/// 是否禁止网络状态变化提示
-///
-@property (nonatomic, getter=isDisabledPromptWhenNetworkStatusChanges) BOOL disabledPromptWhenNetworkStatusChanges;
-
-///
-/// 是否使返回按钮常驻
-///
-@property (nonatomic) BOOL showResidentBackButton;
-
-///
-/// 是否隐藏底部进度条
-///
-@property (nonatomic, getter=isHiddenBottomProgressIndicator) BOOL hiddenBottomProgressIndicator;
-
-///
-/// 底部进度条高度. default value is 1.0
-///
-@property (nonatomic) CGFloat bottomProgressIndicatorHeight;
-
-///
-/// 是否在loadingView上显示网速. default value is YES
-///
-@property (nonatomic) BOOL showNetworkSpeedToLoadingView;
-
-
-@property (nonatomic, weak, nullable) id<SJEdgeControlLayerDelegate> delegate;
+@property (nonatomic) BOOL hideBackButtonWhenOrientationIsPortrait; // 竖屏时隐藏返回按钮
+@property (nonatomic) BOOL disablePromptWhenNetworkStatusChanges; // 禁止网络状态变化提示
+@property (nonatomic) BOOL hideBottomProgressSlider; // 隐藏底部进度条
+@property (nonatomic) BOOL showResidentBackButton;   // 返回按钮常驻
+@property (nonatomic) BOOL resumePlaybackWhenPlayerViewScrollAppears; // 播放器滚动(ScrollView)出现时, 是否恢复播放
 @end
 
 
-@protocol SJEdgeControlLayerDelegate <NSObject>
-- (void)backItemWasTappedForControlLayer:(id<SJControlLayer>)controlLayer;
-@end
+// - Deprecated -
+extern SJEdgeControlButtonItemTag const SJEdgeControlLayerTopItem_Preview __deprecated; // 预览按钮
 NS_ASSUME_NONNULL_END

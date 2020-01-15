@@ -10,151 +10,53 @@ import UIKit
 import Hero
 import CollectionKit
 import Kingfisher
-
-class CardView: UIView {
-    let titleLabel = UILabel()
-    let subtitleLabel = UILabel()
-    let imageView = UIImageView(image: #imageLiteral(resourceName: "montreal"))
-    let locImg = UIImageView()
-
-    required init?(coder aDecoder: NSCoder) { fatalError() }
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        clipsToBounds = true
-        self.cornerRadius = 6
-        self.backgroundColor = .clear
-
-        imageView.contentMode = .scaleAspectFill
-        imageView.cornerRadius = 6
-        
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 15)
-        titleLabel.textColor = .KBlueDark
-        
-        subtitleLabel.font = UIFont.boldSystemFont(ofSize: 13)
-        subtitleLabel.textAlignment = .right
-        subtitleLabel.textColor = #colorLiteral(red: 0.685315609, green: 0.7131230235, blue: 0.754701674, alpha: 1)
-
-        locImg.contentMode = .scaleAspectFit
-        locImg.image = #imageLiteral(resourceName: "location").withRenderingMode(.alwaysTemplate)
-        locImg.tintColor = #colorLiteral(red: 0.685315609, green: 0.7131230235, blue: 0.754701674, alpha: 1)
-        
-        addSubview(imageView)
-        addSubview(titleLabel)
-        addSubview(subtitleLabel)
-        addSubview(locImg)
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.updateFrame()
-    }
-    
-    func updateFrame(){
-        let h:CGFloat = w / 2
-        imageView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: h)
-        titleLabel.frame = CGRect(x: 0, y: h+6, width: bounds.width, height: 24)
-        
-        let subtitleLabelW = subtitleLabel.text!.stringWidth(UIFont.boldSystemFont(ofSize: 13))+5
-        subtitleLabel.frame = CGRect(x: bounds.width-subtitleLabelW, y: titleLabel.y , width: subtitleLabelW, height: 24)
-        locImg.frame = CGRect(x: subtitleLabel.x-20, y: subtitleLabel.y, width: 16, height: 24)
-    }
-    
-    static var viewH:CGFloat = {
-        var h:CGFloat = (KScreenWidth-40)/2
-        h = h + 6 + 24
-        h = h + 15
-        return h
-    }()
-    
-}
-
-class RoundedCardWrapperView: UIView {
-    let cardView = CardView()
-    
-    var isTouched: Bool = false {
-        didSet {
-            var transform = CGAffineTransform.identity
-            if isTouched { transform = transform.scaledBy(x: 0.96, y: 0.96) }
-            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: [], animations: {
-                self.transform = transform
-            }, completion: nil)
-        }
-    }
-    
-    required init?(coder aDecoder: NSCoder) { fatalError() }
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        addSubview(cardView)
-    }
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        if cardView.superview == self {
-            cardView.frame = bounds}
-    }
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        isTouched = true}
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesEnded(touches, with: event)
-        isTouched = false}
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesCancelled(touches, with: event)
-        isTouched = false}
-    
-}
+import LTMorphingLabel
 
 class OneVC: BaseVC{
 
     @IBOutlet weak var newsBGView: UIView!
     var newsCollection:CollectionView!
     var newsArr:Array<IdailyNewsModel>!
-
+    var willScrollX:CGFloat = 0
+    
+    
+    var weatherModel:WeatherToday!
+    @IBOutlet weak var weatherBgView: UIView!
+    @IBOutlet weak var weatherImgView: UIImageView!
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        get{ return .lightContent}
+    }
+    
+    @IBOutlet weak var titleLab: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        
-        newsCollection = CollectionView(frame: CGRect(x: 20, y: 0, width: KScreenWidth-40, height: (KScreenHeight-130)-KTabBarH))
+        // 新闻
+        initNews()
+        // 天气
+        initWeather()
+    }
+
+}
+
+// 新闻
+extension OneVC{
+    // 初始化视图
+    func initNews(){
+        newsCollection = CollectionView(frame: CGRect(x: 15, y: 0, width: KScreenWidth+CardView.viewW+50, height: CardView.viewH))
         newsCollection.showsHorizontalScrollIndicator = false
         newsCollection.delaysContentTouches = false
         newsCollection.backgroundColor = .clear
+        newsCollection.clipsToBounds = false
+        newsCollection.contentInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: CardView.viewW+30+20)
+        newsCollection.delegate = self
         newsBGView.addSubview(newsCollection);
-        
+        newsBGView.addAlphaGradientHori(KScreenWidth-20, KScreenWidth-10,CGRect(x: 0, y: 0, width: KScreenWidth, height: 400))
         self.requestNews()
     }
-    
-    func loadData(){
-        if newsCollection.provider == nil{
-            let dataSource = ArrayDataSource<Int>(data: Array(0..<30))
-            let viewSource = ClosureViewSource(viewUpdater: { (view: RoundedCardWrapperView, data: Int, index: Int) in
-                let model = self.newsArr.bm_object(index)
-                view.cardView.titleLabel.text = model?.ui_sets["caption_subtitle"] ?? ""
-                view.cardView.subtitleLabel.text = model?.location ?? ""
-                view.cardView.imageView.kf.setImage(with: model?.bigImg.resource, placeholder: UIImage(named: "temp"), options: [.transition(.fade(0.5))])
-                view.cardView.updateFrame()
-            })
-            
-            let sizeSource = { (index: Int, data: Int, collectionSize: CGSize) -> CGSize in
-                let w = KScreenWidth-40
-                let h = CardView.viewH
-                return CGSize(width: w, height: h)}
-            
-            let provider = BasicProvider<Int, RoundedCardWrapperView>(
-                dataSource: dataSource,
-                viewSource: viewSource,
-                sizeSource: sizeSource)
-            
-            provider.tapHandler = { (context) in
-                self.cellTapped(cell: context.view, data: context.data)}
-            
-            newsCollection.provider = provider
-        }else{
-            newsCollection.reloadData()
-        }
-    }
-
+    // 请求
     func requestNews(){
         let list = Cache[.newsList]
         if list.notEmpty(){
@@ -165,9 +67,7 @@ class OneVC: BaseVC{
                 let now = Date()
                 if date.toString("yyyy-MM-dd") == now.toString("yyyy-MM-dd"){
                     return
-                }
-            }
-        }
+                }}}
         var param = [String : Any]()
         param["page"] = 1
         param["ver"] = "iphone"
@@ -177,36 +77,66 @@ class OneVC: BaseVC{
             self.newsArr = resp;
             for i in (0..<self.newsArr.count).reversed(){
                 let m = self.newsArr[i]
-                if m.ui_sets == nil{
+                if m.cat.toInt() != 6{
                     self.newsArr.remove(at: i)
-                    continue
-                }
+                    continue}
             }
             Cache[.newsList] = self.newsArr
             self.loadData()
         }
     }
     
+    // 刷新显示
+    func loadData(){
+        if newsCollection.provider == nil{
+            let dataSource = ArrayDataSource<Int>(data: Array(0..<30))
+            let viewSource = ClosureViewSource(viewUpdater: { (view: RoundedCardWrapperView, data: Int, index: Int) in
+                let model = self.newsArr.bm_object(index)
+                view.cardView.titleLabel.text = model?.ui_sets["caption_subtitle"] ?? ""
+                view.cardView.subtitleLabel.text = model?.location ?? ""
+                view.cardView.imageView.kf.setImage(with: model?.bigImg.resource, placeholder: UIImage(named: "temp"), options: [.transition(.fade(0.5))])
+                view.cardView.tagLab.text = model?.tags.bm_object(0)?["name"] as? String
+                
+                view.cardView.timeLab.text = model?.title ?? ""
+                
+                view.cardView.updateFrame()
+                view.alpha = 0;
+            })
+            
+            let sizeSource = { (index: Int, data: Int, collectionSize: CGSize) -> CGSize in
+                return CGSize(width: CardView.viewW, height: CardView.viewH)}
+            
+            let layout = RowLayout(fillIdentifiers: ["horizontal"],
+                                   spacing: 0,
+                                   justifyContent: .center,
+                                   alignItems: .center)
+            let provider = BasicProvider<Int, RoundedCardWrapperView>(
+                dataSource: dataSource,
+                viewSource: viewSource,
+                sizeSource: sizeSource,
+                layout:     layout,
+                animator:   EdgeShrinkAnimator(),
+                tapHandler: { (context) in
+                    self.cellTapped(cell: context.view, data: context.data)
+            }
+            )
+            newsCollection.provider = provider
+        }else{
+            newsCollection.reloadData()
+        }
+    }
+    
+    // 点击事件
     func cellTapped(cell: RoundedCardWrapperView, data: Int) {
-        // MARK: Hero configuration
         let model = self.newsArr.bm_object(data)
-//        cell.cardView.hero.id = model!.heroId
-        
         cell.cardView.hero.modifiers = [.useNoSnapshot, .spring(stiffness: stiffness, damping: damping)]
         cell.cardView.imageView.hero.id = model!.heroId + "image"
         cell.cardView.titleLabel.hero.id = model!.heroId + "title"
         cell.cardView.locImg.hero.id = model!.heroId + "locImg"
         cell.cardView.subtitleLabel.hero.id = model!.heroId + "subtitleLabel"
-
-
-
-//        vc.cardView.hero.id = cardHeroId
-//        vc.cardView.hero.modifiers = [.useNoSnapshot, .spring(stiffness: stiffness, damping: damping)]
-//        vc.cardView.imageView.image = cell.cardView.imageView.image
-//        vc.bgView.hero.modifiers = [.source(heroID: cardHeroId), .fade, .spring(stiffness: stiffness, damping: damping)]
-//
-//        vc.visualEffectView.hero.modifiers = [.fade, .useNoSnapshot]
-//        present(vc, animated: true, completion: nil)
+        
+        cell.cardView.timeLab.hero.id = model!.heroId + "time"
+        cell.cardView.tagLab.hero.id = model!.heroId + "tag"
         
         let vc = NewsDetailCollectionVC()
         vc.selectedIndex = data
@@ -216,6 +146,60 @@ class OneVC: BaseVC{
         vc.visualEffectView.hero.modifiers = [.fade, .useNoSnapshot, .spring(stiffness: stiffness, damping: damping)]
         present(vc, animated: true, completion: nil)
     }
+}
+
+
+/// 天气
+extension OneVC{
     
+    func initWeather() {
+        self.requestWeather()
+        
+    }
+    
+    func requestWeather(){
+        Network.requestModel(WeatherApi.city("101030100"), model: WeatherToday.self) { (resp) in
+            self.weatherModel = resp.data!
+            print(self.weatherModel.forecast)
+        }
+    }
+    
+    func loadWeather(){
+        
+    }
+}
+
+extension OneVC:UIScrollViewDelegate{
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+        let nowX = scrollView.contentOffset.x
+        var willX = targetContentOffset.pointee.x
+        if willX > nowX{
+            willX = nowX + CardView.viewW / 2 - 1
+        }else if willX < nowX{
+            willX = nowX - CardView.viewW / 2 + 1
+        }
+        var x = ((willX + 15)/CardView.viewW).rounded()
+        x = x * CardView.viewW - 15
+        self.willScrollX = x
+        
+        if velocity.x == 0{
+            self.pageAnim()
+        }else{
+            targetContentOffset.pointee.x = scrollView.contentOffset.x
+            self.newsCollection.layoutSubviews()//很重要
+            self.pageAnim()
+        }
+    }
+ 
+    func pageAnim(){
+        UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseInOut], animations: {
+            self.newsCollection.setContentOffset(CGPoint(x: self.willScrollX, y: 0), animated: YES)
+            self.newsCollection.layoutIfNeeded()
+        }, completion: nil)
+    }
     
 }
+
+
+

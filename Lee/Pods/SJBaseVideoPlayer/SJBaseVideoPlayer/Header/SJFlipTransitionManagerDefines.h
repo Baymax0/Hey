@@ -2,7 +2,7 @@
 //  SJFlipTransitionManagerDefines.h
 //  Pods
 //
-//  Created by 畅三江 on 2018/12/31.
+//  Created by BlueDancer on 2018/12/31.
 //
 
 #ifndef SJFlipTransitionManagerProtocol_h
@@ -15,12 +15,16 @@ typedef enum : NSUInteger {
     SJViewFlipTransition_Horizontally, // 水平翻转
 } SJViewFlipTransition;
 
-NS_ASSUME_NONNULL_BEGIN
+typedef enum : NSUInteger {
+    SJFlipTransitionStateStart,
+    SJFlipTransitionStateEnd,
+} SJFlipTransitionState;
+
 @protocol SJFlipTransitionManager <NSObject>
 - (instancetype)initWithTarget:(__strong UIView *)target;
 - (id<SJFlipTransitionManagerObserver>)getObserver;
 
-@property (nonatomic, readonly, getter=isTransitioning) BOOL transitioning;
+@property (nonatomic, readonly) SJFlipTransitionState state;
 @property (nonatomic) NSTimeInterval duration;
 
 @property (nonatomic) SJViewFlipTransition flipTransition;
@@ -36,5 +40,4 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) void(^flipTransitionDidStartExeBlock)(id<SJFlipTransitionManager> mgr);
 @property (nonatomic, copy, nullable) void(^flipTransitionDidStopExeBlock)(id<SJFlipTransitionManager> mgr);
 @end
-NS_ASSUME_NONNULL_END
 #endif /* SJFlipTransitionManagerProtocol_h */

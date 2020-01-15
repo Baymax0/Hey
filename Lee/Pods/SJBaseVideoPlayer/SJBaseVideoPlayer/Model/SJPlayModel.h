@@ -3,7 +3,7 @@
 //  SJVideoPlayerAssetCarrier
 //
 //  Created by 畅三江 on 2018/6/28.
-//  Copyright © 2018年 changsanjiang. All rights reserved.
+//  Copyright © 2018年 SanJiang. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -34,8 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SJPlayModel: NSObject<SJPlayModel>
 
 - (instancetype)init;
-
-+ (instancetype)UIViewPlayModel;
 
 /// - UITableView
 ///     - UITableViewCell

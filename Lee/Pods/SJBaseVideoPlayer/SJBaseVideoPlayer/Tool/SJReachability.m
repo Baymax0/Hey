@@ -2,160 +2,56 @@
 //  SJReachabilityObserver.m
 //  Project
 //
-//  Created by 畅三江 on 2018/12/28.
-//  Copyright © 2018 changsanjiang. All rights reserved.
+//  Created by BlueDancer on 2018/12/28.
+//  Copyright © 2018 SanJiang. All rights reserved.
 //
 
 #import "SJReachability.h"
-#include <arpa/inet.h>
-#include <ifaddrs.h>
-#include <net/if.h>
-#include <net/if_dl.h>
-#import "SJVideoPlayerRegistrar.h"
-
-#import "NSTimer+SJAssetAdd.h"
 #if __has_include(<Reachability/Reachability.h>)
 #import <Reachability/Reachability.h>
 #else
 #import "Reachability.h"
 #endif
 
+#if __has_include(<SJObserverHelper/NSObject+SJObserverHelper.h>)
+#import <SJObserverHelper/NSObject+SJObserverHelper.h>
+#else
+#import "NSObject+SJObserverHelper.h"
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
-static NSNotificationName const GSDownloadNetworkSpeedNotificationKey = @"__GSDownloadNetworkSpeedNotificationKey";
-static NSNotificationName const GSUploadNetworkSpeedNotificationKey = @"__GSUploadNetworkSpeedNotificationKey";
-
-static NSNotificationName const SJReachabilityNetworkStatusDidChangeNotification = @"SJReachabilityNetworkStatusDidChange";
-
-///
-/// Thanks @18138870200
-/// https://github.com/18138870200/SGNetworkSpeed.git
-///
-@interface __DJNetworkSpeedObserver : NSObject {
-    // refresh timer
-    NSTimer *_Nullable _timer;
-    
-    SJVideoPlayerRegistrar *_registrar;
-    @public
-    uint32_t _speed;
-}
-
-- (NSString *)speedString;
+@interface SJReachabilityObserver : NSObject<SJReachabilityObserver>
+- (instancetype)initWithReachability:(id<SJReachability>)reachability;
 @end
 
-@interface __DJNetworkSpeedObserver ()
-// 总网速
-@property uint32_t iBytes;
-@end
-
-@implementation __DJNetworkSpeedObserver
-- (instancetype)init {
+@implementation SJReachabilityObserver
+@synthesize networkStatusDidChangeExeBlock = _networkStatusDidChangeExeBlock;
+- (instancetype)initWithReachability:(id<SJReachability>)reachability {
     self = [super init];
-    if ( !self ) return nil;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self->_registrar = [SJVideoPlayerRegistrar new];
-        __weak typeof(self) _self = self;
-        self->_registrar.willEnterForeground = ^(SJVideoPlayerRegistrar * _Nonnull registrar) {
-            __strong typeof(_self) self = _self;
-            if ( !self ) return;
-            [self start];
-        };
-        self->_registrar.didEnterBackground = ^(SJVideoPlayerRegistrar * _Nonnull registrar) {
-            __strong typeof(_self) self = _self;
-            if ( !self ) return;
-            [self stop];
-        };
-    });
+    if ( !self )
+        return nil;
+    [(id)reachability sj_addObserver:self forKeyPath:@"networkStatus"];
     return self;
 }
 
-- (void)dealloc {
-    [self stop];
+- (void)observeValueForKeyPath:(NSString *_Nullable)keyPath ofObject:(id _Nullable)object change:(NSDictionary<NSKeyValueChangeKey,id> *_Nullable)change context:(void *_Nullable)context {
+    if ( [change[NSKeyValueChangeOldKey] integerValue] == [change[NSKeyValueChangeNewKey] integerValue] )
+        return;
+    
+    id<SJReachability> mgr = object;
+    if ( _networkStatusDidChangeExeBlock )
+        _networkStatusDidChangeExeBlock(mgr, mgr.networkStatus);
 }
-
-- (void)start {
-    if ( !_timer ) {
-        __weak typeof(self) _self = self;
-        _timer = [NSTimer assetAdd_timerWithTimeInterval:1 block:^(NSTimer *timer) {
-            __strong typeof(_self) self = _self;
-            if ( !self ) {
-                [timer invalidate];
-                return;
-            }
-            [self checkNetworkSpeed];
-        } repeats:YES];
-        [_timer assetAdd_fire];
-        [NSRunLoop.mainRunLoop addTimer:_timer forMode:NSRunLoopCommonModes];
-    }
-}
-
-- (void)stop{
-    if ( [_timer isValid] ) {
-        [_timer invalidate];
-        _timer = nil;
-    }
-}
-
-- (NSString*)speedString {
-    // B
-    if ( _speed < 1024 )
-        return @"0KB";
-    // KB
-    else if (_speed >= 1024 && _speed < 1024 * 1024)
-        return [NSString stringWithFormat:@"%.fKB/s", (double)_speed / 1024];
-    // MB
-    else if (_speed >= 1024 * 1024 && _speed < 1024 * 1024 * 1024)
-        return [NSString stringWithFormat:@"%.1fMB/s", (double)_speed / (1024 * 1024)];
-    // GB
-    else
-        return [NSString stringWithFormat:@"%.1fGB/s", (double)_speed / (1024 * 1024 * 1024)];
-}
-
-- (void)checkNetworkSpeed{
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        struct ifaddrs *ifa_list = 0, *ifa;
-        if ( getifaddrs(&ifa_list) == -1 )
-            return;
-        uint32_t iBytes = 0;
-        
-        for ( ifa = ifa_list ; ifa ; ifa = ifa->ifa_next ) {
-            if (AF_LINK != ifa->ifa_addr->sa_family)
-                continue;
-            if (!(ifa->ifa_flags & IFF_UP) && !(ifa->ifa_flags & IFF_RUNNING))
-                continue;
-            if (ifa->ifa_data == 0)
-                continue;
-            // network
-            if (strncmp(ifa->ifa_name, "lo", 2)) {
-                struct if_data* if_data = (struct if_data*)ifa->ifa_data;
-                iBytes += if_data->ifi_ibytes;
-            }
-        }
-        freeifaddrs(ifa_list);
-        
-        uint32_t __iBytes = self.iBytes;
-        if ( __iBytes != 0 ) {
-            
-            uint32_t speed = iBytes - __iBytes;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self->_speed = speed;
-                [[NSNotificationCenter defaultCenter] postNotificationName:GSDownloadNetworkSpeedNotificationKey object:self];
-            });
-        }
-        self.iBytes = iBytes;
-    });
-}
-@end
-
-@interface SJReachabilityObserver : NSObject<SJReachabilityObserver>
-- (instancetype)initWithReachability:(SJReachability *)reachability;
 @end
 
 @interface SJReachability ()
 @property (nonatomic) SJNetworkStatus networkStatus;
-@property (nonatomic, strong, readonly) __DJNetworkSpeedObserver *networkSpeedObserver;
 @end
 
-@implementation SJReachability
+@implementation SJReachability {
+    id _notifyToken;
+}
+
 + (instancetype)shared {
     static id _instance;
     static dispatch_once_t onceToken;
@@ -165,96 +61,37 @@ static NSNotificationName const SJReachabilityNetworkStatusDidChangeNotification
     return _instance;
 }
 
-- (id<SJReachabilityObserver>)getObserver {
-    return [[SJReachabilityObserver alloc] initWithReachability:self];
-}
-
 static Reachability *_reachability;
 - (instancetype)init {
     self = [super init];
     if ( !self ) return nil;
-    [self _initializeReachability];
-    [self _initializeSpeedObserver];
-    [self _startOrStopSpeedObserver];
-    return self;
-}
-
-- (void)dealloc {
-    [NSNotificationCenter.defaultCenter removeObserver:self];
-}
-
-- (NSString *)networkSpeedStr {
-    return [_networkSpeedObserver speedString];
-}
-
-- (void)_initializeReachability {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _reachability = [Reachability reachabilityForInternetConnection];
         [_reachability startNotifier];
     });
+
+    __weak typeof(self) _self = self;
+    _notifyToken = [NSNotificationCenter.defaultCenter addObserverForName:kReachabilityChangedNotification object:_reachability queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        __strong typeof(_self) self = _self;
+        if ( !self ) return;
+        [self _update];
+    }];
     
-    [self _updateNetworkStatus];
-    
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(reachabilityChanged) name:kReachabilityChangedNotification object:_reachability];
-}
-
-- (void)reachabilityChanged {
-    [self _updateNetworkStatus];
-    [self _startOrStopSpeedObserver];
-}
-
-- (void)_updateNetworkStatus {
-    self.networkStatus = (NSInteger)[_reachability currentReachabilityStatus];
-}
-
-- (void)_startOrStopSpeedObserver {
-    if ( _networkStatus == SJNetworkStatus_NotReachable ) {
-        [_networkSpeedObserver stop];
-    }
-    else {
-        [_networkSpeedObserver start];
-    }
-}
-
-- (void)_initializeSpeedObserver {
-    _networkSpeedObserver = [[__DJNetworkSpeedObserver alloc] init];
-}
-
-- (void)startRefresh {
-    [_networkSpeedObserver start];
-}
-
-- (void)stopRefresh {
-    [_networkSpeedObserver stop];
-}
-@end
-
-@implementation SJReachabilityObserver {
-    __weak SJReachability *_reachability;
-}
-@synthesize networkStatusDidChangeExeBlock = _networkStatusDidChangeExeBlock;
-@synthesize networkSpeedDidChangeExeBlock = _networkSpeedDidChangeExeBlock;
-- (instancetype)initWithReachability:(SJReachability *)reachability {
-    self = [super init];
-    if ( !self ) return nil;
-    _reachability = reachability;
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(networkStatusDidChange:) name:SJReachabilityNetworkStatusDidChangeNotification object:reachability];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(networkSpeedDidChange:) name:GSDownloadNetworkSpeedNotificationKey object:reachability.networkSpeedObserver];
+    [self _update];
     return self;
 }
 
-- (void)dealloc {
-    [NSNotificationCenter.defaultCenter removeObserver:self];
+- (id<SJReachabilityObserver>)getObserver {
+    return [[SJReachabilityObserver alloc] initWithReachability:self];
 }
 
-- (void)networkStatusDidChange:(NSNotification *)note {
-    id<SJReachability> mgr = note.object;
-    if ( _networkStatusDidChangeExeBlock )
-        _networkStatusDidChangeExeBlock(mgr);
+- (void)_update {
+    self.networkStatus = (NSInteger)[_reachability currentReachabilityStatus];
 }
-- (void)networkSpeedDidChange:(NSNotification *)note {
-    if ( _networkSpeedDidChangeExeBlock ) _networkSpeedDidChangeExeBlock(note.object);
+
+- (void)dealloc {
+    if ( _notifyToken ) [NSNotificationCenter.defaultCenter removeObserver:_notifyToken];
 }
 @end
 NS_ASSUME_NONNULL_END

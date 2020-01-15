@@ -2,14 +2,17 @@
 //  SJFitOnScreenManager.m
 //  SJBaseVideoPlayer
 //
-//  Created by 畅三江 on 2018/12/31.
+//  Created by BlueDancer on 2018/12/31.
 //
 
 #import "SJFitOnScreenManager.h"
+#if __has_include(<SJObserverHelper/NSObject+SJObserverHelper.h>)
+#import <SJObserverHelper/NSObject+SJObserverHelper.h>
+#else
+#import "NSObject+SJObserverHelper.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
-static NSNotificationName const SJFitOnScreenManagerTransitioningValueDidChangeNotification = @"SJFitOnScreenManagerTransitioningValueDidChange";
-
 @interface SJFitOnScreenManagerObserver : NSObject<SJFitOnScreenManagerObserver>
 - (instancetype)initWithManager:(id<SJFitOnScreenManager>)manager;
 @end
@@ -22,17 +25,16 @@ static NSNotificationName const SJFitOnScreenManagerTransitioningValueDidChangeN
     self = [super init];
     if ( !self )
         return nil;
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(transitioningValueDidChange:) name:SJFitOnScreenManagerTransitioningValueDidChangeNotification object:manager];
+    [(id)manager sj_addObserver:self forKeyPath:@"state"];
     return self;
 }
 
-- (void)dealloc {
-    [NSNotificationCenter.defaultCenter removeObserver:self];
-}
-
-- (void)transitioningValueDidChange:(NSNotification *)note {
-    id<SJFitOnScreenManager> mgr = note.object;
-    if ( mgr.isTransitioning ) {
+- (void)observeValueForKeyPath:(NSString *_Nullable)keyPath ofObject:(id _Nullable)object change:(NSDictionary<NSKeyValueChangeKey,id> *_Nullable)change context:(void *_Nullable)context {
+    if ( [change[NSKeyValueChangeOldKey] integerValue] == [change[NSKeyValueChangeNewKey] integerValue] )
+        return;
+    
+    id<SJFitOnScreenManager> mgr = object;
+    if ( mgr.state == SJFitOnScreenStateStart ) {
         if ( _fitOnScreenWillBeginExeBlock )
             _fitOnScreenWillBeginExeBlock(mgr);
     }
@@ -45,7 +47,7 @@ static NSNotificationName const SJFitOnScreenManagerTransitioningValueDidChangeN
 
 
 @interface SJFitOnScreenManager ()
-@property (nonatomic, getter=isTransitioning) BOOL transitioning;
+@property (nonatomic) SJFitOnScreenState state;
 @property (nonatomic) BOOL innerFitOnScreen;
 @property (nonatomic, strong, readonly) UIView *target;
 @property (nonatomic, strong, readonly) UIView *superview;
@@ -61,6 +63,7 @@ static NSNotificationName const SJFitOnScreenManagerTransitioningValueDidChangeN
     _target = target;
     _superview = superview;
     _duration = 0.4;
+    _state = SJFitOnScreenStateEnd;
     return self;
 }
 
@@ -78,13 +81,13 @@ static NSNotificationName const SJFitOnScreenManagerTransitioningValueDidChangeN
     [self setFitOnScreen:fitOnScreen animated:animated completionHandler:nil];
 }
 - (void)setFitOnScreen:(BOOL)fitOnScreen animated:(BOOL)animated completionHandler:(nullable void (^)(id<SJFitOnScreenManager>))completionHandler {
-    if ( fitOnScreen == self.isFitOnScreen ) { if ( completionHandler ) completionHandler(self); return; }
+    if ( fitOnScreen == self.isFitOnScreen ) { return; }
     __weak typeof(self) _self = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         __strong typeof(_self) self = _self;
         if ( !self ) return;
         self.innerFitOnScreen = fitOnScreen;
-        self.transitioning = YES;
+        self.state = SJFitOnScreenStateStart;
         
         UIWindow *window = [UIApplication sharedApplication].keyWindow;
         if ( !window ) return;
@@ -112,7 +115,7 @@ static NSNotificationName const SJFitOnScreenManagerTransitioningValueDidChangeN
                 self.target.frame = self.superview.bounds;
             }
             
-            self.transitioning = NO;
+            self.state = SJFitOnScreenStateEnd;
 
             if ( completionHandler )
                 completionHandler(self);
@@ -126,9 +129,10 @@ static NSNotificationName const SJFitOnScreenManagerTransitioningValueDidChangeN
     _innerFitOnScreen = innerFitOnScreen;
 }
 
-- (void)setTransitioning:(BOOL)transitioning {
-    _transitioning = transitioning;
-    [NSNotificationCenter.defaultCenter postNotificationName:SJFitOnScreenManagerTransitioningValueDidChangeNotification object:self];
+- (void)setState:(SJFitOnScreenState)state {
+    if ( state == _state )
+        return;
+    _state = state;
 }
 @end
 NS_ASSUME_NONNULL_END

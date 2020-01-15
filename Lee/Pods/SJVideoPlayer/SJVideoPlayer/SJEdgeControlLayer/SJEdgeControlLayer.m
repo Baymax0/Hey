@@ -2,14 +2,20 @@
 //  SJEdgeControlLayer.m
 //  SJVideoPlayer
 //
-//  Created by 畅三江 on 2018/10/24.
+//  Created by BlueDancer on 2018/10/24.
 //  Copyright © 2018 畅三江. All rights reserved.
 //
 
-#if __has_include(<SJUIKit/SJAttributesFactory.h>)
-#import <SJUIKit/SJAttributesFactory.h>
+#if __has_include(<SJAttributesFactory/SJAttributeWorker.h>)
+#import <SJAttributesFactory/SJAttributeWorker.h>
 #else
-#import "SJAttributesFactory.h"
+#import "SJAttributeWorker.h"
+#endif
+
+#if __has_include(<SJObserverHelper/NSObject+SJObserverHelper.h>)
+#import <SJObserverHelper/NSObject+SJObserverHelper.h>
+#else
+#import "NSObject+SJObserverHelper.h"
 #endif
 
 #if __has_include(<Masonry/Masonry.h>)
@@ -21,9 +27,11 @@
 #if __has_include(<SJBaseVideoPlayer/SJBaseVideoPlayer.h>)
 #import <SJBaseVideoPlayer/SJBaseVideoPlayer.h>
 #import <SJBaseVideoPlayer/SJTimerControl.h>
+#import <SJBaseVideoPlayer/SJBaseVideoPlayer+PlayStatus.h>
 #else
 #import "SJBaseVideoPlayer.h"
 #import "SJTimerControl.h"
+#import "SJBaseVideoPlayer+PlayStatus.h"
 #endif
 
 #import "SJEdgeControlLayer.h"
@@ -33,12 +41,12 @@
 #import "UIView+SJVideoPlayerSetting.h"
 #import "UIView+SJAnimationAdded.h"
 #import "SJProgressSlider.h"
-#import "SJNetworkLoadingView.h"
+#import "SJLoadingView.h"
 
 #pragma mark - Top
 SJEdgeControlButtonItemTag const SJEdgeControlLayerTopItem_Back = 10000;
 SJEdgeControlButtonItemTag const SJEdgeControlLayerTopItem_Title = 10001;
-static SJEdgeControlButtonItemTag const SJEdgeControlLayerTopItem_PlaceholderBack = 10002;
+static SJEdgeControlButtonItemTag const SJEdgeControlLayerTopItem_PlaceholderBack = 10003;
 
 #pragma mark - Left
 SJEdgeControlButtonItemTag const SJEdgeControlLayerLeftItem_Lock = 20000;
@@ -56,59 +64,44 @@ SJEdgeControlButtonItemTag const SJEdgeControlLayerBottomItem_LIVEText = 30006;
 SJEdgeControlButtonItemTag const SJEdgeControlLayerCenterItem_Replay = 40000;
 
 
-@interface SJEdgeControlLayer ()<SJProgressSliderDelegate>
+#define _SJFastPath(P)  __builtin_expect((P), 1)
+#define _SJSlowPath(P)  __builtin_expect((P), 0)
+
+@interface SJEdgeControlLayer ()<SJProgressSliderDelegate, SJEdgeControlButtonItemDelegate>
 @property (nonatomic, weak, nullable) SJBaseVideoPlayer *videoPlayer;
 
 @property (nonatomic, strong, readonly) SJTimerControl *lockStateTappedTimerControl;
 @property (nonatomic, strong, readonly) SJVideoPlayerDraggingProgressView *draggingProgressView;
-@property (nonatomic, strong, readonly) SJProgressSlider *bottomProgressIndicator;
+@property (nonatomic, strong, readonly) SJLoadingView *loadingView;
+@property (nonatomic, strong, readonly) SJProgressSlider *bottomProgressSlider;
 
 // back
 @property (nonatomic, strong, readonly) UIButton *residentBackButton;
 @property (nonatomic, strong, readonly) SJEdgeControlButtonItem *backItem;
-@property (nonatomic, strong, nullable) id<SJReachabilityObserver> reachabilityObserver;
-
-@property (nonatomic, strong, nullable) NSString *durationStr;
 @end
 
 @implementation SJEdgeControlLayer
 @synthesize restarted = _restarted;
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if ( !self ) return nil;
-    _bottomProgressIndicatorHeight = 1;
-    [self _setupView];
-    self.autoAdjustTopSpacing = YES;
-    self.hiddenBottomProgressIndicator = YES;
-    return self;
-}
-
-- (void)dealloc {
-    [NSNotificationCenter.defaultCenter removeObserver:self];
-}
-
-#pragma mark -
-
-///
 /// 切换器(player.switcher)重启该控制层
-///
 - (void)restartControlLayer {
     _restarted = YES;
-    sj_view_makeAppear(self.controlView, YES);
-    [self _showOrHiddenLoadingView];
-    _videoPlayer.URLAsset != nil ? [_videoPlayer controlLayerNeedAppear] : [_videoPlayer controlLayerNeedDisappear];
+    if ( _videoPlayer.URLAsset ) {
+        [_videoPlayer controlLayerNeedAppear];
+        sj_view_makeAppear(self.controlView, YES);
+    }
+    else {
+        [_videoPlayer controlLayerNeedDisappear];
+    }
 }
 
-///
 /// 控制层退场
-///
 - (void)exitControlLayer {
     _restarted = NO;
-    
-    sj_view_makeDisappear(self.controlView, YES, ^{
-        if ( !self->_restarted ) [self.controlView removeFromSuperview];
-    });
+    /// clean
+    _videoPlayer.controlLayerDataSource = nil;
+    _videoPlayer.controlLayerDelegate = nil;
+    _videoPlayer = nil;
     
     sj_view_makeDisappear(_topContainerView, YES);
     sj_view_makeDisappear(_leftContainerView, YES);
@@ -116,34 +109,21 @@ SJEdgeControlButtonItemTag const SJEdgeControlLayerCenterItem_Replay = 40000;
     sj_view_makeDisappear(_rightContainerView, YES);
     sj_view_makeDisappear(_draggingProgressView, YES);
     sj_view_makeDisappear(_centerContainerView, YES);
+    sj_view_makeDisappear(self.controlView, YES, ^{
+        if ( !self->_restarted ) [self.controlView removeFromSuperview];
+    });
 }
 
-#pragma mark - item actions
-
-- (void)_tappedBackItem {
-    if ( [self.delegate respondsToSelector:@selector(backItemWasTappedForControlLayer:)] ) {
-        [self.delegate backItemWasTappedForControlLayer:self];
-    }
-}
-
-- (void)_tappedLockItem {
-    self.videoPlayer.lockedScreen = !self.videoPlayer.isLockedScreen;
-}
-
-- (void)_tappedPlayItem {
-    self.videoPlayer.timeControlStatus == SJPlaybackTimeControlStatusPaused ? [self.videoPlayer play] : [self.videoPlayer pause];
-}
-
-- (void)_tappedFullItem {
-    _videoPlayer.useFitOnScreenAndDisableRotation ? _videoPlayer.fitOnScreen = !_videoPlayer.fitOnScreen : [self.videoPlayer rotate];
-}
-
-- (void)_tappedReplayItem {
-    [_videoPlayer replay];
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if ( !self ) return nil;
+    [self _setupView];
+    self.autoAdjustTopSpacing = YES;
+    self.hideBottomProgressSlider = YES;
+    return self;
 }
 
 #pragma mark - setup view
-
 - (void)_setupView {
     [self _addItemsToTopAdapter];
     [self _addItemsToLeftAdapter];
@@ -151,117 +131,84 @@ SJEdgeControlButtonItemTag const SJEdgeControlLayerCenterItem_Replay = 40000;
     [self _addItemsToRightAdapter];
     [self _addItemsToCenterAdapter];
     
+    [self.controlView addSubview:self.loadingView];
+    [_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.offset(0);
+    }];
+    
     self.topContainerView.sjv_disappearDirection = SJViewDisappearAnimation_Top;
     self.leftContainerView.sjv_disappearDirection = SJViewDisappearAnimation_Left;
     self.bottomContainerView.sjv_disappearDirection = SJViewDisappearAnimation_Bottom;
     self.rightContainerView.sjv_disappearDirection = SJViewDisappearAnimation_Right;
     self.centerContainerView.sjv_disappearDirection = SJViewDisappearAnimation_None;
+    sj_view_initializes(@[self.topContainerView, self.leftContainerView, self.bottomContainerView, self.rightContainerView]);
     
-    sj_view_initializes(@[self.topContainerView, self.leftContainerView,
-                          self.bottomContainerView, self.rightContainerView]);
-    
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(_resetControlLayerAppearIntervalForItemIfNeeded:) name:SJEdgeControlButtonItemPerformedActionNotification object:nil];
+    [self sj_observeWithNotification:SJEdgeControlButtonItemPerformedActionNotification target:nil usingBlock:^(SJEdgeControlLayer *self, NSNotification * _Nonnull note) {
+        [self _buttonItemPerformedAction:note.object];
+    }];
 }
 
+- (void)_buttonItemPerformedAction:(SJEdgeControlButtonItem *)item {
+    if ( [_topAdapter containsItem:item] ||
+         [_leftAdapter containsItem:item] ||
+         [_bottomAdapter containsItem:item] ||
+         [_rightAdapter containsItem:item] ||
+         [_centerAdapter containsItem:item] ) {
+        [_videoPlayer controlLayerNeedAppear]; // 如果点击到当前控制层上的item, 则重置控制层的隐藏间隔
+    }
+}
+
+#pragma mark - Top
 - (void)_addItemsToTopAdapter {
     SJEdgeControlButtonItem *backItem = [SJEdgeControlButtonItem placeholderWithType:SJButtonItemPlaceholderType_49x49 tag:SJEdgeControlLayerTopItem_Back];
-    [backItem addTarget:self action:@selector(_tappedBackItem)];
+    backItem.delegate = self;
+    [backItem addTarget:self action:@selector(clickedBackItem)];
     [self.topAdapter addItem:backItem];
     _backItem = backItem;
 
     SJEdgeControlButtonItem *titleItem = [SJEdgeControlButtonItem placeholderWithType:SJButtonItemPlaceholderType_49xFill tag:SJEdgeControlLayerTopItem_Title];
+    titleItem.delegate = self;
     [self.topAdapter addItem:titleItem];
+}
+
+/// 更新显示状态
+- (void)_updateAppearStateFor_TopAdapterWithVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( 0 == _topAdapter.itemCount ) {
+        sj_view_makeDisappear(_topContainerView, YES);
+        return;
+    }
     
+    /// 锁屏状态下, 使隐藏
+    if ( videoPlayer.isLockedScreen ) {
+        sj_view_makeDisappear(_topContainerView, YES);
+        return;
+    }
+    
+    /// 是否显示
+    if ( videoPlayer.controlLayerIsAppeared ) {
+        sj_view_makeAppear(_topContainerView, YES);
+    }
+    else {
+        sj_view_makeDisappear(_topContainerView, YES);
+    }
+}
+
+/// - 更新容器中的Items
+/// - 是否应该显示
+- (void)_updateItemsFor_TopAdapterIfNeeded:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( sj_view_isDisappeared(_topContainerView) )
+        return;
+    
+    [self _callUpdatePropertiesMethodOfItemsForAdapter:_topAdapter videoPlayer:videoPlayer];
     [self.topAdapter reload];
 }
 
-- (void)_addItemsToLeftAdapter {
-    SJEdgeControlButtonItem *lockItem = [SJEdgeControlButtonItem placeholderWithType:SJButtonItemPlaceholderType_49x49 tag:SJEdgeControlLayerLeftItem_Lock];
-    [lockItem addTarget:self action:@selector(_tappedLockItem)];
-    [self.leftAdapter addItem:lockItem];
-    
-    [self.leftAdapter reload];
+- (BOOL)_canDisappearFor_TopAdapter {
+    return YES;
 }
 
-- (void)_addItemsToBottomAdapter {
-    // 播放按钮
-    SJEdgeControlButtonItem *playItem = [SJEdgeControlButtonItem placeholderWithType:SJButtonItemPlaceholderType_49x49 tag:SJEdgeControlLayerBottomItem_Play];
-    [playItem addTarget:self action:@selector(_tappedPlayItem)];
-    [self.bottomAdapter addItem:playItem];
-    
-    SJEdgeControlButtonItem *liveItem = [[SJEdgeControlButtonItem alloc] initWithTag:SJEdgeControlLayerBottomItem_LIVEText];
-    liveItem.hidden = YES;
-    [self.bottomAdapter addItem:liveItem];
-    
-    // 当前时间
-    SJEdgeControlButtonItem *currentTimeItem = [SJEdgeControlButtonItem placeholderWithSize:8 tag:SJEdgeControlLayerBottomItem_CurrentTime];
-    [self.bottomAdapter addItem:currentTimeItem];
-    
-    // 时间分隔符
-    SJEdgeControlButtonItem *separatorItem = [[SJEdgeControlButtonItem alloc] initWithTitle:[NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-        make.append(@"/ ").font([UIFont systemFontOfSize:11]).textColor([UIColor whiteColor]).alignment(NSTextAlignmentCenter);
-    }] target:nil action:NULL tag:SJEdgeControlLayerBottomItem_Separator];
-    [self.bottomAdapter addItem:separatorItem];
-    
-    // 全部时长
-    SJEdgeControlButtonItem *durationTimeItem = [SJEdgeControlButtonItem placeholderWithSize:8 tag:SJEdgeControlLayerBottomItem_DurationTime];
-    [self.bottomAdapter addItem:durationTimeItem];
-    
-    // 播放进度条
-    SJProgressSlider *slider = [SJProgressSlider new];
-    slider.trackHeight = 3;
-    slider.delegate = self;
-    slider.tap.enabled = YES;
-    slider.enableBufferProgress = YES;
-    __weak typeof(self) _self = self;
-    slider.tappedExeBlock = ^(SJProgressSlider * _Nonnull slider, CGFloat location) {
-        __strong typeof(_self) self = _self;
-        if ( !self ) return;
-        if ( self.videoPlayer.canSeekToTime && self.videoPlayer.canSeekToTime(self.videoPlayer) == NO ) {
-            return;
-        }
-        
-        if ( self.videoPlayer.assetStatus != SJAssetStatusReadyToPlay ) {
-            return;
-        }
-    
-        [self.videoPlayer seekToTime:location completionHandler:nil];
-    };
-    SJEdgeControlButtonItem *progressItem = [[SJEdgeControlButtonItem alloc] initWithCustomView:slider tag:SJEdgeControlLayerBottomItem_Progress];
-    progressItem.insets = SJEdgeInsetsMake(8, 8);
-    progressItem.fill = YES;
-    [self.bottomAdapter addItem:progressItem];
-
-    // 全屏按钮
-    SJEdgeControlButtonItem *fullItem = [SJEdgeControlButtonItem placeholderWithType:SJButtonItemPlaceholderType_49x49 tag:SJEdgeControlLayerBottomItem_FullBtn];
-    [fullItem addTarget:self action:@selector(_tappedFullItem)];
-    [self.bottomAdapter addItem:fullItem];
-
-    [self.bottomAdapter reload];
-}
-
-- (void)_addItemsToRightAdapter {
-    
-}
-
-- (void)_addItemsToCenterAdapter {
-    UILabel *replayLabel = [UILabel new];
-    replayLabel.numberOfLines = 0;
-    SJEdgeControlButtonItem *replayItem = [SJEdgeControlButtonItem frameLayoutWithCustomView:replayLabel tag:SJEdgeControlLayerCenterItem_Replay];
-    [replayItem addTarget:self action:@selector(_tappedReplayItem)];
-    [self.centerAdapter addItem:replayItem];
-    [self.centerAdapter reload];
-}
-
-#pragma mark - resident Back Button
-
-@synthesize residentBackButton = _residentBackButton;
-- (UIButton *)residentBackButton {
-    if ( _residentBackButton ) return _residentBackButton;
-    _residentBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_residentBackButton setImage:SJEdgeControlLayerSettings.commonSettings.backBtnImage forState:UIControlStateNormal];
-    [_residentBackButton addTarget:self action:@selector(_tappedBackItem) forControlEvents:UIControlEventTouchUpInside];
-    return _residentBackButton;
+- (void)clickedBackItem {
+    if ( _clickedBackItemExeBlock ) _clickedBackItemExeBlock(self);
 }
 
 - (void)setShowResidentBackButton:(BOOL)showResidentBackButton {
@@ -283,7 +230,7 @@ SJEdgeControlButtonItemTag const SJEdgeControlLayerCenterItem_Replay = 40000;
             }
             [self.topAdapter removeItemForTag:SJEdgeControlLayerTopItem_Back];
             [self.topAdapter insertItem:placeholderItem atIndex:0];
-            [self _updateResidentBackButtonAppearStateIfNeeded];
+            [self _updateAppearStateForResidentBackButton];
             [self.topAdapter reload];
         }
         else {
@@ -300,112 +247,525 @@ SJEdgeControlButtonItemTag const SJEdgeControlLayerCenterItem_Replay = 40000;
     });
 }
 
-#pragma mark - bottom progress slider delegate
+@synthesize residentBackButton = _residentBackButton;
+- (UIButton *)residentBackButton {
+    if ( _residentBackButton ) return _residentBackButton;
+    _residentBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_residentBackButton setImage:SJEdgeControlLayerSettings.commonSettings.backBtnImage forState:UIControlStateNormal];
+    [_residentBackButton addTarget:self action:@selector(clickedBackItem) forControlEvents:UIControlEventTouchUpInside];
+    return _residentBackButton;
+}
 
-- (void)sliderWillBeginDragging:(SJProgressSlider *)slider {
-    if ( _videoPlayer.assetStatus != SJAssetStatusReadyToPlay ) {
-        [slider cancelDragging];
+- (void)_updateAppearStateForResidentBackButton {
+    if ( !_showResidentBackButton )
+        return;
+    SJEdgeControlButtonItem *placeholderItem = [self.topAdapter itemForTag:SJEdgeControlLayerTopItem_PlaceholderBack];
+    BOOL isFitOnScreen = _videoPlayer.isFitOnScreen;
+    BOOL isFull = _videoPlayer.isFullScreen;
+    BOOL isLockedScreen = _videoPlayer.isLockedScreen;
+    if ( _SJSlowPath(isLockedScreen) ) {
+        _residentBackButton.hidden = YES;
+    }
+    else {
+        BOOL isPlayOnScrollView = _videoPlayer.isPlayOnScrollView;
+        _residentBackButton.hidden = placeholderItem.hidden = isPlayOnScrollView && !isFitOnScreen && !isFull;
+    }
+}
+
+#pragma mark - left
+- (void)_addItemsToLeftAdapter {
+    SJEdgeControlButtonItem *lockItem = [SJEdgeControlButtonItem placeholderWithType:SJButtonItemPlaceholderType_49x49 tag:SJEdgeControlLayerLeftItem_Lock];
+    lockItem.delegate = self;
+    [lockItem addTarget:self action:@selector(clickedLockItem:)];
+    [self.leftAdapter addItem:lockItem];
+}
+
+/// 更新显示状态
+- (void)_updateAppearStateFor_LeftAdapterWithVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( 0 == _leftAdapter.itemCount ) {
+        sj_view_makeDisappear(_leftContainerView, YES);
         return;
     }
-    else if ( _videoPlayer.canSeekToTime && !_videoPlayer.canSeekToTime(_videoPlayer) ) {
+    
+    /// 锁屏状态下显示
+    if ( videoPlayer.isLockedScreen ) {
+        sj_view_makeAppear(_leftContainerView, YES);
+        return;
+    }
+    
+    /// 是否显示
+    if ( videoPlayer.controlLayerIsAppeared ) {
+        sj_view_makeAppear(_leftContainerView, YES);
+    }
+    else {
+        sj_view_makeDisappear(_leftContainerView, YES);
+    }
+}
+
+/// 更新容器中的Items
+- (void)_updateItemsFor_LeftAdapterIfNeeded:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( sj_view_isDisappeared(_leftContainerView) )
+        return;
+    
+    [self _callUpdatePropertiesMethodOfItemsForAdapter:_leftAdapter videoPlayer:videoPlayer];
+    [_leftAdapter reload];
+}
+
+- (BOOL)_canDisappearFor_LeftAdapter {
+    return YES;
+}
+
+/// item actions
+- (void)clickedLockItem:(SJEdgeControlButtonItem *)item {
+    self.videoPlayer.lockedScreen = !self.videoPlayer.isLockedScreen;
+}
+
+
+#pragma mark - bottom
+- (void)_addItemsToBottomAdapter {
+    
+    // 播放按钮
+    SJEdgeControlButtonItem *playItem = [SJEdgeControlButtonItem placeholderWithType:SJButtonItemPlaceholderType_49x49 tag:SJEdgeControlLayerBottomItem_Play];
+    playItem.delegate = self;
+    [playItem addTarget:self action:@selector(clickedPlayItem:)];
+    [self.bottomAdapter addItem:playItem];
+    
+    // 当前时间
+    SJEdgeControlButtonItem *currentTimeItem = [SJEdgeControlButtonItem placeholderWithSize:8 tag:SJEdgeControlLayerBottomItem_CurrentTime];
+    [self.bottomAdapter addItem:currentTimeItem];
+    
+    // 时间分隔符
+    SJEdgeControlButtonItem *separatorItem = [[SJEdgeControlButtonItem alloc] initWithTitle:sj_makeAttributesString(^(SJAttributeWorker * _Nonnull make) {
+        make.append(@"/ ").font([UIFont systemFontOfSize:11]).textColor([UIColor whiteColor]).alignment(NSTextAlignmentCenter);
+    }) target:nil action:NULL tag:SJEdgeControlLayerBottomItem_Separator];
+    [self.bottomAdapter addItem:separatorItem];
+    
+    // 全部时长
+    SJEdgeControlButtonItem *durationTimeItem = [SJEdgeControlButtonItem placeholderWithSize:8 tag:SJEdgeControlLayerBottomItem_DurationTime];
+    [self.bottomAdapter addItem:durationTimeItem];
+    
+    // 播放进度条
+    SJProgressSlider *slider = [SJProgressSlider new];
+    slider.trackHeight = 3;
+    slider.delegate = self;
+    slider.tap.enabled = YES;
+    slider.enableBufferProgress = YES;
+    __weak typeof(self) _self = self;
+    slider.tappedExeBlock = ^(SJProgressSlider * _Nonnull slider, CGFloat location) {
+        __strong typeof(_self) self = _self;
+        if ( !self ) return;
+        if ( self.videoPlayer.canSeekToTime ) {
+            if ( !self.videoPlayer.canSeekToTime(self.videoPlayer) )
+                return;
+        }
+        
+        if ( [self.videoPlayer playStatus_isUnknown] ||
+             [self.videoPlayer playStatus_isPrepare] ) {
+            return;
+        }
+        
+        [self.videoPlayer seekToTime:location completionHandler:^(BOOL finished) {
+            __strong typeof(_self) self = _self;
+            if ( !self ) return;
+            if ( finished ) [self.videoPlayer play];
+        }];
+    };
+    SJEdgeControlButtonItem *progressItem = [[SJEdgeControlButtonItem alloc] initWithCustomView:slider tag:SJEdgeControlLayerBottomItem_Progress];
+    progressItem.delegate = self;
+    progressItem.fill = YES;
+    [self.bottomAdapter addItem:progressItem];
+
+    // 全屏按钮
+    SJEdgeControlButtonItem *fullItem = [SJEdgeControlButtonItem placeholderWithType:SJButtonItemPlaceholderType_49x49 tag:SJEdgeControlLayerBottomItem_FullBtn];
+    fullItem.delegate = self;
+    [fullItem addTarget:self action:@selector(clickedFullItem:)];
+    [self.bottomAdapter addItem:fullItem];
+    
+    self.bottomAdapter.view.settingRecroder = [[SJVideoPlayerControlSettingRecorder alloc] initWithSettings:^(SJEdgeControlLayerSettings * _Nonnull setting) {
+        __strong typeof(_self) self = _self;
+        if ( !self ) return;
+        [self _updateItemsFor_BottomAdapterIfNeeded:self.videoPlayer];
+    }];
+}
+
+/// 更新显示状态
+- (void)_updateAppearStateFor_BottomAdapterWithVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( 0 == _bottomAdapter.itemCount ) {
+        sj_view_makeDisappear(_bottomContainerView, YES);
+        return;
+    }
+    
+    /// 锁屏状态下, 使隐藏
+    if ( videoPlayer.isLockedScreen ) {
+        sj_view_makeDisappear(_bottomContainerView, YES);
+        sj_view_makeAppear(_bottomProgressSlider, YES);
+        return;
+    }
+    
+    /// 是否显示
+    if ( videoPlayer.controlLayerIsAppeared ) {
+        sj_view_makeAppear(_bottomContainerView, YES);
+        sj_view_makeDisappear(_bottomProgressSlider, YES);
+    }
+    else {
+        sj_view_makeDisappear(_bottomContainerView, YES);
+        sj_view_makeAppear(_bottomProgressSlider, YES);
+    }
+}
+
+/// 更新容器中的Items
+- (void)_updateItemsFor_BottomAdapterIfNeeded:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( sj_view_isDisappeared(_bottomContainerView) )
+        return;
+    
+    [self _updateTimeLabelFor_BottomAdapterWithCurrentTimeStr:videoPlayer.currentTimeStr durationStr:videoPlayer.totalTimeStr];
+    [self _callUpdatePropertiesMethodOfItemsForAdapter:_bottomAdapter videoPlayer:videoPlayer];
+    [_bottomAdapter reload];
+}
+
+/// 更新时间标签
+- (void)_updateTimeLabelFor_BottomAdapterWithCurrentTimeStr:(NSString *)currentTimeStr durationStr:(NSString *)durationStr {
+    if ( !_bottomAdapter ) return;
+    if ( sj_view_isDisappeared(_bottomContainerView) ) return;
+    SJEdgeControlButtonItem *currentTimeItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_CurrentTime];
+    SJEdgeControlButtonItem *durationTimeItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_DurationTime];
+    
+    if ( !durationTimeItem && !currentTimeItem ) return;
+    
+    currentTimeItem.title = sj_makeAttributesString(^(SJAttributeWorker * _Nonnull make) {
+        make.append(currentTimeStr).font([UIFont systemFontOfSize:11]).textColor([UIColor whiteColor]).alignment(NSTextAlignmentCenter);
+    });
+    [_bottomAdapter updateContentForItemWithTag:SJEdgeControlLayerBottomItem_CurrentTime];
+    
+    if ( ![durationStr isEqualToString:durationTimeItem.title.string] ) {
+        durationTimeItem.title = sj_makeAttributesString(^(SJAttributeWorker * _Nonnull make) {
+            make.append(durationStr).font([UIFont systemFontOfSize:11]).textColor([UIColor whiteColor]).alignment(NSTextAlignmentCenter);
+            currentTimeItem.size = durationTimeItem.size = [self _timeLabelMaxWidthByDurationStr:durationStr];
+        });
+        [_bottomAdapter reload];
+    }
+}
+
+- (CGFloat)_timeLabelMaxWidthByDurationStr:(NSString *)durationStr {
+    // 00:00
+    // 00:00:00
+    NSString *ms = @"00:00";
+    NSString *hms = @"00:00:00";
+    NSString *format = (durationStr.length == ms.length)?ms:hms;
+    __block CGSize size = CGSizeZero;
+    sj_makeAttributesString(^(SJAttributeWorker * _Nonnull make) {
+       make.append(format).font([UIFont systemFontOfSize:11]).textColor([UIColor whiteColor]).alignment(NSTextAlignmentCenter);
+        size = make.size();
+    });
+    return size.width;
+}
+
+/// 更新播放进度
+- (void)_updatePlaybackProgressFor_BottomAdapterWithCurrentTime:(NSTimeInterval)currentTime duration:(NSTimeInterval)duration {
+    NSTimeInterval c = currentTime;
+    NSTimeInterval d = duration?:1;
+    
+    if ( !sj_view_isDisappeared(_bottomContainerView) ) {
+        SJEdgeControlButtonItem *progressItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_Progress];
+        SJProgressSlider *slider = progressItem.customView;
+        slider.maxValue = d;
+        if ( !slider.isDragging ) slider.value = c;
+    }
+    
+    if ( !sj_view_isDisappeared(_bottomProgressSlider) ) {
+        _bottomProgressSlider.value = c;
+        _bottomProgressSlider.maxValue = d;
+    }
+}
+
+/// 更新缓冲进度
+- (void)_updateBufferProgressFor_BottomAdapter:(NSTimeInterval)bufferProgress {
+    SJEdgeControlButtonItem *progressItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_Progress];
+    SJProgressSlider *slider = progressItem.customView;
+    slider.bufferProgress = bufferProgress;
+}
+
+// controlLayerDisappearCondition
+- (BOOL)_canDisappearFor_BottomAdapter {
+    SJEdgeControlButtonItem *progressItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_Progress];
+    SJProgressSlider *slider = progressItem.customView;
+    return !slider.isDragging;
+}
+
+- (void)clickedPlayItem:(SJEdgeControlButtonItem *)item {
+    if ( [self.videoPlayer playStatus_isPlaying] ) [self.videoPlayer pause];
+    else [self.videoPlayer play];
+}
+
+- (void)clickedFullItem:(SJEdgeControlButtonItem *)item {
+    if ( _videoPlayer.needPresentModalViewControlller ) {
+        if ( !_videoPlayer.modalViewControllerManager.isPresentedModalViewControlller )
+            [_videoPlayer presentModalViewControlller];
+        else
+            [_videoPlayer dismissModalViewControlller];
+    }
+    else if ( _videoPlayer.useFitOnScreenAndDisableRotation ) {
+        _videoPlayer.fitOnScreen = !_videoPlayer.fitOnScreen;
+    }
+    else {
+        [self.videoPlayer rotate];
+    }
+}
+
+- (void)sliderWillBeginDragging:(SJProgressSlider *)slider {
+    if ( _videoPlayer.canSeekToTime ) {
+        if ( !_videoPlayer.canSeekToTime(_videoPlayer) ) {
+            [slider cancelDragging];
+            return;
+        }
+    }
+    
+    if ( [_videoPlayer playStatus_isUnknown] ||
+         [_videoPlayer playStatus_isPrepare] ) {
         [slider cancelDragging];
         return;
     }
     
-    [self _onDragStart];
+    [self _draggingDidStart:_videoPlayer];
 }
 
-- (void)slider:(SJProgressSlider *)slider valueDidChange:(CGFloat)value {
-    if ( slider.isDragging ) [self _onDragMoving:value];
+- (void)sliderDidDrag:(SJProgressSlider *)slider {
+    [self _draggingForVideoPlayer:_videoPlayer progressTime:slider.value];
 }
 
 - (void)sliderDidEndDragging:(SJProgressSlider *)slider {
-    [self _onDragMoveEnd];
+    [self _draggingDidEnd:_videoPlayer];
 }
 
-#pragma mark - bottom progress indicator
+@synthesize bottomProgressSlider = _bottomProgressSlider;
+- (SJProgressSlider *)bottomProgressSlider {
+    if ( _bottomProgressSlider ) return _bottomProgressSlider;
+    _bottomProgressSlider = [SJProgressSlider new];
+    _bottomProgressSlider.pan.enabled = NO;
+    _bottomProgressSlider.trackHeight = 1;
+    __weak typeof(self) _self = self;
+    _bottomProgressSlider.settingRecroder = [[SJVideoPlayerControlSettingRecorder alloc] initWithSettings:^(SJEdgeControlLayerSettings * _Nonnull setting) {
+        __strong typeof(_self) self = _self;
+        if ( !self ) return ;
+        [self _updateBottomProgressSlider];
+    }];
+    [self _updateBottomProgressSlider];
+    return _bottomProgressSlider;
+}
 
-@synthesize bottomProgressIndicator = _bottomProgressIndicator;
-- (SJProgressSlider *)bottomProgressIndicator {
-    if ( _bottomProgressIndicator ) return _bottomProgressIndicator;
-    _bottomProgressIndicator = [SJProgressSlider new];
-    _bottomProgressIndicator.pan.enabled = NO;
-    _bottomProgressIndicator.trackHeight = _bottomProgressIndicatorHeight;
+- (void)_updateBottomProgressSlider {
+    if ( !_bottomProgressSlider )
+        return;
     SJEdgeControlLayerSettings *setting = SJEdgeControlLayerSettings.commonSettings;
-    _bottomProgressIndicator.traceImageView.backgroundColor = setting.progress_traceColor;
-    _bottomProgressIndicator.trackImageView.backgroundColor = setting.progress_trackColor;
-    return _bottomProgressIndicator;
+    _bottomProgressSlider.traceImageView.backgroundColor = setting.progress_traceColor;
+    _bottomProgressSlider.trackImageView.backgroundColor = setting.progress_trackColor;
 }
 
-- (void)setHiddenBottomProgressIndicator:(BOOL)hiddenBottomProgressIndicator {
-    if ( hiddenBottomProgressIndicator != _hiddenBottomProgressIndicator ) {
-        _hiddenBottomProgressIndicator = hiddenBottomProgressIndicator;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self _showOrRemoveBottomProgressIndicator];
-        });
-    }
-}
-
-- (void)setBottomProgressIndicatorHeight:(CGFloat)bottomProgressIndicatorHeight {
-    if ( bottomProgressIndicatorHeight != _bottomProgressIndicatorHeight ) {
-        
-        _bottomProgressIndicatorHeight = bottomProgressIndicatorHeight;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self->_bottomProgressIndicator.trackHeight = bottomProgressIndicatorHeight;
-            [self->_bottomProgressIndicator mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.height.offset(bottomProgressIndicatorHeight);
-            }];
-        });
-    }
-}
-
-#pragma mark - loading view
-
-- (void)setLoadingView:(nullable id<SJEdgeControlLayerLoadingViewProtocol>)loadingView {
-    if ( loadingView != _loadingView ) {
-        [(UIView *)_loadingView removeFromSuperview];
-        _loadingView = loadingView;
-        
-        if ( loadingView ) {
-            [self.controlView addSubview:(UIView *)loadingView];
-            [(UIView *)loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.center.offset(0);
-            }];
+- (void)setHideBottomProgressSlider:(BOOL)hideBottomProgressSlider {
+    if ( hideBottomProgressSlider == _hideBottomProgressSlider )
+        return;
+    
+    _hideBottomProgressSlider = hideBottomProgressSlider;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ( self->_hideBottomProgressSlider ) {
+            if ( self->_bottomProgressSlider ) {
+                [self->_bottomProgressSlider removeFromSuperview];
+                self->_bottomProgressSlider = nil;
+            }
         }
+        else {
+            if ( !self->_bottomProgressSlider ) {
+                [self.controlView addSubview:self.bottomProgressSlider];
+                [self->_bottomProgressSlider mas_makeConstraints:^(MASConstraintMaker *make) {
+                    make.left.bottom.right.offset(0);
+                    make.height.offset(1);
+                }];
+            }
+        }
+    });
+}
+
+#pragma mark - right
+- (void)_addItemsToRightAdapter {
+    
+}
+
+/// 更新显示状态
+- (void)_updateAppearStateFor_RightAdapterWithVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( 0 == _rightAdapter.itemCount ) {
+        sj_view_makeDisappear(_rightContainerView, YES);
+        return;
     }
+    
+    /// 锁屏状态下, 使隐藏
+    if ( videoPlayer.isLockedScreen ) {
+        sj_view_makeDisappear(_rightContainerView, YES);
+        return;
+    }
+    
+    /// 是否显示
+    if ( videoPlayer.controlLayerIsAppeared ) {
+        sj_view_makeAppear(_rightContainerView, YES);
+    }
+    else {
+        sj_view_makeDisappear(_rightContainerView, YES);
+    }
+}
+
+/// 更新容器中的Items
+- (void)_updateItemsFor_RightAdapterIfNeeded:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( sj_view_isDisappeared(_rightContainerView) ) return;
+
+    [self _callUpdatePropertiesMethodOfItemsForAdapter:_rightAdapter videoPlayer:videoPlayer];
+    [_rightAdapter reload];
+}
+
+- (BOOL)_canDisapearFor_RightAdapter {
+    return YES;
+}
+
+#pragma mark - center
+- (void)_addItemsToCenterAdapter {
+    UILabel *replayLabel = [UILabel new];
+    replayLabel.numberOfLines = 0;
+    SJEdgeControlButtonItem *replayItem = [SJEdgeControlButtonItem frameLayoutWithCustomView:replayLabel tag:SJEdgeControlLayerCenterItem_Replay];
+    replayItem.delegate = self;
+    replayItem.hidden = YES;
+    [replayItem addTarget:self action:@selector(clickedReplayButton:)];
+    [self.centerAdapter addItem:replayItem];
+    
+    __weak typeof(self) _self = self;
+    replayLabel.settingRecroder = [[SJVideoPlayerControlSettingRecorder alloc] initWithSettings:^(SJEdgeControlLayerSettings * _Nonnull setting) {
+        __strong typeof(_self) self = _self;
+        if ( !self ) return;
+        [self _center_updateReplayItem:[self.centerAdapter itemForTag:SJEdgeControlLayerCenterItem_Replay]];
+    }];
+    
+    [self _center_updateReplayItem:[self.centerAdapter itemForTag:SJEdgeControlLayerCenterItem_Replay]];
+}
+
+- (void)_updateAppearStateFor_CenterAdapterWithVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( 0 == _centerAdapter.itemCount ) {
+        sj_view_makeDisappear(_centerContainerView, YES);
+        return;
+    }
+    
+    sj_view_makeAppear(_centerContainerView, YES);
+}
+
+- (void)_updateItemsFor_CenterAdapterIfNeeded:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( 0 == _centerAdapter.itemCount )
+        return;
+    
+    [self _updateAppearStateFor_ReplayItemWithVideoPlayerIfNeeded:videoPlayer];
+    [self _callUpdatePropertiesMethodOfItemsForAdapter:_centerAdapter videoPlayer:videoPlayer];
+    [_centerAdapter reload];
+}
+
+- (void)_updateReplayItemFor_CenterAdapter {
+    
+}
+
+- (void)_updateAppearStateFor_ReplayItemWithVideoPlayerIfNeeded:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    SJEdgeControlButtonItem *replayItem = [_centerAdapter itemForTag:SJEdgeControlLayerCenterItem_Replay];
+    BOOL needHidden = ![videoPlayer playStatus_isInactivity_ReasonPlayEnd];
+    if ( needHidden != replayItem.hidden ) {
+        replayItem.hidden = needHidden;
+        [_centerAdapter reload];
+    }
+}
+
+- (void)clickedReplayButton:(UIButton *)button {
+    [_videoPlayer replay];
 }
 
 @synthesize loadingView = _loadingView;
-- (id<SJEdgeControlLayerLoadingViewProtocol>)loadingView {
+- (SJLoadingView *)loadingView {
     if ( _loadingView ) return _loadingView;
-    _loadingView = [SJNetworkLoadingView new];
-    _loadingView.lineColor = SJEdgeControlLayerSettings.commonSettings.loadingLineColor;
-    [self.controlView addSubview:(UIView *)_loadingView];
-    [(UIView *)_loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.center.offset(0);
+    _loadingView = [SJLoadingView new];
+    __weak typeof(self) _self = self;
+    _loadingView.settingRecroder = [[SJVideoPlayerControlSettingRecorder alloc] initWithSettings:^(SJEdgeControlLayerSettings * _Nonnull setting) {
+        __strong typeof(_self) self = _self;
+        if ( !self ) return;
+        self.loadingView.lineColor = setting.loadingLineColor;
     }];
     return _loadingView;
 }
-
-- (void)setShowNetworkSpeedToLoadingView:(BOOL)showNetworkSpeedToLoadingView {
-    _showNetworkSpeedToLoadingView = showNetworkSpeedToLoadingView;
-    if ( !showNetworkSpeedToLoadingView )
-        self.loadingView.networkSpeedStr = nil;
-}
-
-#pragma mark - dragging progress view
 
 @synthesize draggingProgressView = _draggingProgressView;
 - (SJVideoPlayerDraggingProgressView *)draggingProgressView {
     if ( _draggingProgressView ) return _draggingProgressView;
     _draggingProgressView = [SJVideoPlayerDraggingProgressView new];
-    [_draggingProgressView setPreviewImage:_videoPlayer.presentView.placeholderImageView.image];
+    [_draggingProgressView setPreviewImage:_videoPlayer.placeholderImageView.image];
     sj_view_makeDisappear(_draggingProgressView, NO);
     return _draggingProgressView;
 }
 
-#pragma mark - player delegate methods
+- (void)_updateCurrentTimeForDraggingProgressViewIfNeeded:(NSTimeInterval)currentTime {
+    if ( !sj_view_isDisappeared(_draggingProgressView) )
+        _draggingProgressView.currentTime = currentTime;
+}
 
+/// 拖拽将要开始
+- (void)_draggingDidStart:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( !_videoPlayer.isFullScreen ||
+         !_videoPlayer.playbackController.isReadyForDisplay ||
+         videoPlayer.URLAsset.isM3u8 ||
+         ![_videoPlayer.playbackController respondsToSelector:@selector(screenshotWithTime:size:completion:)] ) {
+        self.draggingProgressView.style = SJVideoPlayerDraggingProgressViewStyleArrowProgress;
+    }
+    else {
+        self.draggingProgressView.style = SJVideoPlayerDraggingProgressViewStylePreviewProgress;
+    }
+    
+    [self.controlView addSubview:_draggingProgressView];
+    [_draggingProgressView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.offset(0);
+    }];
+    
+    sj_view_initializes(_draggingProgressView);
+    sj_view_makeAppear(_draggingProgressView, NO);
+    
+    _draggingProgressView.maxValue = videoPlayer.totalTime?:1;
+    [_draggingProgressView setProgressTimeStr:videoPlayer.currentTimeStr
+                                 totalTimeStr:videoPlayer.totalTimeStr];
+}
+
+/// 拖拽中
+- (void)_draggingForVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer progressTime:(NSTimeInterval)progressTime {
+    _draggingProgressView.progressTime = progressTime;
+    [_draggingProgressView setProgressTimeStr:[videoPlayer timeStringWithSeconds:progressTime]];
+    
+    // 生成预览图
+    if ( _draggingProgressView.style == SJVideoPlayerDraggingProgressViewStylePreviewProgress ) {
+        __weak typeof(self) _self = self;
+        [self.videoPlayer screenshotWithTime:progressTime size:CGSizeMake(_draggingProgressView.frame.size.width * 2, _draggingProgressView.frame.size.height * 2) completion:^(SJBaseVideoPlayer * _Nonnull videoPlayer, UIImage * _Nullable image, NSError * _Nullable error) {
+            __strong typeof(_self) self = _self;
+            if ( !self ) return;
+            [self.draggingProgressView setPreviewImage:image];
+        }];
+    }
+}
+
+/// 拖拽结束
+- (void)_draggingDidEnd:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    __weak typeof(self) _self = self;
+    [videoPlayer seekToTime:_draggingProgressView.progressTime completionHandler:^(BOOL finished) {
+        __strong typeof(_self) self = _self;
+        if ( !self ) return;
+        if ( ![self.videoPlayer playStatus_isPlaying] )[self.videoPlayer play];
+    }];
+    sj_view_makeDisappear(_draggingProgressView, YES, ^{
+        if ( sj_view_isDisappeared(self->_draggingProgressView) ) {
+            [self->_draggingProgressView removeFromSuperview];
+        }
+    });
+}
+
+
+
+
+#pragma mark - player delegate methods
 - (UIView *)controlView {
     return self;
 }
@@ -417,138 +777,267 @@ SJEdgeControlButtonItemTag const SJEdgeControlLayerCenterItem_Replay = 40000;
     sj_view_makeDisappear(_bottomContainerView, NO);
     sj_view_makeDisappear(_rightContainerView, NO);
     sj_view_makeDisappear(_centerContainerView, NO);
-    
-    [self _updateBottomTimeLabelSize];
-    [self _updateBottomCurrentTimeItemIfNeeded];
-    [self _updateBottomDurationItemIfNeeded];
-    
-    _reachabilityObserver = [videoPlayer.reachability getObserver];
-    __weak typeof(self) _self = self;
-    _reachabilityObserver.networkSpeedDidChangeExeBlock = ^(id<SJReachability> r) {
-        __strong typeof(_self) self = _self;
-        if ( !self ) return;
-        [self _updateNetworkSpeedStrForLoadingView];
-    };
 }
 
-///
-/// 当播放器尝试自动隐藏控制层之前 将会调用这个方法
-///
+#pragma mark -
+/// 当播放器尝试自动隐藏控制层时, 将会调用这个方法
 - (BOOL)controlLayerOfVideoPlayerCanAutomaticallyDisappear:(__kindof SJBaseVideoPlayer *)videoPlayer {
-    SJEdgeControlButtonItem *progressItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_Progress];
-    SJProgressSlider *slider = progressItem.customView;
-    return !slider.isDragging;
+    if ( [self _canDisappearFor_BottomAdapter] &&
+         [self _canDisappearFor_LeftAdapter] &&
+         [self _canDisappearFor_TopAdapter] &&
+         [self _canDisapearFor_RightAdapter] ) return YES;
+    return NO;
 }
 
 - (void)controlLayerNeedAppear:(__kindof SJBaseVideoPlayer *)videoPlayer {
-    if ( videoPlayer.isLockedScreen )
-        return;
-    
-    [self _updateResidentBackButtonAppearStateIfNeeded];
-    [self _updateContainerViewsAppearState];
-    [self _updateAdaptersIfNeeded];
-    [self _updateBottomCurrentTimeItemIfNeeded];
+    [self _updateAppearStateForResidentBackButton];
+    [self _updateAppearStateForAdapters:videoPlayer];
+    [self _updateItemsForAdaptersIfNeeded:videoPlayer];
+    [self videoPlayer:videoPlayer currentTime:videoPlayer.currentTime currentTimeStr:videoPlayer.currentTimeStr totalTime:videoPlayer.totalTime totalTimeStr:videoPlayer.totalTimeStr];
 }
 
 - (void)controlLayerNeedDisappear:(__kindof SJBaseVideoPlayer *)videoPlayer {
-    if ( videoPlayer.isLockedScreen )
-        return;
-    
-    [self _updateResidentBackButtonAppearStateIfNeeded];
-    [self _updateContainerViewsAppearState];
+    [self _updateAppearStateForAdapters:videoPlayer];
 }
 
 - (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer prepareToPlay:(SJVideoPlayerURLAsset *)asset {
-    [self _updateBottomTimeLabelSize];
-    [self _updateBottomDurationItemIfNeeded];
-    [self _updateBottomCurrentTimeItemIfNeeded];
-    [self _updateBottomProgressIndicatorIfNeeded];
-    [self _updateResidentBackButtonAppearStateIfNeeded];
-    [self _updateAdaptersIfNeeded];
-    [self _showOrHiddenLoadingView];
+    [self _updateAppearStateForResidentBackButton];
+    [self _updateItemsForAdaptersIfNeeded:videoPlayer];
+    [self _updateTimeLabelFor_BottomAdapterWithCurrentTimeStr:videoPlayer.currentTimeStr durationStr:videoPlayer.totalTimeStr];
+    [self _updatePlaybackProgressFor_BottomAdapterWithCurrentTime:videoPlayer.currentTime duration:videoPlayer.totalTime];
 }
 
-- (void)videoPlayerPlaybackStatusDidChange:(__kindof SJBaseVideoPlayer *)videoPlayer {
-    [self _updateAdaptersIfNeeded];
-    [self _showOrHiddenLoadingView];
-}
-
-- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer currentTimeDidChange:(NSTimeInterval)currentTime {
-    [self _updateBottomCurrentTimeItemIfNeeded];
-    [self _updateBottomProgressIndicatorIfNeeded];
-    [self _updateBottomProgressSliderItemIfNeeded];
-    [self _updateDraggingProgressViewCurrentTimeIfNeeded];
-}
-
-- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer durationDidChange:(NSTimeInterval)duration {
-    [self _updateBottomTimeLabelSize];
-    [self _updateBottomDurationItemIfNeeded];
-    [self _updateBottomProgressIndicatorIfNeeded];
-    [self _updateBottomProgressSliderItemIfNeeded];
-}
-
-- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer playableDurationDidChange:(NSTimeInterval)duration {
-    [self _updateBottomProgressSliderItemIfNeeded];
-}
-
-- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer playbackTypeDidChange:(SJPlaybackType)playbackType {
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer playbackTypeLoaded:(SJMediaPlaybackType)playbackType {
     SJEdgeControlButtonItem *currentTimeItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_CurrentTime];
     SJEdgeControlButtonItem *separatorItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_Separator];
     SJEdgeControlButtonItem *durationTimeItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_DurationTime];
     SJEdgeControlButtonItem *progressItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_Progress];
-    SJEdgeControlButtonItem *liveItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_LIVEText];
     switch ( playbackType ) {
-        case SJPlaybackTypeLIVE: {
+        case SJMediaPlaybackTypeLIVE: {
             currentTimeItem.hidden = YES;
             separatorItem.hidden = YES;
             durationTimeItem.hidden = YES;
             progressItem.hidden = YES;
-            liveItem.hidden = NO;
+            _bottomProgressSlider.hidden = YES;
+            
+            SJEdgeControlButtonItem *liveTextItem = [[SJEdgeControlButtonItem alloc] initWithTag:SJEdgeControlLayerBottomItem_LIVEText];
+            liveTextItem.title = sj_makeAttributesString(^(SJAttributeWorker * _Nonnull make) {
+                make.append(@"实时直播")
+                .font(SJEdgeControlLayerSettings.commonSettings.titleFont)
+                .textColor(SJEdgeControlLayerSettings.commonSettings.titleColor)
+                .shadow(CGSizeMake(0.5, 0.5), 1, [UIColor blackColor]);
+            });
+            [_bottomAdapter insertItem:liveTextItem frontItem:SJEdgeControlLayerBottomItem_Play];
         }
             break;
-        case SJPlaybackTypeUnknown:
-        case SJPlaybackTypeVOD:
-        case SJPlaybackTypeFILE: {
+        case SJMediaPlaybackTypeUnknown:
+        case SJMediaPlaybackTypeVOD:
+        case SJMediaPlaybackTypeFILE: {
             currentTimeItem.hidden = NO;
             separatorItem.hidden = NO;
             durationTimeItem.hidden = NO;
             progressItem.hidden = NO;
-            liveItem.hidden = YES;
+            _bottomProgressSlider.hidden = self.hideBottomProgressSlider;
             [_bottomAdapter removeItemForTag:SJEdgeControlLayerBottomItem_LIVEText];
         }
             break;
     }
     [self.bottomAdapter reload];
-    [self _showOrRemoveBottomProgressIndicator];
+}
+
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer statusDidChanged:(SJVideoPlayerPlayStatus)status {
+    [self _updateItemsForAdaptersIfNeeded:videoPlayer];
+    
+    [self _startOrStopLoadingView];
+}
+
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer currentTime:(NSTimeInterval)currentTime currentTimeStr:(NSString *)currentTimeStr totalTime:(NSTimeInterval)totalTime totalTimeStr:(NSString *)totalTimeStr {
+    [self _updateTimeLabelFor_BottomAdapterWithCurrentTimeStr:currentTimeStr durationStr:totalTimeStr];
+    [self _updatePlaybackProgressFor_BottomAdapterWithCurrentTime:currentTime duration:totalTime];
+    [self _updateCurrentTimeForDraggingProgressViewIfNeeded:videoPlayer.currentTime];
+}
+
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer bufferTimeDidChange:(NSTimeInterval)bufferTime {
+    [self _updateBufferProgressFor_BottomAdapter:bufferTime/videoPlayer.totalTime];
+}
+
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer bufferStatusDidChange:(SJPlayerBufferStatus)bufferStatus {
+    [self _startOrStopLoadingView];
+}
+
+- (void)_startOrStopLoadingView {
+    SJPlayerBufferStatus bufferStatus = self.videoPlayer.playbackController.bufferStatus;
+    if ( [_videoPlayer playStatus_isPaused_ReasonSeeking] ||
+         [_videoPlayer playStatus_isPrepare] ) {
+        [_loadingView start];
+    }
+    else if ( _videoPlayer.playbackController.bufferStatus == SJPlayerBufferStatusPlayable ||
+             [_videoPlayer playStatus_isInactivity] ) {
+        [_loadingView stop];
+    }
+    else {
+        switch ( bufferStatus ) {
+            case SJPlayerBufferStatusUnknown:
+            case SJPlayerBufferStatusPlayable: {
+                [_loadingView stop];
+            }
+                break;
+            case SJPlayerBufferStatusUnplayable: {
+                [_loadingView start];
+            }
+                break;
+        }
+    }
 }
 
 - (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer willRotateView:(BOOL)isFull {
-    [self _updateResidentBackButtonAppearStateIfNeeded];
-    [self _updateContainerViewsAppearState];
-    [self _updateAdaptersIfNeeded];
-    
-    if ( !sj_view_isDisappeared(_bottomProgressIndicator) ) {
-        sj_view_makeDisappear(_bottomProgressIndicator, NO);
+    [self _updateAppearStateForResidentBackButton];
+    [self _updateAppearStateForAdapters:videoPlayer];
+    [self _updateItemsForAdaptersIfNeeded:videoPlayer];
+    if ( !sj_view_isDisappeared(_bottomProgressSlider) ) {
+        sj_view_makeDisappear(_bottomProgressSlider, NO);
     }
-}
-
-- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer didEndRotation:(BOOL)isFull {
-    if ( !videoPlayer.isControlLayerAppeared )
-        sj_view_makeAppear(_bottomProgressIndicator, YES);
 }
 
 - (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer willFitOnScreen:(BOOL)isFitOnScreen {
-    [self _updateResidentBackButtonAppearStateIfNeeded];
-    [self _updateContainerViewsAppearState];
-    [self _updateAdaptersIfNeeded];
-    
-    if ( !sj_view_isDisappeared(_bottomProgressIndicator) ) {
-        sj_view_makeDisappear(_bottomProgressIndicator, NO);
+    [self _updateAppearStateForResidentBackButton];
+    [self _updateAppearStateForAdapters:videoPlayer];
+    [self _updateItemsForAdaptersIfNeeded:videoPlayer];
+}
+
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer didEndRotation:(BOOL)isFull {
+    if ( !videoPlayer.controlLayerIsAppeared ) sj_view_makeAppear(_bottomProgressSlider, YES);
+}
+
+///  在`tableView`或`collectionView`上将要显示的时候调用.
+- (void)videoPlayerWillAppearInScrollView:(SJBaseVideoPlayer *)videoPlayer {
+    videoPlayer.view.hidden = NO;
+    if ( _resumePlaybackWhenPlayerViewScrollAppears ) {
+        [videoPlayer play];
     }
 }
 
+///  在`tableView`或`collectionView`上将要消失的时候调用.
+- (void)videoPlayerWillDisappearInScrollView:(SJBaseVideoPlayer *)videoPlayer {
+    videoPlayer.view.hidden = YES;
+    [videoPlayer pause];
+}
+
+#pragma mark Player Horizontal Gesture
 /// 是否可以触发播放器的手势
 - (BOOL)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer gestureRecognizerShouldTrigger:(SJPlayerGestureType)type location:(CGPoint)location {
+    if ( ![self _gestureRecognizerShouldTrigger:type location:location] )
+        return NO;
+    
+    return YES;
+}
+
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer panGestureTriggeredInTheHorizontalDirection:(SJPanGestureRecognizerState)state progressTime:(NSTimeInterval)progressTime {
+    switch ( state ) {
+        case SJPanGestureRecognizerStateBegan: {
+            [self _draggingDidStart:videoPlayer];
+        }
+            break;
+        case SJPanGestureRecognizerStateChanged: {
+            [self _draggingForVideoPlayer:videoPlayer progressTime:progressTime];
+        }
+            break;
+        case SJPanGestureRecognizerStateEnded: {
+            [self _draggingDidEnd:videoPlayer];
+        }
+            break;
+    }
+}
+
+/// 这是一个只有在播放器锁屏状态下, 才会回调的方法
+/// 当播放器锁屏后, 用户每次点击都会回调这个方法
+- (void)tappedPlayerOnTheLockedState:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( sj_view_isDisappeared(_leftContainerView) ) {
+        sj_view_makeAppear(_leftContainerView, YES);
+        [self.lockStateTappedTimerControl start];
+    }
+    else {
+        sj_view_makeDisappear(_leftContainerView, YES);
+        [self.lockStateTappedTimerControl clear];
+    }
+}
+
+- (void)lockedVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    [videoPlayer controlLayerNeedDisappear];
+    [self _updateAppearStateForResidentBackButton];
+    [self _updateAppearStateForAdapters:videoPlayer];
+    [self _updateItemsForAdaptersIfNeeded:videoPlayer];
+    [self.lockStateTappedTimerControl start];
+}
+
+- (void)unlockedVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    [videoPlayer controlLayerNeedAppear];
+    [self _updateAppearStateForResidentBackButton];
+    [self _updateAppearStateForAdapters:videoPlayer];
+    [self _updateItemsForAdaptersIfNeeded:videoPlayer];
+    [self.lockStateTappedTimerControl clear];
+}
+
+@synthesize lockStateTappedTimerControl = _lockStateTappedTimerControl;
+- (SJTimerControl *)lockStateTappedTimerControl {
+    if ( _lockStateTappedTimerControl ) return _lockStateTappedTimerControl;
+    _lockStateTappedTimerControl = [[SJTimerControl alloc] init];
+    __weak typeof(self) _self = self;
+    _lockStateTappedTimerControl.exeBlock = ^(SJTimerControl * _Nonnull control) {
+        __strong typeof(_self) self = _self;
+        if ( !self ) return;
+        sj_view_makeDisappear(self.leftContainerView, YES);
+        [control clear];
+    };
+    return _lockStateTappedTimerControl;
+}
+
+- (void)videoPlayer:(SJBaseVideoPlayer *)videoPlayer reachabilityChanged:(SJNetworkStatus)status {
+    [self _promptWithNetworkStatus:status];
+}
+
+- (void)_promptWithNetworkStatus:(SJNetworkStatus)status {
+    if ( _disablePromptWhenNetworkStatusChanges ) return;
+    if ( [self.videoPlayer.assetURL isFileURL] ) return; // return when is local video.
+   
+    switch ( status ) {
+        case SJNetworkStatus_NotReachable: {
+            [_videoPlayer showTitle:SJEdgeControlLayerSettings.commonSettings.notReachablePrompt duration:3];
+        }
+            break;
+        case SJNetworkStatus_ReachableViaWWAN: {
+            [_videoPlayer showTitle:SJEdgeControlLayerSettings.commonSettings.reachableViaWWANPrompt duration:3];
+        }
+            break;
+        case SJNetworkStatus_ReachableViaWiFi: {}
+            break;
+    }
+}
+
+#pragma mark -
+/// 更新 adapters
+/// - 布局
+/// - 显示或隐藏
+- (void)_updateAppearStateForAdapters:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    [self _updateAppearStateFor_TopAdapterWithVideoPlayer:videoPlayer];
+    [self _updateAppearStateFor_LeftAdapterWithVideoPlayer:videoPlayer];
+    [self _updateAppearStateFor_BottomAdapterWithVideoPlayer:videoPlayer];
+    [self _updateAppearStateFor_RightAdapterWithVideoPlayer:videoPlayer];
+    [self _updateAppearStateFor_CenterAdapterWithVideoPlayer:videoPlayer];
+}
+
+/// 更新 items
+- (void)_updateItemsForAdaptersIfNeeded:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self _updateItemsFor_TopAdapterIfNeeded:videoPlayer];
+        [self _updateItemsFor_LeftAdapterIfNeeded:videoPlayer];
+        [self _updateItemsFor_BottomAdapterIfNeeded:videoPlayer];
+        [self _updateItemsFor_RightAdapterIfNeeded:videoPlayer];
+        [self _updateItemsFor_CenterAdapterIfNeeded:videoPlayer];
+    });
+}
+
+- (BOOL)_gestureRecognizerShouldTrigger:(SJPlayerGestureType)type location:(CGPoint)location {
     SJEdgeControlLayerItemAdapter *adapter = nil;
     BOOL(^_locationInTheView)(UIView *) = ^BOOL(UIView *container) {
         return CGRectContainsPoint(container.frame, location) && !sj_view_isDisappeared(container);
@@ -575,581 +1064,211 @@ SJEdgeControlButtonItemTag const SJEdgeControlLayerCenterItem_Replay = 40000;
     if ( !CGRectContainsPoint(adapter.view.frame, point) ) return YES;
     
     SJEdgeControlButtonItem *_Nullable item = [adapter itemAtPoint:point];
-    return [item.target respondsToSelector:item.action];
+    return [self _edgeControlButtonItem:item gestureRecognizerShouldTrigger:type atPoint:point];
 }
-
-- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer panGestureTriggeredInTheHorizontalDirection:(SJPanGestureRecognizerState)state progressTime:(NSTimeInterval)progressTime {
-    switch ( state ) {
-        case SJPanGestureRecognizerStateBegan:
-            [self _onDragStart];
-            break;
-        case SJPanGestureRecognizerStateChanged:
-            [self _onDragMoving:progressTime];
-            break;
-        case SJPanGestureRecognizerStateEnded:
-            [self _onDragMoveEnd];
-            break;
+- (BOOL)_edgeControlButtonItem:(SJEdgeControlButtonItem *)item gestureRecognizerShouldTrigger:(SJPlayerGestureType)type atPoint:(CGPoint)point {
+    if ( item.target != nil ) return NO;
+    if ( !item ) return YES;
+    if ( [item.delegate respondsToSelector:@selector(edgeControlButtonItem:gestureRecognizerShouldTrigger:atPoint:)] ) {
+        return [item.delegate edgeControlButtonItem:item gestureRecognizerShouldTrigger:type atPoint:point];
     }
+    return NO;
 }
 
-/// 这是一个只有在播放器锁屏状态下, 才会回调的方法
-/// 当播放器锁屏后, 用户每次点击都会回调这个方法
-- (void)tappedPlayerOnTheLockedState:(__kindof SJBaseVideoPlayer *)videoPlayer {
-    if ( sj_view_isDisappeared(_leftContainerView) ) {
-        sj_view_makeAppear(_leftContainerView, YES);
-        [self.lockStateTappedTimerControl start];
-    }
-    else {
-        sj_view_makeDisappear(_leftContainerView, YES);
-        [self.lockStateTappedTimerControl clear];
-    }
-}
-
-- (void)lockedVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer {
-    [self _updateResidentBackButtonAppearStateIfNeeded];
-    [self _updateContainerViewsAppearState];
-    [self _updateAdaptersIfNeeded];
-    [self.lockStateTappedTimerControl start];
-}
-
-- (void)unlockedVideoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer {
-    [self.lockStateTappedTimerControl clear];
-    [videoPlayer controlLayerNeedAppear];
-}
-
-- (void)videoPlayer:(SJBaseVideoPlayer *)videoPlayer reachabilityChanged:(SJNetworkStatus)status {
-    if ( _disabledPromptWhenNetworkStatusChanges ) return;
-    if ( [self.videoPlayer.assetURL isFileURL] ) return; // return when is local video.
-    
-    switch ( status ) {
-        case SJNetworkStatus_NotReachable: {
-            [_videoPlayer.prompt show:[NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-                make.append(SJEdgeControlLayerSettings.commonSettings.notReachablePrompt);
-                make.textColor(UIColor.whiteColor);
-            }] duration:3];
+- (void)_callUpdatePropertiesMethodOfItemsForAdapter:(SJEdgeControlLayerItemAdapter *)adapter videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer {
+    if ( !adapter ) return;
+    NSArray<SJEdgeControlButtonItem *> *items = [adapter itemsWithRange:NSMakeRange(0, adapter.itemCount)];
+    for ( SJEdgeControlButtonItem *item in items ) {
+        if ( [item.delegate respondsToSelector:@selector(updatePropertiesIfNeeded:videoPlayer:)] ) {
+            [item.delegate updatePropertiesIfNeeded:item videoPlayer:videoPlayer];
         }
-            break;
-        case SJNetworkStatus_ReachableViaWWAN: {
-            [_videoPlayer.prompt show:[NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-                make.append(SJEdgeControlLayerSettings.commonSettings.reachableViaWWANPrompt);
-                make.textColor(UIColor.whiteColor);
-            }] duration:3];
-        }
-            break;
-        case SJNetworkStatus_ReachableViaWiFi: {}
-            break;
     }
 }
 
-#pragma mark - lock screen
-
-@synthesize lockStateTappedTimerControl = _lockStateTappedTimerControl;
-- (SJTimerControl *)lockStateTappedTimerControl {
-    if ( _lockStateTappedTimerControl ) return _lockStateTappedTimerControl;
-    _lockStateTappedTimerControl = [[SJTimerControl alloc] init];
-    __weak typeof(self) _self = self;
-    _lockStateTappedTimerControl.exeBlock = ^(SJTimerControl * _Nonnull control) {
-        __strong typeof(_self) self = _self;
-        if ( !self ) return;
-        sj_view_makeDisappear(self.leftContainerView, YES);
-        [control clear];
-    };
-    return _lockStateTappedTimerControl;
+#pragma mark - SJEdgeControlButtonItem Delegate Methods
+/// 手势是否可以触发
+- (BOOL)edgeControlButtonItem:(SJEdgeControlButtonItem *)item gestureRecognizerShouldTrigger:(SJPlayerGestureType)type atPoint:(CGPoint)point {
+    if ( item.tag == SJEdgeControlLayerTopItem_Title ||
+         item.tag == SJEdgeControlLayerBottomItem_CurrentTime ||
+         item.tag == SJEdgeControlLayerBottomItem_DurationTime ||
+         item.tag == SJEdgeControlLayerBottomItem_Separator ) {
+        return YES;
+    }
+    return NO;
 }
 
-
-#pragma mark - appear state
-
-- (void)_updateContainerViewsAppearState {
-    [self _updateTopContainerViewAppearState];
-    [self _updateLeftContainerViewAppearState];
-    [self _updateBottomContainerViewAppearState];
-    [self _updateRightContainerViewAppearState];
-    [self _updateCenterContainerViewAppearState];
-}
-
-- (void)_updateTopContainerViewAppearState {
-    if ( 0 == _topAdapter.itemCount ) {
-        sj_view_makeDisappear(_topContainerView, YES);
-        return;
+- (void)updatePropertiesIfNeeded:(SJEdgeControlButtonItem *)item videoPlayer:(__kindof SJBaseVideoPlayer *)player {
+    // top
+    if ( item.tag == SJEdgeControlLayerTopItem_Back ) {
+        [self _top_updateBackItem:item];
     }
-    
-    /// 锁屏状态下, 使隐藏
-    if ( _videoPlayer.isLockedScreen ) {
-        sj_view_makeDisappear(_topContainerView, YES);
-        return;
+    else if ( item.tag == SJEdgeControlLayerTopItem_Title ) {
+        [self _top_updateTitleItem:item];
     }
-    
-    /// 是否显示
-    if ( _videoPlayer.isControlLayerAppeared ) {
-        sj_view_makeAppear(_topContainerView, YES);
+    // left
+    else if ( item.tag == SJEdgeControlLayerLeftItem_Lock ) {
+        [self _left_updateLockItem:item];
     }
-    else {
-        sj_view_makeDisappear(_topContainerView, YES);
+    // bottom
+    else if ( item.tag == SJEdgeControlLayerBottomItem_Play ) {
+        [self _bottom_updatePlayItem:item];
+    }
+    else if ( item.tag == SJEdgeControlLayerBottomItem_Progress ) {
+        [self _bottom_updateProgressItem:item];
+    }
+    else if ( item.tag == SJEdgeControlLayerBottomItem_FullBtn ) {
+        [self _bottom_updateFullItem:item];
+    }
+    // center
+    else if ( item.tag == SJEdgeControlLayerCenterItem_Replay ) {
+        [self _center_updateReplayItem:item];
     }
 }
 
-- (void)_updateLeftContainerViewAppearState {
-    if ( 0 == _leftAdapter.itemCount ) {
-        sj_view_makeDisappear(_leftContainerView, YES);
-        return;
-    }
-    
-    /// 锁屏状态下显示
-    if ( _videoPlayer.isLockedScreen ) {
-        sj_view_makeAppear(_leftContainerView, YES);
-        return;
-    }
-    
-    /// 是否显示
-    if ( _videoPlayer.isControlLayerAppeared ) {
-        sj_view_makeAppear(_leftContainerView, YES);
-    }
-    else {
-        sj_view_makeDisappear(_leftContainerView, YES);
-    }
-}
+#pragma mark - update items -- TOP
+- (void)_top_updateBackItem:(SJEdgeControlButtonItem *)backItem {
+    if ( _SJSlowPath(!backItem) ) return;
 
-/// 更新显示状态
-- (void)_updateBottomContainerViewAppearState {
-    if ( 0 == _bottomAdapter.itemCount ) {
-        sj_view_makeDisappear(_bottomContainerView, YES);
-        return;
-    }
-    
-    /// 锁屏状态下, 使隐藏
-    if ( _videoPlayer.isLockedScreen ) {
-        sj_view_makeDisappear(_bottomContainerView, YES);
-        sj_view_makeAppear(_bottomProgressIndicator, YES);
-        return;
-    }
-    
-    /// 是否显示
-    if ( _videoPlayer.isControlLayerAppeared ) {
-        sj_view_makeAppear(_bottomContainerView, YES);
-        sj_view_makeDisappear(_bottomProgressIndicator, YES);
-    }
-    else {
-        sj_view_makeDisappear(_bottomContainerView, YES);
-        sj_view_makeAppear(_bottomProgressIndicator, YES);
-    }
-}
-
-/// 更新显示状态
-- (void)_updateRightContainerViewAppearState {
-    if ( 0 == _rightAdapter.itemCount ) {
-        sj_view_makeDisappear(_rightContainerView, YES);
-        return;
-    }
-    
-    /// 锁屏状态下, 使隐藏
-    if ( _videoPlayer.isLockedScreen ) {
-        sj_view_makeDisappear(_rightContainerView, YES);
-        return;
-    }
-    
-    /// 是否显示
-    if ( _videoPlayer.isControlLayerAppeared ) {
-        sj_view_makeAppear(_rightContainerView, YES);
-    }
-    else {
-        sj_view_makeDisappear(_rightContainerView, YES);
-    }
-}
-
-- (void)_updateCenterContainerViewAppearState {
-    if ( 0 == _centerAdapter.itemCount ) {
-        sj_view_makeDisappear(_centerContainerView, YES);
-        return;
-    }
-    
-    sj_view_makeAppear(_centerContainerView, YES);
-}
-
-
-#pragma mark - update items
-
-- (void)_updateAdaptersIfNeeded {
-    [self _updateTopAdapterIfNeeded];
-    [self _updateLeftAdapterIfNeeded];
-    [self _updateBottomAdapterIfNeeded];
-    [self _updateRightAdapterIfNeeded];
-    [self _updateCenterAdapterIfNeeded];
-}
-
-- (void)_updateTopAdapterIfNeeded {
-    if ( sj_view_isDisappeared(_topContainerView) ) return;
-    SJEdgeControlLayerSettings *sources = SJEdgeControlLayerSettings.commonSettings;
     BOOL isFullscreen = _videoPlayer.isFullScreen;
     BOOL isFitOnScreen = _videoPlayer.isFitOnScreen;
+    BOOL isPresentedModalViewControlller = _videoPlayer.modalViewControllerManager.isPresentedModalViewControlller;
     BOOL isPlayOnScrollView = _videoPlayer.isPlayOnScrollView;
+    
+    if ( isFullscreen || isFitOnScreen || isPresentedModalViewControlller )
+        backItem.hidden = NO;
+    else {
+        if ( _hideBackButtonWhenOrientationIsPortrait )
+            backItem.hidden = YES;
+        else
+            backItem.hidden = isPlayOnScrollView;
+    }
+    
+    if ( backItem.hidden ) return;
 
-    // back item
-    {
-        SJEdgeControlButtonItem *backItem = [self.topAdapter itemForTag:SJEdgeControlLayerTopItem_Back];
-        if ( backItem != nil ) {
-            if ( isFullscreen || isFitOnScreen )
-                backItem.hidden = NO;
-            else if ( _hiddenBackButtonWhenOrientationIsPortrait )
-                backItem.hidden = YES;
-            else
-                backItem.hidden = isPlayOnScrollView;
-            
-            if ( backItem.hidden == NO )
-                backItem.image = sources.backBtnImage;
-        }
-    }
-    
-    // title item
-    {
-        SJEdgeControlButtonItem *titleItem = [self.topAdapter itemForTag:SJEdgeControlLayerTopItem_Title];
-        if ( titleItem != nil ) {
-            SJVideoPlayerURLAsset *asset = _videoPlayer.URLAsset.originAsset ? : _videoPlayer.URLAsset;
-            NSString *title = asset.title;
-            titleItem.hidden = title.length == 0;
-            if ( titleItem.hidden == NO && ![titleItem.title.string isEqualToString:title] ) {
-                NSInteger atIndex = [_topAdapter indexOfItemForTag:SJEdgeControlLayerTopItem_Title];
-                // margin
-                CGFloat left  = [_topAdapter itemsIsHiddenWithRange:NSMakeRange(0, atIndex)] ? 16 : 0;
-                CGFloat right = [_topAdapter itemsIsHiddenWithRange:NSMakeRange(atIndex, _topAdapter.itemCount)] ? 16 : 0;
-                titleItem.insets = SJEdgeInsetsMake(left, right);
-                titleItem.title = [NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-                    make.append(title);
-                    make.font(sources.titleFont);
-                    make.textColor(sources.titleColor);
-                    make.lineBreakMode(NSLineBreakByTruncatingTail);
-                    make.shadow(^(NSShadow * _Nonnull make) {
-                        make.shadowOffset = CGSizeMake(0, 0.5);
-                        make.shadowColor = UIColor.blackColor;
-                    });
-                }];
-            }
-        }
-    }
-    
-    [_topAdapter reload];
+    SJEdgeControlLayerSettings *setting = SJEdgeControlLayerSettings.commonSettings;
+    backItem.image = setting.backBtnImage;
 }
 
-- (void)_updateLeftAdapterIfNeeded {
-    if ( sj_view_isDisappeared(_leftContainerView) ) return;
+- (void)_top_updateTitleItem:(SJEdgeControlButtonItem *)titleItem {
+    if ( _SJSlowPath(!titleItem) ) return;
+    
+    BOOL alwaysShowTitle = _videoPlayer.URLAsset.alwaysShowTitle;
+    BOOL isFullscreen = _videoPlayer.isFullScreen;
+    BOOL isFitOnScreen = _videoPlayer.isFitOnScreen;
+
+    if ( alwaysShowTitle )
+        titleItem.hidden = NO;
+    else
+        titleItem.hidden = (!isFullscreen && !isFitOnScreen);
+    
+    if ( titleItem.hidden ) return;
+    
+    NSString *title = _videoPlayer.URLAsset.title?:@"";
+    // margin
+    CGFloat left =
+    [_topAdapter itemsIsHiddenWithRange:NSMakeRange(0, [_topAdapter indexOfItemForTag:SJEdgeControlLayerTopItem_Title])]?16:0;
+    
+    CGFloat right =
+    [_topAdapter itemsIsHiddenWithRange:NSMakeRange([_topAdapter indexOfItemForTag:SJEdgeControlLayerTopItem_Title], _topAdapter.itemCount)]?16:0;
+    titleItem.numberOfLines = 1;
+    titleItem.insets = SJEdgeInsetsMake(left, right);
+    titleItem.title = sj_makeAttributesString(^(SJAttributeWorker * _Nonnull make) {
+        make.append(title)
+        .font(SJEdgeControlLayerSettings.commonSettings.titleFont)
+        .textColor(SJEdgeControlLayerSettings.commonSettings.titleColor)
+        .shadow(CGSizeMake(0.5, 0.5), 1, [UIColor blackColor])
+        .lineBreakMode(NSLineBreakByTruncatingTail);
+    });
+}
+
+#pragma mark - update items -- LEFT
+- (void)_left_updateLockItem:(SJEdgeControlButtonItem *)lockItem {
+    if ( _SJSlowPath(!lockItem) ) return;
     
     BOOL isFullscreen = _videoPlayer.isFullScreen;
     BOOL isLockedScreen = _videoPlayer.isLockedScreen;
 
-    SJEdgeControlButtonItem *lockItem = [self.leftAdapter itemForTag:SJEdgeControlLayerLeftItem_Lock];
-    if ( lockItem != nil ) {
-        lockItem.hidden = !isFullscreen;
-        if ( lockItem.hidden == NO ) {
-            SJEdgeControlLayerSettings *setting = SJEdgeControlLayerSettings.commonSettings;
-            lockItem.image = isLockedScreen ? setting.lockBtnImage : setting.unlockBtnImage;
-        }
-    }
+    lockItem.hidden = !isFullscreen;
     
-    [_leftAdapter reload];
+    if ( lockItem.hidden ) return;
+    
+    SJEdgeControlLayerSettings *setting = SJEdgeControlLayerSettings.commonSettings;
+    lockItem.image = isLockedScreen?setting.lockBtnImage:setting.unlockBtnImage;
 }
 
-- (void)_updateBottomAdapterIfNeeded {
-    if ( sj_view_isDisappeared(_bottomContainerView) ) return;
+#pragma mark - update items -- BOTTOM
+- (void)_bottom_updatePlayItem:(SJEdgeControlButtonItem *)playItem {
+    if ( _SJSlowPath(!playItem) ) return;
     
-    SJEdgeControlLayerSettings *sources = SJEdgeControlLayerSettings.commonSettings;
-    
-    // play item
-    {
-        SJEdgeControlButtonItem *playItem = [self.bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_Play];
-        if ( playItem != nil && playItem.hidden == NO ) {
-            BOOL isPaused = _videoPlayer.timeControlStatus == SJPlaybackTimeControlStatusPaused;
-            playItem.image = isPaused ? sources.playBtnImage : sources.pauseBtnImage;
-        }
-    }
-    
-    // progress item
-    {
-        SJEdgeControlButtonItem *progressItem = [self.bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_Progress];
-        if ( progressItem != nil && progressItem.hidden == NO ) {
-            SJProgressSlider *slider = progressItem.customView;
-            slider.traceImageView.backgroundColor = sources.progress_traceColor;
-            slider.trackImageView.backgroundColor = sources.progress_trackColor;
-            slider.bufferProgressColor = sources.progress_bufferColor;
-            slider.trackHeight = sources.progress_traceHeight;
-            slider.loadingColor = sources.loadingLineColor;
-            
-            if ( sources.progress_thumbImage ) {
-                slider.thumbImageView.image = sources.progress_thumbImage;
-            }
-            else if ( sources.progress_thumbSize ) {
-                [slider setThumbCornerRadius:sources.progress_thumbSize * 0.5 size:CGSizeMake(sources.progress_thumbSize, sources.progress_thumbSize) thumbBackgroundColor:sources.progress_thumbColor];
-            }
-        }
-    }
-    
-    // full item
-    {
-        SJEdgeControlButtonItem *fullItem = [self.bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_FullBtn];
-        if ( fullItem != nil && fullItem.hidden == NO ) {
-            BOOL isFullscreen = _videoPlayer.isFullScreen;
-            BOOL isFitOnScreen = _videoPlayer.isFitOnScreen;
-            fullItem.image = (isFullscreen || isFitOnScreen) ? sources.shrinkscreenImage : sources.fullBtnImage;
-        }
-    }
-    
-    // live text
-    {
-        SJEdgeControlButtonItem *liveItem = [self.bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_LIVEText];
-        if ( liveItem != nil && liveItem.hidden == NO ) {
-            liveItem.title = [NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-                make.append(sources.liveText);
-                make.font(sources.titleFont);
-                make.textColor(sources.titleColor);
-                make.shadow(^(NSShadow * _Nonnull make) {
-                    make.shadowOffset = CGSizeMake(0, 0.5);
-                    make.shadowColor = UIColor.blackColor;
-                });
-            }];
-        }
-    }
-    
-    [_bottomAdapter reload];
+    BOOL isPlaying = [_videoPlayer playStatus_isPlaying];
+    SJEdgeControlLayerSettings *setting = SJEdgeControlLayerSettings.commonSettings;
+    playItem.image = isPlaying?setting.pauseBtnImage:setting.playBtnImage;
 }
 
-- (void)_updateRightAdapterIfNeeded {
-//    if ( sj_view_isDisappeared(_rightContainerView) ) return;
+- (void)_bottom_updateProgressItem:(SJEdgeControlButtonItem *)progressItem {
+    if ( _SJSlowPath(!progressItem) ) return;
     
-}
-
-- (void)_updateCenterAdapterIfNeeded {
-    if ( sj_view_isDisappeared(_centerContainerView) ) return;
+    SJEdgeControlLayerSettings *setting = SJEdgeControlLayerSettings.commonSettings;
+    progressItem.insets = SJEdgeInsetsMake(8, 8);
+    SJProgressSlider *slider = progressItem.customView;
+    slider.traceImageView.backgroundColor = setting.progress_traceColor;
+    slider.trackImageView.backgroundColor = setting.progress_trackColor;
+    slider.bufferProgressColor = setting.progress_bufferColor;
+    slider.trackHeight = setting.progress_traceHeight;
+    slider.loadingColor = setting.loadingLineColor;
     
-    SJEdgeControlButtonItem *replayItem = [self.centerAdapter itemForTag:SJEdgeControlLayerCenterItem_Replay];
-    if ( replayItem != nil ) {
-        replayItem.hidden = !_videoPlayer.isPlayedToEndTime;
-        if ( replayItem.hidden == NO && replayItem.title == nil ) {
-            SJEdgeControlLayerSettings *sources = SJEdgeControlLayerSettings.commonSettings;
-            UILabel *textLabel = replayItem.customView;
-            textLabel.attributedText = [NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-                make.alignment(NSTextAlignmentCenter).lineSpacing(6);
-                make.font(sources.replayBtnFont);
-                make.textColor(sources.replayBtnTitleColor);
-                if ( sources.replayBtnImage != nil ) {
-                    make.appendImage(^(id<SJUTImageAttachment>  _Nonnull make) {
-                        make.image = sources.replayBtnImage;
-                    });
-                }
-                if ( sources.replayBtnTitle.length != 0 ) {
-                    if ( sources.replayBtnImage != nil ) make.append(@"\n");
-                    make.append(sources.replayBtnTitle);
-                }
-            }];
-            textLabel.bounds = (CGRect){CGPointZero, [textLabel.attributedText sj_textSize]};
-        }
+    if ( setting.progress_thumbImage ) {
+        slider.thumbImageView.image = setting.progress_thumbImage;
     }
-    
-    [_centerAdapter reload];
-}
-
-- (void)_updateBottomCurrentTimeItemIfNeeded {
-    if ( sj_view_isDisappeared(_bottomContainerView) )
-        return;
-    NSString *currentTimeStr = [_videoPlayer stringForSeconds:_videoPlayer.currentTime];
-    SJEdgeControlButtonItem *currentTimeItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_CurrentTime];
-    if ( currentTimeItem != nil && currentTimeItem.isHidden == NO ) {
-        currentTimeItem.title = [self _textForTimeString:currentTimeStr];
-        [_bottomAdapter updateContentForItemWithTag:SJEdgeControlLayerBottomItem_CurrentTime];
+    else if ( setting.progress_thumbSize ) {
+        [slider setThumbCornerRadius:setting.progress_thumbSize * 0.5 size:CGSizeMake(setting.progress_thumbSize, setting.progress_thumbSize) thumbBackgroundColor:setting.progress_thumbColor];
     }
 }
 
-- (void)_updateBottomDurationItemIfNeeded {
-    SJEdgeControlButtonItem *durationTimeItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_DurationTime];
-    if ( durationTimeItem != nil && durationTimeItem.isHidden == NO ) {
-        durationTimeItem.title = [self _textForTimeString:[_videoPlayer stringForSeconds:_videoPlayer.duration]];
-        [_bottomAdapter updateContentForItemWithTag:SJEdgeControlLayerBottomItem_DurationTime];
-    }
-}
-
-- (void)_updateBottomTimeLabelSize {
-    // 00:00
-    // 00:00:00
-    NSString *ms = @"00:00";
-    NSString *hms = @"00:00:00";
-    NSString *durationTimeStr = [_videoPlayer stringForSeconds:_videoPlayer.duration];
-    NSString *format = (durationTimeStr.length == ms.length)?ms:hms;
-    CGSize formatSize = [[self _textForTimeString:format] sj_textSize];
-    
-    SJEdgeControlButtonItem *currentTimeItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_CurrentTime];
-    SJEdgeControlButtonItem *durationTimeItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_DurationTime];
-    
-    if ( !durationTimeItem && !currentTimeItem ) return;
-    currentTimeItem.size = formatSize.width;
-    durationTimeItem.size = formatSize.width;
-    [_bottomAdapter reload];
-}
-
-- (void)_updateBottomProgressSliderItemIfNeeded {
-    if ( !sj_view_isDisappeared(_bottomContainerView) ) {
-        SJEdgeControlButtonItem *progressItem = [_bottomAdapter itemForTag:SJEdgeControlLayerBottomItem_Progress];
-        SJProgressSlider *slider = progressItem.customView;
-        slider.maxValue = _videoPlayer.duration ? : 1;
-        if ( !slider.isDragging ) slider.value = _videoPlayer.currentTime;
-        slider.bufferProgress = _videoPlayer.playableDuration / slider.maxValue;
-    }
-}
-
-- (void)_updateBottomProgressIndicatorIfNeeded {
-    if ( _bottomProgressIndicator != nil && !sj_view_isDisappeared(_bottomProgressIndicator) ) {
-        _bottomProgressIndicator.value = _videoPlayer.currentTime;
-        _bottomProgressIndicator.maxValue = _videoPlayer.duration ? : 1;
-    }
-}
-
-- (void)_updateDraggingProgressViewCurrentTimeIfNeeded {
-    if ( !sj_view_isDisappeared(_draggingProgressView) )
-        _draggingProgressView.currentTime = _videoPlayer.currentTime;
-}
-
-- (void)_updateResidentBackButtonAppearStateIfNeeded {
-    if ( !_showResidentBackButton )
-        return;
-    SJEdgeControlButtonItem *placeholderItem = [self.topAdapter itemForTag:SJEdgeControlLayerTopItem_PlaceholderBack];
+- (void)_bottom_updateFullItem:(SJEdgeControlButtonItem *)fullItem {
+    if ( _SJSlowPath(!fullItem) ) return;
+ 
+    BOOL isFullscreen = _videoPlayer.isFullScreen;
     BOOL isFitOnScreen = _videoPlayer.isFitOnScreen;
-    BOOL isFull = _videoPlayer.isFullScreen;
-    BOOL isLockedScreen = _videoPlayer.isLockedScreen;
-    if ( isLockedScreen ) {
-        _residentBackButton.hidden = YES;
-    }
-    else {
-        BOOL isPlayOnScrollView = _videoPlayer.isPlayOnScrollView;
-        _residentBackButton.hidden = placeholderItem.hidden = isPlayOnScrollView && !isFitOnScreen && !isFull;
-    }
+    BOOL isPresentedModalViewControlller = _videoPlayer.modalViewControllerManager.isPresentedModalViewControlller;
+
+    SJEdgeControlLayerSettings *setting = SJEdgeControlLayerSettings.commonSettings;
+    fullItem.image = (isFullscreen || isFitOnScreen || isPresentedModalViewControlller) ?setting.shrinkscreenImage:setting.fullBtnImage;
 }
 
-- (void)_updateNetworkSpeedStrForLoadingView {
-    if ( !_videoPlayer || !self.loadingView.isAnimating )
-        return;
+#pragma mark - update items CENTER
+- (void)_center_updateReplayItem:(SJEdgeControlButtonItem *)replayItem {
+    if ( _SJSlowPath(!replayItem) ) return;
     
-    if ( _showNetworkSpeedToLoadingView && !_videoPlayer.assetURL.isFileURL ) {
-        self.loadingView.networkSpeedStr = [NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-            SJEdgeControlLayerSettings *settings = [SJEdgeControlLayerSettings commonSettings];
-            make.font(settings.loadingNetworkSpeedTextFont);
-            make.textColor(settings.loadingNetworkSpeedTextColor);
-            make.alignment(NSTextAlignmentCenter);
-            make.append(self.videoPlayer.reachability.networkSpeedStr);
-        }];
-    }
-    else {
-        self.loadingView.networkSpeedStr = nil;
-    }
-}
-
-#pragma mark -
-
-- (nullable NSAttributedString *)_textForTimeString:(NSString *)timeStr {
-    return [NSAttributedString sj_UIKitText:^(id<SJUIKitTextMakerProtocol>  _Nonnull make) {
-        make.append(timeStr).font([UIFont systemFontOfSize:11]).textColor([UIColor whiteColor]).alignment(NSTextAlignmentCenter);
-    }];
-}
-
-- (void)_resetControlLayerAppearIntervalForItemIfNeeded:(NSNotification *)note {
-    SJEdgeControlButtonItem *item = note.object;
-    if ( [_topAdapter containsItem:item] ) {
-        if ( item.tag == SJEdgeControlLayerTopItem_Back )
-            return;
-    }
+    SJEdgeControlLayerSettings *setting = SJEdgeControlLayerSettings.commonSettings;
+    UILabel *replayLabel = replayItem.customView;
     
-    if ( [_bottomAdapter containsItem:item] ) {
-        if ( item.tag == SJEdgeControlLayerBottomItem_FullBtn )
-            return;
-    }
-    
-    if ( [_topAdapter containsItem:item] ||
-         [_leftAdapter containsItem:item] ||
-         [_bottomAdapter containsItem:item] ||
-         [_rightAdapter containsItem:item] ||
-         [_centerAdapter containsItem:item] ) {
-        [_videoPlayer controlLayerNeedAppear]; // 此处为重置控制层的隐藏间隔.(如果点击到当前控制层上的item, 则重置控制层的隐藏间隔)
-    }
-}
-
-- (void)_showOrRemoveBottomProgressIndicator {
-    if ( _hiddenBottomProgressIndicator || _videoPlayer.playbackType == SJPlaybackTypeLIVE ) {
-        if ( _bottomProgressIndicator ) {
-            [_bottomProgressIndicator removeFromSuperview];
-            _bottomProgressIndicator = nil;
-        }
-    }
-    else {
-        if ( !_bottomProgressIndicator ) {
-            [self.controlView addSubview:self.bottomProgressIndicator];
-            [_bottomProgressIndicator mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.bottom.right.offset(0);
-                make.height.offset(1);
-            }];
-        }
-    }
-}
-
-- (void)_showOrHiddenLoadingView {
-    if ( _videoPlayer == nil || _videoPlayer.URLAsset == nil ) {
-        [self.loadingView stop];
-        return;
-    }
-    
-    if ( _videoPlayer.assetStatus == SJAssetStatusPreparing ) {
-        [self.loadingView start];
-    }
-    else if ( _videoPlayer.assetStatus == SJAssetStatusFailed ) {
-        [self.loadingView stop];
-    }
-    else if ( _videoPlayer.assetStatus == SJAssetStatusReadyToPlay ) {
-        self.videoPlayer.reasonForWaitingToPlay == SJWaitingToMinimizeStallsReason ? [self.loadingView start] : [self.loadingView stop];
-    }
-}
-
-- (void)_onDragStart {
-    if ( !_videoPlayer.isFullScreen ||
-         !_videoPlayer.playbackController.isReadyForDisplay ||
-          _videoPlayer.URLAsset.isM3u8 ||
-        ![_videoPlayer.playbackController respondsToSelector:@selector(screenshotWithTime:size:completion:)] ) {
-        self.draggingProgressView.style = SJVideoPlayerDraggingProgressViewStyleArrowProgress;
-    }
-    else {
-        self.draggingProgressView.style = SJVideoPlayerDraggingProgressViewStylePreviewProgress;
-    }
-    
-    [self.controlView addSubview:_draggingProgressView];
-    [_draggingProgressView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.center.offset(0);
-    }];
-    
-    sj_view_initializes(_draggingProgressView);
-    sj_view_makeAppear(_draggingProgressView, NO);
-    
-    _draggingProgressView.maxValue = _videoPlayer.duration ? : 1;
-    [_draggingProgressView setProgressTimeStr:[_videoPlayer stringForSeconds:_videoPlayer.currentTime]
-                                 totalTimeStr:[_videoPlayer stringForSeconds:_videoPlayer.duration]];
-
-}
-
-- (void)_onDragMoving:(NSTimeInterval)progressTime {
-    _draggingProgressView.progressTime = progressTime;
-    [_draggingProgressView setProgressTimeStr:[_videoPlayer stringForSeconds:progressTime]];
-    
-    // 生成预览图
-    if ( _draggingProgressView.style == SJVideoPlayerDraggingProgressViewStylePreviewProgress ) {
-        __weak typeof(self) _self = self;
-        [_videoPlayer screenshotWithTime:progressTime size:CGSizeMake(_draggingProgressView.frame.size.width * 2, _draggingProgressView.frame.size.height * 2) completion:^(SJBaseVideoPlayer * _Nonnull videoPlayer, UIImage * _Nullable image, NSError * _Nullable error) {
-            __strong typeof(_self) self = _self;
-            if ( !self ) return;
-            [self.draggingProgressView setPreviewImage:image];
-        }];
-    }
-}
-
-- (void)_onDragMoveEnd {
-    [_videoPlayer seekToTime:_draggingProgressView.progressTime completionHandler:nil];
-
-    sj_view_makeDisappear(_draggingProgressView, YES, ^{
-        if ( sj_view_isDisappeared(self->_draggingProgressView) ) {
-            [self->_draggingProgressView removeFromSuperview];
-        }
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        __block CGRect bounds = CGRectZero;
+        NSAttributedString *attr = sj_makeAttributesString(^(SJAttributeWorker * _Nonnull make) {
+            if ( setting.replayBtnImage ) {
+                make.append(setting.replayBtnImage, CGPointZero, CGSizeZero).alignment(NSTextAlignmentCenter);
+            }
+            
+            if ( setting.replayBtnImage && 0 != setting.replayBtnTitle.length ) {
+                make.append(@"\n");
+            }
+            
+            if ( 0 != setting.replayBtnTitle.length ) {
+                make.append(setting.replayBtnTitle).font(setting.replayBtnFont)
+                .textColor(setting.replayBtnTitleColor);
+            }
+            make.alignment(NSTextAlignmentCenter).lineSpacing(6);
+            bounds = (CGRect){CGPointZero, make.size()};
+        });
+        dispatch_async(dispatch_get_main_queue(), ^{
+            replayLabel.attributedText = attr;
+            replayLabel.bounds = bounds;
+            [self.centerAdapter reload];
+        });
     });
 }
 @end
+
+
+SJEdgeControlButtonItemTag const SJEdgeControlLayerTopItem_Preview = 10002;

@@ -2,15 +2,18 @@
 //  SJControlLayerAppearStateManager.m
 //  SJBaseVideoPlayer
 //
-//  Created by 畅三江 on 2018/12/28.
+//  Created by BlueDancer on 2018/12/28.
 //
 
 #import "SJControlLayerAppearStateManager.h"
+#if __has_include(<SJObserverHelper/NSObject+SJObserverHelper.h>)
+#import <SJObserverHelper/NSObject+SJObserverHelper.h>
+#else
+#import "NSObject+SJObserverHelper.h"
+#endif
 #import "SJTimerControl.h"
 
 NS_ASSUME_NONNULL_BEGIN
-static NSNotificationName const SJControlLayerAppearStateDidChangeNotification = @"SJControlLayerAppearStateDidChangeNotification";
-
 @interface SJControlLayerAppearManagerObserver : NSObject<SJControlLayerAppearManagerObserver>
 - (instancetype)initWithManager:(id<SJControlLayerAppearManager>)mgr;
 @end
@@ -21,20 +24,14 @@ static NSNotificationName const SJControlLayerAppearStateDidChangeNotification =
     self = [super init];
     if ( !self )
         return nil;
-    
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(appearStateDidChange:) name:SJControlLayerAppearStateDidChangeNotification object:mgr];
-    
+    [mgr sj_addObserver:self forKeyPath:@"isAppeared"];
     return self;
 }
 
-- (void)dealloc {
-    [NSNotificationCenter.defaultCenter removeObserver:self];
-}
+- (void)observeValueForKeyPath:(NSString *_Nullable)keyPath ofObject:(id _Nullable)object change:(NSDictionary<NSKeyValueChangeKey,id> *_Nullable)change context:(void *_Nullable)context {
 
-- (void)appearStateDidChange:(NSNotification *)note {
-    SJControlLayerAppearStateManager *mgr = note.object;
     if ( _appearStateDidChangeExeBlock )
-        _appearStateDidChangeExeBlock(mgr);
+        _appearStateDidChangeExeBlock(object);
 }
 @end
 
@@ -109,11 +106,6 @@ static NSNotificationName const SJControlLayerAppearStateDidChangeNotification =
 
 - (void)keepDisappearState {
     [self needDisappear];
-}
-
-- (void)setIsAppeared:(BOOL)isAppeared {
-    _isAppeared = isAppeared;
-    [NSNotificationCenter.defaultCenter postNotificationName:SJControlLayerAppearStateDidChangeNotification object:self];
 }
 
 #pragma mark -

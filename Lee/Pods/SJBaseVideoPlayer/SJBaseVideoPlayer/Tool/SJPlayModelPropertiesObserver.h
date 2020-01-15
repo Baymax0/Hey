@@ -3,7 +3,7 @@
 //  SJVideoPlayerAssetCarrier
 //
 //  Created by 畅三江 on 2018/6/29.
-//  Copyright © 2018年 changsanjiang. All rights reserved.
+//  Copyright © 2018年 SanJiang. All rights reserved.
 //
 
 #import "SJPlayModel.h"
@@ -31,7 +31,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL isTouchedCollectionView;
 @property (nonatomic, readonly) BOOL isPlayInTableView;
 @property (nonatomic, readonly) BOOL isPlayInCollectionView;
-@property (nonatomic, readonly) BOOL isScrolling;
 
 - (void)refreshAppearState;
 @end

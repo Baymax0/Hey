@@ -18,34 +18,32 @@ extern NSNotificationName const SJSettingsPlayerNotification;
 @property (class, nonatomic, copy, readonly) void(^update)(void(^block)(SJEdgeControlLayerSettings *settings));
 
 - (void)reset;
-- (void)postUpdateNotify;
 
-// - Loading -
+#pragma mark loading
 @property (nonatomic, strong, nullable) UIImage *placeholder;
 @property (nonatomic, strong) UIColor *loadingLineColor; // default is white.
-@property (nonatomic, strong) UIColor *loadingNetworkSpeedTextColor;
-@property (nonatomic, strong) UIFont *loadingNetworkSpeedTextFont;
-
-// - Dragging view -
 @property (nonatomic, strong) UIImage *fastImage;
 @property (nonatomic, strong) UIImage *forwardImage;
 
-// - Network -
+
+#pragma mark network
 @property (nonatomic, strong, readonly) NSString *notReachablePrompt;
 @property (nonatomic, strong, readonly) NSString *reachableViaWWANPrompt;
 
-// - Top Adapter Item -
+
+#pragma mark top
 @property (nonatomic, strong) UIImage *backBtnImage;
 @property (nonatomic, strong) UIImage *moreBtnImage;
 @property (nonatomic, strong) UIFont *titleFont;   // video title font, default is [UIFont boldSystemFontOfSize:14]
 @property (nonatomic, strong) UIColor *titleColor; // video title color, default is [UIColor whiteColor]
 
-// - Left Adapter Item -
+
+#pragma mark left
 @property (nonatomic, strong) UIImage *lockBtnImage;
 @property (nonatomic, strong) UIImage *unlockBtnImage;
 
 
-// - Bootom Adapter Item -
+#pragma mark bottom
 @property (nonatomic, strong) UIImage *playBtnImage;
 @property (nonatomic, strong) UIImage *pauseBtnImage;
 @property (nonatomic, assign) float progress_traceHeight;               // 轨道高度
@@ -58,20 +56,20 @@ extern NSNotificationName const SJSettingsPlayerNotification;
 @property (nonatomic, strong, nullable) UIColor *progress_thumbColor;
 @property (nonatomic, strong) UIImage *fullBtnImage;
 @property (nonatomic, strong, nullable) UIImage *shrinkscreenImage;
-@property (nonatomic, strong) NSString *liveText;                       // 实时直播
 
-// - Right Adapter Item -
+
+#pragma mark right
 @property (nonatomic, strong) UIImage *filmEditingBtnImage;
 
 
-// - Center Adapter Item -
+#pragma mark center
 @property (nonatomic, strong, readonly) NSString *replayBtnTitle;
 @property (nonatomic, strong) UIImage *replayBtnImage;       // default is `sj_video_player_replay`.
 @property (nonatomic, strong) UIFont *replayBtnFont;         // default is [UIFont boldSystemFontOfSize:12].
 @property (nonatomic, strong) UIColor *replayBtnTitleColor;  // default is white.
 
 
-// - SJMoreSettingControlLayer -
+#pragma mark more
 @property (nonatomic, strong) UIColor *moreBackgroundColor; // more view background color
 @property (nonatomic, strong) UIColor *more_traceColor;     // sider trace color of more view
 @property (nonatomic, strong) UIColor *more_trackColor;     // sider track color of more view
@@ -85,20 +83,19 @@ extern NSNotificationName const SJSettingsPlayerNotification;
 @property (nonatomic, strong) UIImage *more_minBrightnessImage;
 @property (nonatomic, strong) UIImage *more_maxBrightnessImage;
 
-
-// - SJLoadFailedControlLayer -
+/// 播放失败控制层
 @property (nonatomic, strong) NSString *playFailedText;
 @property (nonatomic, strong) NSString *playFailedButtonText;
 @property (nonatomic, strong) UIColor *playFailedButtonBackgroundColor;
 
-
-// - SJNotReachableControlLayer -
+/// 无网控制层
 @property (nonatomic, strong) NSString *notReachableAndPlaybackStalledText;
 @property (nonatomic, strong) NSString *notReachableAndPlaybackStalledButtonText;
 @property (nonatomic, strong) UIColor *notReachableAndPlaybackStalledButtonBackgroundColor;
 
 
-// - deprecated properties -
+// - deprecated properties
+
 @property (nonatomic, strong, readonly) NSString *playFailedBtnTitle __deprecated;
 @property (nonatomic, strong, nullable) UIImage *playFailedBtnImage __deprecated;
 @property (nonatomic, strong) UIFont *playFailedBtnFont __deprecated;

@@ -2,8 +2,8 @@
 //  SJVideoPlayerControlMaskView.m
 //  SJVideoPlayerProject
 //
-//  Created by 畅三江 on 2017/9/25.
-//  Copyright © 2017年 changsanjiang. All rights reserved.
+//  Created by BlueDancer on 2017/9/25.
+//  Copyright © 2017年 SanJiang. All rights reserved.
 //
 
 #import "SJVideoPlayerControlMaskView.h"
@@ -14,7 +14,10 @@
 
 @end
 
-@implementation SJVideoPlayerControlMaskView
+@implementation SJVideoPlayerControlMaskView {
+    CAGradientLayer *_maskGradientLayer;
+}
+
 + (Class)layerClass {
     return [CAGradientLayer class];
 }
@@ -26,13 +29,13 @@
     CAGradientLayer *maskGradientLayer = (id)self.layer;
     switch (_style) {
         case SJMaskStyle_top: {
-            maskGradientLayer.colors = @[(__bridge id)[UIColor colorWithWhite:0 alpha:0.8].CGColor,
+            maskGradientLayer.colors = @[(__bridge id)[UIColor colorWithWhite:0 alpha:0.42].CGColor,
                                          (__bridge id)[UIColor clearColor].CGColor];
         }
             break;
         case SJMaskStyle_bottom: {
             maskGradientLayer.colors = @[(__bridge id)[UIColor clearColor].CGColor,
-                                         (__bridge id)[UIColor colorWithWhite:0 alpha:0.8].CGColor];
+                                         (__bridge id)[UIColor colorWithWhite:0 alpha:0.42].CGColor];
         }
             break;
     }

@@ -2,7 +2,7 @@
 //  SJPlayerAutoplayConfig.m
 //  Masonry
 //
-//  Created by 畅三江 on 2018/7/10.
+//  Created by BlueDancer on 2018/7/10.
 //
 
 #import "SJPlayerAutoplayConfig.h"
@@ -17,7 +17,6 @@
     config->_playerSuperviewTag = playerSuperviewTag;
     config->_autoplayDelegate = autoplayDelegate;
     config->_animationType = SJAutoplayScrollAnimationTypeMiddle;
-    config->_autoplayPosition = SJAutoplayPositionMiddle;
     return config;
 }
 @end

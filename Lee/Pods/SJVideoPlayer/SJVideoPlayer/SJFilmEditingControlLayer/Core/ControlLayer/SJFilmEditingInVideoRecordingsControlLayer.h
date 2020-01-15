@@ -7,7 +7,7 @@
 //
 
 #import "SJEdgeControlLayerAdapters.h"
-#import "SJControlLayerDefines.h"
+#import "SJControlLayerCarrier.h"
 #import "SJFilmEditingStatus.h"
 
 NS_ASSUME_NONNULL_BEGIN

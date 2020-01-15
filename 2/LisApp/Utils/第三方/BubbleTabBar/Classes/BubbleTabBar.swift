@@ -120,7 +120,7 @@ open class BubbleTabBar: UITabBar {
         }
         let viewCount = buttons.count - 1
         spaceLayoutGuides = [];
-        for i in 0..<viewCount {
+        for i in 0 ..< viewCount {
             let layoutGuide = UILayoutGuide()
             container.addLayoutGuide(layoutGuide)
             spaceLayoutGuides.append(layoutGuide)

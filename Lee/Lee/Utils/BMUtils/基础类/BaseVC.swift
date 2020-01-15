@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Hero
 import NVActivityIndicatorView
 import IQKeyboardManagerSwift
 
@@ -29,7 +30,7 @@ class BaseVC: UIViewController {
     static var currentVC:String?
     /// 状态栏颜色  需要指定的  从写该属性
     override var preferredStatusBarStyle: UIStatusBarStyle{
-        get{ return hideNav ? .lightContent : .default }
+        get{ return hideNav ? .lightContent : .darkContent }
     }
     
     var autoHideKeyboard:Bool = true
@@ -48,6 +49,10 @@ class BaseVC: UIViewController {
     var needLoadWhenAppear:Bool{
         return Date().timeIntervalSince(lastLoadTime) > (reloadIntervalTime)
     }
+    var bottomPopView:UIView = {
+        let v = UIView(frame: CGRect(x: 0, y: KScreenHeight-10, width: KScreenWidth, height: 1))
+        return v
+    }()
 
     // 弹出框使用的 灰背景
     lazy var maskView : UIButton = {
@@ -64,12 +69,16 @@ class BaseVC: UIViewController {
     }
 
     // ===================  func   ===================
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .KBGGray
         navigationController?.navigationBar.isTranslucent = false
         edgesForExtendedLayout = [];
+        self.hero.isEnabled = true
+        self.view.addSubview(bottomPopView)
+        
+        self.modalPresentationStyle = .fullScreen
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -112,6 +121,30 @@ class BaseVC: UIViewController {
             self.maskView.removeFromSuperview()
         }
     }
+    
+    //传需要接受侧滑手势的视图
+    func addSlideBack(_ toView:UIView) -> Void {
+        let screenEdgePanGR = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handlePan(gr:)))
+        screenEdgePanGR.edges = .left
+        toView.addGestureRecognizer(screenEdgePanGR)
+    }
+    
+    @objc func handlePan(gr: UIPanGestureRecognizer) {
+        switch gr.state {
+        case .began:
+            dismiss(animated: true, completion: nil)
+            self.closeKeyboard()
+        case .changed:
+            let progress = gr.translation(in: nil).x / view.bounds.width
+            Hero.shared.update(progress)
+        default:
+            if (gr.translation(in: nil).x + gr.velocity(in: nil).x) / view.bounds.width > 0.38 {
+                Hero.shared.finish()
+            } else {
+                Hero.shared.cancel()
+            }
+        }
+    }
 
     func addTapCloseKeyBoard(_ view:UIView) {
         let tag = UITapGestureRecognizer(target: self, action: #selector(closeKeyboard))
@@ -139,6 +172,14 @@ extension BaseVC {
             n.popViewController(animated: animation)
             self.dismissType = .pop
         }
+    }
+    
+    class func fromStoryboard(_ identify: String? = nil) -> BaseVC {
+        let id = identify ?? String(describing: type(of:self.init()))
+        let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyBoard.instantiateViewController(withIdentifier: id) as! BaseVC
+        vc.modalPresentationStyle = .fullScreen
+        return vc
     }
 }
 

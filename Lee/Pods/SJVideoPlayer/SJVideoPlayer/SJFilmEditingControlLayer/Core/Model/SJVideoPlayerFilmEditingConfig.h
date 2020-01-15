@@ -2,15 +2,14 @@
 //  SJVideoPlayerFilmEditingConfig.h
 //  SJVideoPlayerProject
 //
-//  Created by 畅三江 on 2018/4/12.
-//  Copyright © 2018年 changsanjiang. All rights reserved.
+//  Created by BlueDancer on 2018/4/12.
+//  Copyright © 2018年 SanJiang. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import "SJVideoPlayerFilmEditingCommonHeader.h"
 #import "SJFilmEditingResultShareItem.h"
 
-NS_ASSUME_NONNULL_BEGIN
 @protocol SJVideoPlayerFilmEditingResult, SJVideoPlayerFilmEditingResultUpload;
 
 @class SJBaseVideoPlayer;
@@ -54,4 +53,3 @@ NS_ASSUME_NONNULL_BEGIN
 /// 导出成功后, 保存到相册
 @property (nonatomic) BOOL saveResultToAlbumWhenExportSuccess; // default is NO
 @end
-NS_ASSUME_NONNULL_END

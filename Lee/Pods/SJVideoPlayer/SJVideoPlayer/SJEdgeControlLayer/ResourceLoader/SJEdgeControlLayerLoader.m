@@ -2,8 +2,8 @@
 //  SJEdgeControlLayerLoader.m
 //  SJVideoPlayerProject
 //
-//  Created by 畅三江 on 2017/11/29.
-//  Copyright © 2017年 changsanjiang. All rights reserved.
+//  Created by BlueDancer on 2017/11/29.
+//  Copyright © 2017年 SanJiang. All rights reserved.
 //
 
 #import "SJEdgeControlLayerLoader.h"
@@ -17,7 +17,6 @@ NSString *const SJVideoPlayer_NotReachablePrompt = @"SJVideoPlayer_NotReachableP
 NSString *const SJVideoPlayer_ReachableViaWWANPrompt = @"SJVideoPlayer_ReachableViaWWANPrompt";
 NSString *const SJVideoPlayer_NotReachableText = @"SJVideoPlayer_NotReachableText";
 NSString *const SJVideoPlayer_NotReachableButtonText = @"SJVideoPlayer_NotReachableButtonText";
-NSString *const SJVideoPlayer_LiveText = @"SJVideoPlayer_LiveText";
 
 @implementation SJEdgeControlLayerLoader
 
@@ -42,8 +41,7 @@ NSString *const SJVideoPlayer_LiveText = @"SJVideoPlayer_LiveText";
 
 + (nullable NSString *)localizedStringForKey:(NSString *)key {
     static NSBundle *bundle = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    if ( nil == bundle ) {
         NSString *language = [NSLocale preferredLanguages].firstObject;
         if ( [language hasPrefix:@"en"] ) {
             language = @"en";
@@ -60,7 +58,7 @@ NSString *const SJVideoPlayer_LiveText = @"SJVideoPlayer_LiveText";
             language = @"en";
         }
         bundle = [NSBundle bundleWithPath:[[self bundle] pathForResource:language ofType:@"lproj"]];
-    });
+    }
     NSString *value = [bundle localizedStringForKey:key value:nil table:nil];
     return [[NSBundle mainBundle] localizedStringForKey:key value:value table:nil];
 }

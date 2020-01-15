@@ -2,13 +2,14 @@
 //  SJEdgeControlButtonItem.h
 //  SJVideoPlayer
 //
-//  Created by 畅三江 on 2018/10/19.
+//  Created by BlueDancer on 2018/10/19.
 //  Copyright © 2018 畅三江. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import <SJBaseVideoPlayer/SJPlayerGestureControlDefines.h>
+#import <SJBaseVideoPlayer/SJPlayerGestureControl.h>
 typedef NSInteger SJEdgeControlButtonItemTag;
+@protocol SJEdgeControlButtonItemDelegate;
 @class SJBaseVideoPlayer;
 
 typedef struct SJEdgeInsets {
@@ -20,9 +21,9 @@ UIKIT_STATIC_INLINE SJEdgeInsets SJEdgeInsetsMake(CGFloat front, CGFloat rear) {
     return (SJEdgeInsets){front, rear};
 }
 
-NS_ASSUME_NONNULL_BEGIN
 UIKIT_EXTERN NSNotificationName const SJEdgeControlButtonItemPerformedActionNotification;
 
+NS_ASSUME_NONNULL_BEGIN
 @interface SJEdgeControlButtonItem : NSObject
 /// 49 * 49
 - (instancetype)initWithImage:(nullable UIImage *)image
@@ -53,11 +54,22 @@ UIKIT_EXTERN NSNotificationName const SJEdgeControlButtonItemPerformedActionNoti
 @property (nonatomic, nullable) SEL action;
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new  NS_UNAVAILABLE;
-@property (nonatomic) BOOL fill; // 当想要填充剩余空间时, 可以设置为`Yes`.
+@property (nonatomic) BOOL fill; // 当想要填充剩余空间时, 可以设置为`Yes`. 
+@property (nonatomic, weak, nullable) id<SJEdgeControlButtonItemDelegate> delegate;
 
 - (void)addTarget:(id)target action:(nonnull SEL)action;
 - (void)performAction;
 @end
+
+@protocol SJEdgeControlButtonItemDelegate <NSObject>
+@optional
+/// 每次控制层显示, 这个方法都会被调用
+- (void)updatePropertiesIfNeeded:(SJEdgeControlButtonItem *)item videoPlayer:(__kindof SJBaseVideoPlayer *)player;
+/// 手势是否可以触发
+- (BOOL)edgeControlButtonItem:(SJEdgeControlButtonItem *)item gestureRecognizerShouldTrigger:(SJPlayerGestureType)type atPoint:(CGPoint)point;
+@end
+
+
 
 typedef enum : NSUInteger {
     SJButtonItemPlaceholderType_Unknown,

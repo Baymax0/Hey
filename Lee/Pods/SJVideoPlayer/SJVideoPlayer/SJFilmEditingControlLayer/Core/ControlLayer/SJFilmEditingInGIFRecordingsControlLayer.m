@@ -22,12 +22,15 @@
 
 #if __has_include(<SJBaseVideoPlayer/NSTimer+SJAssetAdd.h>)
 #import <SJBaseVideoPlayer/NSTimer+SJAssetAdd.h>
-#import <SJBaseVideoPlayer/SJBaseVideoPlayer.h>
 #else
 #import "NSTimer+SJAssetAdd.h"
-#import "SJBaseVideoPlayer.h"
 #endif
 
+#if __has_include(<SJBaseVideoPlayer/SJBaseVideoPlayer+PlayStatus.h>)
+#import <SJBaseVideoPlayer/SJBaseVideoPlayer+PlayStatus.h>
+#else
+#import "SJBaseVideoPlayer+PlayStatus.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 static SJEdgeControlButtonItemTag SJTopItem_Back = 1;
@@ -37,13 +40,13 @@ static SJEdgeControlButtonItemTag SJBottomItem_LeftFill = 4;
 static SJEdgeControlButtonItemTag SJBottomItem_RightFill = 5;
 
 @interface SJFilmEditingInGIFRecordingsControlLayer ()
-@property (nonatomic, weak, nullable) __kindof SJBaseVideoPlayer *player;
 @property (nonatomic, strong, readonly) SJFilmEditingSettingsUpdatedObserver *settingsUpdatedObserver;
 @property (nonatomic, strong, readonly) SJFilmEditingButtonContainerView *backButtonContainerView;
 @property (nonatomic, strong, readonly) SJFilmEditingGIFCountDownView *countDownView;
 @property (nonatomic, strong, nullable) NSTimer *countDownTimer;
 @property (nonatomic) NSInteger countDownNum;
 @property (nonatomic, readonly) NSInteger maxCountDownNum;
+@property (nonatomic, weak, nullable) SJBaseVideoPlayer *player;
 @property (nonatomic) SJFilmEditingStatus status;
 
 @property (nonatomic) CMTime start;
@@ -68,7 +71,7 @@ static SJEdgeControlButtonItemTag SJBottomItem_RightFill = 5;
     sj_view_makeAppear(self.controlView, YES);
     self.status = SJFilmEditingStatus_Unknown;
     self.countDownNum = _maxCountDownNum;
-    if ( _player.isPlayedToEndTime ) {
+    if ( [_player playStatus_isInactivity_ReasonPlayEnd] ) {
         self.start = kCMTimeZero;
     }
     else {
@@ -119,10 +122,7 @@ static SJEdgeControlButtonItemTag SJBottomItem_RightFill = 5;
     __weak typeof(self) _self = self;
     _countDownTimer = [NSTimer assetAdd_timerWithTimeInterval:1 block:^(NSTimer *timer) {
         __strong typeof(_self) self = _self;
-        if ( !self ) {
-            [timer invalidate];
-            return;
-        }
+        if ( !self ) return ;
         if ( 0 == (self.countDownNum -= 1) ) {
             [self finished];
         }
@@ -313,25 +313,35 @@ static SJEdgeControlButtonItemTag SJBottomItem_RightFill = 5;
     return NO;
 }
 
-- (void)videoPlayerPlaybackStatusDidChange:(__kindof SJBaseVideoPlayer *)videoPlayer {
-    if ( videoPlayer.isPlayedToEndTime ) {
-        [self finished];
-    }
-    else if ( videoPlayer.assetStatus == SJAssetStatusFailed ) {
-        [self cancel];
-    }
-    else if ( videoPlayer.timeControlStatus == SJPlaybackTimeControlStatusPlaying ) {
-        [self resume];
-    }
-    else if ( self.status == SJFilmEditingStatus_Recording ) {
-        [self pause];
+- (void)videoPlayer:(__kindof SJBaseVideoPlayer *)videoPlayer statusDidChanged:(SJVideoPlayerPlayStatus)status {
+    switch ( videoPlayer.playStatus ) {
+        case SJVideoPlayerPlayStatusUnknown: break;
+        case SJVideoPlayerPlayStatusPrepare: break;
+        case SJVideoPlayerPlayStatusReadyToPlay: break;
+        case SJVideoPlayerPlayStatusPlaying: {
+            if ( _restarted ) [self resume];
+        }
+            break;
+        case SJVideoPlayerPlayStatusPaused: {
+            if ( self.status == SJFilmEditingStatus_Recording ) [self pause];
+        }
+            break;
+        case SJVideoPlayerPlayStatusInactivity: {
+            if ( [videoPlayer playStatus_isInactivity_ReasonPlayEnd] ) {
+                [self finished];
+            }
+            else {
+                [self cancel];
+            }
+        }
+            break;
     }
 }
 
 - (void)controlLayerNeedAppear:(__kindof SJBaseVideoPlayer *)videoPlayer { /* nothing */ }
 - (void)controlLayerNeedDisappear:(__kindof SJBaseVideoPlayer *)videoPlayer { /* nothing */ }
 
-- (void)receivedApplicationDidBecomeActiveNotification:(__kindof SJBaseVideoPlayer *)videoPlayer {
+- (void)appDidBecomeActive:(__kindof SJBaseVideoPlayer *)videoPlayer {
     if ( self.status == SJFilmEditingStatus_Paused ) {
         [videoPlayer play];
     }
