@@ -45,12 +45,12 @@ class ReviewVC: BaseVC {
     //编辑用
 //    @IBOutlet weak var tempImgView: UIImageView!
 
-    var tempImgView: UIImageView = {
-        let v = UIImageView(frame: CGRect(x: 0, y: 64, width: KScreenWidth, height: KScreenHeight-64-80))
-        v.contentMode = .scaleAspectFit
-        v.backgroundColor = .black
-        return v
-    }()
+//    var tempImgView: UIImageView = {
+//        let v = UIImageView(frame: CGRect(x: 0, y: 64, width: KScreenWidth, height: KScreenHeight-64-80))
+//        v.contentMode = .scaleAspectFit
+//        v.backgroundColor = .black
+//        return v
+//    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,17 +63,16 @@ class ReviewVC: BaseVC {
         tagDic = (Cache[.imageTagsDic] as? Dictionary<String, String>) ?? Dictionary<String, String>()
         loadTag()
         
-        tempImgView.contentMode = .scaleAspectFit
-        tempImgView.backgroundColor = .black
+//        tempImgView.contentMode = .scaleAspectFit
+//        tempImgView.backgroundColor = .black
         
-        self.view.addSubview(tempImgView)
-        self.view.bringSubviewToFront(tempImgView)
+//        self.view.addSubview(tempImgView)
+//        self.view.bringSubviewToFront(tempImgView)
     }
     
     override func viewWillLayoutSubviews() {
         if sc == nil{
-            tempImgView.w = self.view.w
-            sc = BMScrollView(frame: tempImgView.frame, currentIndex: imageIndex, dataArr: subFilesUrl ,delegate:self)
+            sc = BMScrollView(frame: CGRect(x: 0, y: 75, width: self.view.w, height: KScreenHeight-75-80), currentIndex: imageIndex, dataArr: subFilesUrl ,delegate:self)
             view.addSubview(sc)
             self.view.sendSubviewToBack(sc)
         }else{
@@ -85,7 +84,7 @@ class ReviewVC: BaseVC {
         
         UIView.animate(withDuration: 0.5) {
             self.sc.alpha = 1
-            self.tempImgView.alpha = 0
+//            self.tempImgView.alpha = 0
         }
         if appearTimes != 1{
             self.sc.loadImage(self.sc.centerImageView, index: imageIndex)
@@ -100,9 +99,6 @@ class ReviewVC: BaseVC {
         addTagView.isHidden = true
     }
     
-    @IBAction func backAction(_ sender: Any) {
-         dismiss(animated: true, completion: nil)
-    }
     
     @IBAction func changeTagAction(_ sender: Any) {
         self.view.addSubview(maskView)
@@ -122,12 +118,13 @@ class ReviewVC: BaseVC {
         let fontSize:CGFloat = 14
         
         var set = Set<String>()
-        var location = directPath.components(separatedBy: "Documents").last!
+        var location = directPath
+        location = directPath.components(separatedBy: "Documents").last!
         location = location + "/"
         for (key,str) in tagDic{
-            if key.contains(location){
+//            if key.contains(location){
                 set.insert(str)
-            }
+//            }
         }
         let temp = set.sorted()
         
@@ -161,8 +158,8 @@ class ReviewVC: BaseVC {
     
     //给名字加上相对地址
     func getSaveKey(withName name:String) -> String {
-        var path = directPath.components(separatedBy: "Documents").last!
-        path = path + "/" + name
+//        var path = directPath.components(separatedBy: "Documents").last!
+//        path = path + "/" + name
 //        return path
         return name
     }
@@ -234,11 +231,12 @@ extension ReviewVC: BMScrollViewDelegate{
     func bm_scrollView(didSelected index: Int) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
         let editAction = UIAlertAction(title: "编辑", style: UIAlertAction.Style.default){ (action:UIAlertAction)in
-            let vc = EditImageVC.fromStoryboard() as! EditImageVC
-            vc.path = self.subFilesUrl[index]
+//            let vc = EditImageVC.fromStoryboard() as! EditImageVC
+//            vc.path = self.subFilesUrl[index]
             
-//            let vc = EditVC()
-//            vc.imgPath = self.subFilesUrl[index]
+            let vc = EditVC()
+            vc.imgPath = self.subFilesUrl[index]
+            vc.modalPresentationStyle = .fullScreen
             self.present(vc, animated: false, completion: nil)
         }
         

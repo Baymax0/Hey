@@ -7,7 +7,7 @@
 //
 
 #import "EditVC.h"
-#import "UIImageView+YYWebImage.h"
+//#import "UIImageView+YYWebImage.h"
 #import "TKImageView.h"
 
 @interface EditVC (){
@@ -34,11 +34,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.modalPresentationStyle = UIModalPresentationFullScreen;
     self.myNewImg = [UIImage imageWithContentsOfFile:self.imgPath];
     orignImg = self.imageView.image;
     self.imageView.image = self.myNewImg;
 
-    self.cutImgView.backgroundColor = KBlack;
+    self.cutImgView.backgroundColor = [UIColor blackColor];
     self.cutImgView.showMidLines = YES;
     self.cutImgView.needScaleCrop = YES;
     self.cutImgView.showCrossLines = NO;
@@ -79,7 +80,7 @@
 - (IBAction)cutImageBtnAction:(id)sender {
     self.cutImgView.toCropImage = self.myNewImg;
     self.cutImgView.cropAspectRatio = 0;
-
+    self.cutBGView.frame = self.view.bounds;
     [self.view addSubview:self.cutBGView];
 }
 
@@ -92,6 +93,7 @@
 //5.自由旋转
 - (IBAction)returnBtnAction:(id)sender {
     self.sliderView.value = 0;
+    self.rollView.frame = self.view.bounds;
     [self.view addSubview:self.rollView];
 }
 
@@ -147,13 +149,13 @@
 
 //导航栏按钮
 - (IBAction)cancelBtnAction:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self dismissViewControllerAnimated:false completion:nil];
 }
 
 - (IBAction)saveBtnAction:(id)sender {
     [UIImagePNGRepresentation(self.imageView.image) writeToFile:self.imgPath atomically:YES];
-    [[NSNotificationCenter defaultCenter] postNotificationName:KNotification_SaveImg object:nil userInfo:nil];
-    [self dismissViewControllerAnimated:YES completion:nil];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:KNotification_SaveImg object:nil userInfo:nil];
+    [self dismissViewControllerAnimated:false completion:nil];
 }
 
 #pragma mark ----------  tool  ----------

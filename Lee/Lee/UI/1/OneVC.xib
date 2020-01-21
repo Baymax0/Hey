@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
-    <device id="retina5_9" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -13,8 +11,12 @@
                 <outlet property="newsBGView" destination="N9N-DK-2de" id="cnf-VF-l4s"/>
                 <outlet property="titleLab" destination="1DW-Dh-fus" id="5cL-g5-nkr"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+                <outlet property="weatherAnimBG" destination="sdN-o3-2b1" id="Bw4-Dy-osa"/>
                 <outlet property="weatherBgView" destination="44f-Sw-3Hd" id="eTW-Ff-Rzt"/>
+                <outlet property="weatherBgViewTop" destination="93d-NV-IGu" id="qb8-Xz-eoe"/>
                 <outlet property="weatherImgView" destination="C7f-25-wi5" id="SlJ-mO-uTO"/>
+                <outlet property="weekLab" destination="68t-KS-Mw8" id="xsu-2z-Wwz"/>
+                <outlet property="wenduLab" destination="4PB-KA-52i" id="EDk-J8-xNB"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -25,6 +27,12 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HSW-es-BVu">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                     <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sdN-o3-2b1">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="500"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="500" id="Koi-v9-gaZ"/>
+                            </constraints>
+                        </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="44f-Sw-3Hd">
                             <rect key="frame" x="0.0" y="0.0" width="375" height="745"/>
                             <subviews>
@@ -48,12 +56,11 @@
                                     <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </imageView>
                             </subviews>
-                            <color key="backgroundColor" red="0.31966196154375942" green="0.55581862925962178" blue="0.93252300126903553" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="745" id="Zcw-EH-MZP"/>
                             </constraints>
                         </view>
-                        <scrollView multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zbG-4t-iGs">
+                        <scrollView multipleTouchEnabled="YES" tag="10086" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zbG-4t-iGs">
                             <rect key="frame" x="0.0" y="160" width="375" height="652"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tTT-Jj-dsO">
@@ -131,16 +138,23 @@
                                 <constraint firstItem="Ipe-JJ-nq7" firstAttribute="top" secondItem="zbG-4t-iGs" secondAttribute="top" id="rYl-w6-TYU"/>
                                 <constraint firstItem="Ipe-JJ-nq7" firstAttribute="height" secondItem="zbG-4t-iGs" secondAttribute="height" id="yyO-hy-1CQ"/>
                             </constraints>
+                            <connections>
+                                <outlet property="delegate" destination="-1" id="tYI-sR-9jC"/>
+                            </connections>
                         </scrollView>
                     </subviews>
+                    <color key="backgroundColor" red="0.0" green="0.56027533654109585" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstItem="44f-Sw-3Hd" firstAttribute="top" secondItem="HSW-es-BVu" secondAttribute="top" id="93d-NV-IGu"/>
                         <constraint firstAttribute="bottom" secondItem="zbG-4t-iGs" secondAttribute="bottom" id="9Pd-gu-MjC"/>
                         <constraint firstItem="44f-Sw-3Hd" firstAttribute="leading" secondItem="HSW-es-BVu" secondAttribute="leading" id="B5E-Eg-vXH"/>
                         <constraint firstAttribute="trailing" secondItem="44f-Sw-3Hd" secondAttribute="trailing" id="BKS-da-PNA"/>
+                        <constraint firstItem="sdN-o3-2b1" firstAttribute="leading" secondItem="HSW-es-BVu" secondAttribute="leading" id="JKN-Q9-4eC"/>
                         <constraint firstItem="zbG-4t-iGs" firstAttribute="leading" secondItem="HSW-es-BVu" secondAttribute="leading" id="Kgh-kR-foN"/>
                         <constraint firstAttribute="trailing" secondItem="zbG-4t-iGs" secondAttribute="trailing" id="QUJ-N0-BW5"/>
                         <constraint firstItem="zbG-4t-iGs" firstAttribute="top" secondItem="HSW-es-BVu" secondAttribute="top" constant="160" id="QYA-mO-rjU"/>
+                        <constraint firstItem="sdN-o3-2b1" firstAttribute="top" secondItem="HSW-es-BVu" secondAttribute="top" id="W63-jE-HTh"/>
+                        <constraint firstAttribute="trailing" secondItem="sdN-o3-2b1" secondAttribute="trailing" id="Xej-ci-Pm1"/>
                     </constraints>
                 </view>
             </subviews>

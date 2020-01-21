@@ -12,7 +12,7 @@ class ThreeVC: BaseVC {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.view.backgroundColor = #colorLiteral(red: 0.9607843137, green: 0.7607843137, blue: 0.3803921569, alpha: 1)
         // Do any additional setup after loading the view.
     }
 

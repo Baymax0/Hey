@@ -18,11 +18,20 @@ class OneVC: BaseVC{
     var newsCollection:CollectionView!
     var newsArr:Array<IdailyNewsModel>!
     var willScrollX:CGFloat = 0
-    
+
     
     var weatherModel:WeatherToday!
+    
+    @IBOutlet weak var weatherBgViewTop: NSLayoutConstraint!
     @IBOutlet weak var weatherBgView: UIView!
+    
+    @IBOutlet weak var wenduLab: UILabel!
+    @IBOutlet weak var weekLab: UILabel!
     @IBOutlet weak var weatherImgView: UIImageView!
+    
+    @IBOutlet weak var weatherAnimBG: UIView!
+    var weatherView: WHWeatherView!
+    
     
     override var preferredStatusBarStyle: UIStatusBarStyle{
         get{ return .lightContent}
@@ -32,11 +41,21 @@ class OneVC: BaseVC{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        weatherView = WHWeatherView()
+        weatherView.weatherBackImageView.frame = CGRect(x: 0, y: 0, width: KScreenWidth, height: 500)
+        weatherView.w = weatherView.weatherBackImageView.w
+        self.weatherAnimBG.addSubview(self.weatherView.weatherBackImageView)
+        self.weatherAnimBG.addSubview(self.weatherView)
         
         // 新闻
         initNews()
         // 天气
         initWeather()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        weatherView.weatherBackImageView.w = self.view.w
+        weatherView.w = self.view.w
     }
 
 }
@@ -94,7 +113,7 @@ extension OneVC{
                 let model = self.newsArr.bm_object(index)
                 view.cardView.titleLabel.text = model?.ui_sets["caption_subtitle"] ?? ""
                 view.cardView.subtitleLabel.text = model?.location ?? ""
-                view.cardView.imageView.kf.setImage(with: model?.bigImg.resource, placeholder: UIImage(named: "temp"), options: [.transition(.fade(0.5))])
+                view.cardView.imageView.kf.setImage(with: model?.bigImg.resource, placeholder: nil, options: [.transition(.fade(0.5))])
                 view.cardView.tagLab.text = model?.tags.bm_object(0)?["name"] as? String
                 
                 view.cardView.timeLab.text = model?.title ?? ""
@@ -154,24 +173,56 @@ extension OneVC{
     
     func initWeather() {
         self.requestWeather()
-        
     }
     
     func requestWeather(){
-        Network.requestModel(WeatherApi.city("101030100"), model: WeatherToday.self) { (resp) in
+        Network.requestModel(WeatherApi.city("101210701"), model: WeatherToday.self) { (resp) in
             self.weatherModel = resp.data!
+            self.loadWeather()
             print(self.weatherModel.forecast)
         }
     }
     
     func loadWeather(){
+        if let today = self.weatherModel.forecast.first{
+            wenduLab.text = self.weatherModel.wendu + "℃"
+            weekLab.text = today.ymd
+            let type:String! = today.type
+            if type.contains("雷") {
+                self.weatherView.showWeatherAnimation(with: .rainLighting)
+            }else if type.contains("雪"){
+                self.weatherView.showWeatherAnimation(with: .snow)
+            }else if type.contains("雨"){
+                self.weatherView.showWeatherAnimation(with: .rain)
+            }else if type.contains("晴"){
+                self.weatherView.showWeatherAnimation(with: .sun)
+            }else{
+                self.weatherView.showWeatherAnimation(with: .clound)
+            }
+            if let img = UIImage(named: type){
+                weatherImgView.image = img
+            }
+        }
+        
         
     }
 }
 
 extension OneVC:UIScrollViewDelegate{
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.tag == 10086{
+            let c = max((scrollView.contentOffset.y * -1 ) / 2 , 0)
+            weatherBgViewTop.constant = c
+//            print(scrollView.contentOffset.y)
+        }
         
+    }
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if scrollView.tag == 10086{
+            return
+        }
         let nowX = scrollView.contentOffset.x
         var willX = targetContentOffset.pointee.x
         if willX > nowX{

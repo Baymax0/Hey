@@ -29,6 +29,27 @@ extension UIViewController{
         self.showAlertView(title, msg, complish: complish, cancel: cancel)
         
     }
+    
+    func showInputView(_ title:String, _ msg:String, cancel:(()->())? = nil, complish:((String?)->())? = nil){
+        var inputText = UITextField()
+        
+        let alertVC = UIAlertController(title: title, message: msg, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "确认", style: .default, handler: { (action) in
+            complish?(inputText.text)
+        })
+        let cancelAction = UIAlertAction(title: "取消", style: .cancel , handler:{ (action) in
+            cancel?()
+        })
+        
+        alertVC.addAction(cancelAction)
+        alertVC.addAction(okAction)
+        alertVC.addTextField { (textField) in
+            inputText = textField
+        }
+        self.present(alertVC, animated: YES, completion: nil)
+        
+    }
+    
 }
 
 

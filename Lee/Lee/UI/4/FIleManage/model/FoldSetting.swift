@@ -12,6 +12,7 @@ import HandyJSON
 class FoldSetting: HandyJSON {
     var isAspectFit:Bool = false
     var isSortByTag:Bool = false
-    
+    var showlist:Bool = false
+
     required init() {}
 }

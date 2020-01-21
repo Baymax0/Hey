@@ -26,22 +26,27 @@ class VideoPlayVC: BaseVC {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .rgbGray(87)
+        self.view.backgroundColor = .black
         addSlideBack(view)
         
-        videoTab = UITableView(frame: CGRect(x: 15, y: 464, width: KScreenWidth-30, height: KScreenHeight-464))
+        videoTab = UITableView(frame: CGRect(x: 0, y: KScreenHeight/2, width: KScreenWidth, height: KScreenHeight/2))
         videoTab.delegate = self
-        videoTab.backgroundColor = .rgbGray(87)
+        videoTab.backgroundColor = .clear
         videoTab.dataSource = self
         videoTab.separatorStyle = .none
         self.view.addSubview(videoTab)
+    }
+    
+    override func viewWillLayoutSubviews() {
+        videoTab.w = view.w
+        videoPlayer.view.w = view.w
     }
     
     override func viewWillAppear(_ animated: Bool) {
         if videoPlayer == nil{
             videoPlayer = SJVideoPlayer.lightweight()
             
-            videoPlayer.view.frame = CGRect(x: 0, y: 64, width: KScreenWidth, height: 400)
+            videoPlayer.view.frame = CGRect(x: 0, y: 40, width: KScreenWidth, height: KScreenHeight/2-40)
             videoPlayer.clickedBackEvent = { (player) in
                 self.dismiss(animated: true, completion: nil)
             }

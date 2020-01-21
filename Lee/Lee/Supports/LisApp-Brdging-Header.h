@@ -9,7 +9,8 @@
 #ifndef LisApp_Brdging_Header_h
 #define LisApp_Brdging_Header_h
 
-//#import "EditVC.h"
-//#import "TKImageView.h"
+#import "EditVC.h"
+#import "TKImageView.h"
+#import "WHWeatherView.h"
 
 #endif /* LisApp_Brdging_Header_h */

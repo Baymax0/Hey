@@ -57,11 +57,11 @@ class Utils: NSObject {
         }
     }
     
-    static func isDirectory2(_ path:String) -> Bool {
-        if Utils.isVideoFile(path){
+    static func isDirectory2(_ name:String) -> Bool {
+        if Utils.isVideoFile(name){
             return false
         }
-        if Utils.isImageFile(path){
+        if Utils.isImageFile(name){
             return false
         }
         
