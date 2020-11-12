@@ -54,7 +54,7 @@ class HostConfig{
     }
     
     func showConfigView(){
-        let window = UIApplication.shared.windows.first
+        let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
         mask.alpha = 0
         contentView.alpha = 0
         window?.addSubview(mask)

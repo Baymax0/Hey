@@ -10,6 +10,12 @@ import Foundation
 import UIKit
 
 extension UIImage{
+//    
+//    convenience init(_ symbolName:String, font:UIImage.SymbolWeight) {
+//        let config = UIImage.SymbolConfiguration(weight: font)
+////        self.init(systemName: symbolName, withConfiguration(config))!
+//    }
+    
     func circleImage() -> UIImage {
         //取最短边长
         let shotest = min(self.size.width, self.size.height)

@@ -125,6 +125,12 @@ public class BMCache{
         }
         Defaults.synchronize()
     }
+    
+    func allCache() -> Dictionary<String,Any> {
+        let dic = Defaults.dictionaryRepresentation()
+        return dic
+    }
+    
 }
 
 public protocol BMOrignType {}

@@ -58,6 +58,13 @@ extension Date {
         return toString("ss")
     }
     
+    var weekend:Int{
+        let interval = Int(self.timeIntervalSince1970) + NSTimeZone.local.secondsFromGMT()
+        let days = Int(interval/86400) // 24*60*60
+        let weekday = ((days + 4)%7+7)%7
+        return weekday == 0 ? 7 : weekday
+    }
+    
     // 是否是今天
     public var isToday: Bool{
         let format = DateFormatter()

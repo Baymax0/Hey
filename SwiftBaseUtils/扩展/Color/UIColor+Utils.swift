@@ -31,7 +31,7 @@ extension UIColor {
     open class var KTextBlack: UIColor  { return #colorLiteral(red: 0.2588235294, green: 0.2588235294, blue: 0.2588235294, alpha: 1) }
     open class var KTextGray: UIColor   { return #colorLiteral(red: 0.6, green: 0.6, blue: 0.6, alpha: 1) }
     open class var KTextLightGray: UIColor { return #colorLiteral(red: 0.7176470588, green: 0.7176470588, blue: 0.7176470588, alpha: 1) }
-    open class var KBGGray: UIColor     { return #colorLiteral(red: 0.9607843137, green: 0.9607843137, blue: 0.9607843137, alpha: 1) }
+    open class var KBGGray: UIColor     { return #colorLiteral(red: 0.9647058824, green: 0.9764705882, blue: 0.9882352941, alpha: 1) }
     open class var KBGGrayLine: UIColor { return #colorLiteral(red: 0.9019607843, green: 0.9019607843, blue: 0.9019607843, alpha: 1) }
     
     /// RGB 0～255

@@ -199,7 +199,7 @@ public class BMRequester{
     ///   - params: params description
     ///   - finish: finish description
     @discardableResult
-    fileprivate func requestJson(_ url:String, method:HTTPMethod, params:[String:Any], finish: @escaping (_ resp:String?)->())  -> DataRequest{
+    func requestJson(_ url:String, method:HTTPMethod, params:[String:Any], finish: @escaping (_ resp:String?)->())  -> DataRequest{
         var dic = params
         for key in defaultParam{
             dic[key.key] = key.value

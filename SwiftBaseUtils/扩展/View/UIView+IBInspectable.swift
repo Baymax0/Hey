@@ -27,6 +27,15 @@ extension UIView{
         }
     }
     
+    func showWithAnimation(delay:Double, _ time:Double = 0.2){
+        self.alpha = 0
+        UIView.animate(withDuration: time, delay: delay) {
+            self.alpha = 1
+        } completion: { (_) in
+            
+        }
+    }
+    
     var x:CGFloat{
         get{
             return self.frame.origin.x
