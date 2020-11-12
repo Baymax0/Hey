@@ -1,2 +1,8 @@
 # MAC:
 .DS_Store
+.svn
+/.build
+/Packages
+/*.xcodeproj
+xcuserdata/
+
