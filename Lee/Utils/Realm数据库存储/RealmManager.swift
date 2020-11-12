@@ -13,7 +13,8 @@ import HandyJSON
 
 class RealmManager {
 
-    static let dbPath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .allDomainsMask, true)[0] as NSString).appendingPathComponent("/cache/db.realm")
+    static let dbFilesName = "cache"
+    static let dbPath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .allDomainsMask, true)[0] as NSString).appendingPathComponent("/\(dbFilesName)/db.realm")
     /// 配置数据库
     static func configRealm() {
         /// 如果要存储的数据模型属性发生变化,需要配置当前版本号比之前大
@@ -37,6 +38,19 @@ class RealmManager {
     }
     
     static var db:Realm={
+        let dbfile = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .allDomainsMask, true)[0] as NSString).appendingPathComponent("/\(dbFilesName)")
+        let manager = FileManager.default
+        
+        if manager.fileExists(atPath: dbfile) == false{
+            do{
+                try manager.createDirectory(atPath: dbfile, withIntermediateDirectories: true, attributes: nil)
+                print("Succes to create folder")
+            }
+            catch{
+                print("Error to create folder")
+            }
+        }
+
         /// 传入路径会自动创建数据库
         let defaultRealm = try! Realm(fileURL: URL.init(string: dbPath)!)
         return defaultRealm
