@@ -1,6 +1,0 @@
-framework module SJObserverHelper {
-  umbrella header "SJObserverHelper-umbrella.h"
-
-  export *
-  module * { export * }
-}
