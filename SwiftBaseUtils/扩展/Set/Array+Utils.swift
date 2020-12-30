@@ -10,6 +10,7 @@ import Foundation
 
 extension Array{
     
+    // 防止越界崩溃
     func bm_object(_ at:Int) -> Element? {
         if at >= self.count || at < 0{
             return nil

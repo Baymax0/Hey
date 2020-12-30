@@ -9,7 +9,6 @@
 import UIKit
 import NVActivityIndicatorView
 import MJRefresh
-import Alamofire
 
 class ListModel: HandyJSON {
     required init() {}
@@ -22,6 +21,8 @@ class MyTableView: UITableView ,UIGestureRecognizerDelegate{
 }
 
 class BaseTableVC: BaseVC {
+    
+    var listRequestCode = 1
     
     var tableview: MyTableView?
     var pageNo = 1
@@ -59,6 +60,8 @@ class BaseTableVC: BaseVC {
         tableview?.separatorStyle = .none
         tableview?.backgroundColor = .white
         
+        tableview?.keyboardDismissMode = .onDrag//滚动退出键盘
+        
         tableview?.estimatedRowHeight = 0
         tableview?.estimatedSectionHeaderHeight = 0
         tableview?.estimatedSectionFooterHeight = 0
@@ -66,8 +69,8 @@ class BaseTableVC: BaseVC {
         self.ignoreAutoAdjustScrollViewInsets(tableview)
         
         indicatorView = BMIndicatorView.showInView(view, frame: rect)
+        indicatorView.bm.addConstraints([.fill])
     }
-    
     
     func initMJHeadView() -> Void {
         let header = MJRefreshNormalHeader()
@@ -111,6 +114,7 @@ class BaseTableVC: BaseVC {
         let count = self.dataArr.count
         
         return network[key].request(params: param) { (resp) in
+            self.listRequestCode = resp!.code
             if resp?.code == 1{
                 self.pageNo = page
                 
@@ -120,7 +124,7 @@ class BaseTableVC: BaseVC {
                 }else{
                     self.dataArr.append(contentsOf: temp ?? [])
                 }
-            }else if resp?.code == -1 && page == 1{
+            }else if resp!.code < 0 && page == 1{
                 self.dataArr = []
             }else{
                 if self.showRequestError == false{

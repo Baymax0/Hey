@@ -16,7 +16,7 @@ class BMBasePicker: UIView {
     var bgMaskView:UIButton = {
         let btn         = UIButton(type: .custom)
         btn.frame       = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        btn.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        btn.backgroundColor = .maskView
         btn.addTarget(self, action: #selector(close), for: .touchUpInside)
         return btn
     }()
@@ -100,12 +100,17 @@ class BMBasePicker: UIView {
     }
     /// 显示
     func show(){
-        let w = UIApplication.shared.keyWindow
+        let w = UIApplication.shared.windows.filter({$0.isKeyWindow}).first
         w?.addSubview(self)
         
         bgMaskView.alpha = 0
         self.contentView.alpha = 0
         contentView.frame.origin.y = contentViewY! + 130
+        if #available(iOS 14.0, *){
+            if let v = pickerView.subviews.bm_object(1){
+                v.backgroundColor = .clear
+            }
+        }
         UIView.animate(withDuration: 0.2, animations: {
             self.bgMaskView.alpha = 1
             self.contentView.alpha = 1

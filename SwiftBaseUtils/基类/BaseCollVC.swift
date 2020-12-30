@@ -9,7 +9,6 @@
 import UIKit
 import NVActivityIndicatorView
 import MJRefresh
-import Alamofire
 
 class BaseCollVC: BaseVC {
     

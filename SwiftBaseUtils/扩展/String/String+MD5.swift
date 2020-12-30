@@ -37,11 +37,6 @@ extension String{
 }
 
 
-
-
-
-
-
 /** array of bytes, little-endian representation */
 func arrayOfBytes<T>(_ value: T, length: Int? = nil) -> [UInt8] {
     let totalBytes = length ?? (MemoryLayout<T>.size * 8)

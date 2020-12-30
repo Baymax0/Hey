@@ -32,54 +32,55 @@ class BMIndicatorView: UIView {
     
     class func showInView(_ view:UIView,frame:CGRect) -> BMIndicatorView {
         let v = BMIndicatorView(frame: frame)
+        view.addSubview(v)
         v.initUI()
         v.alpha = 0
-        view.addSubview(v)
         return v
     }
     
     
     func initUI() {
         
-        myMaskView = UIView(frame: self.bounds)
-        myMaskView.isHidden = true
+        myMaskView = UIView()
         self.addSubview(myMaskView)
+        myMaskView.isHidden = true
+        myMaskView.bm.addConstraints([.margin(0, 0, 0, 0)])
+
         
-        var w = CGFloat(35)
-        var rect = CGRect(x: (self.w-w)/2, y: (self.h-w)/2, width: w, height: w)
-        activityIndicatorView = NVActivityIndicatorView(frame: rect,
+        var w:CGFloat = 35
+        var h:CGFloat = w
+
+        activityIndicatorView = NVActivityIndicatorView(frame: .init(x: 0, y: 0, width: w, height: h),
                                                         type: NVActivityIndicatorType.ballBeat)
         activityIndicatorView!.color = .KTextLightGray
         self.addSubview(activityIndicatorView!)
+        activityIndicatorView.bm.addConstraints([.w(w), .h(w), .center])
         
-        w = CGFloat(70)
-        rect = CGRect(x: (self.w-w)/2, y: (self.h-w)/2+4, width: w, height: 20)
-        activityIndicatorLab = UILabel(frame: rect)
+        w = 70
+        h = 20
+        activityIndicatorLab = UILabel(frame: .zero)
         activityIndicatorLab.text = "加载中.."
         activityIndicatorLab.textAlignment = .center
         activityIndicatorLab.font = UIFont.systemFont(ofSize: 15)
         activityIndicatorLab.textColor = .KTextLightGray
         activityIndicatorLab.isHidden = YES
         self.addSubview(activityIndicatorLab)
+        activityIndicatorLab.bm.addConstraints([.top((self.h-w)/2+4), .center_X(0), .w(w), .h(h)])
         
         
-        w = CGFloat(160)
-        let h = CGFloat(200)
-        self.contentBG = UIView(frame: CGRect(x: 0, y: 0, width: w, height: h))
-        var tempRect = self.center
-        tempRect.y = tempRect.y - self.y
-        self.contentBG.center = tempRect
-        //        self.contentBG.backgroundColor = .gray
+        w = 160
+        h = 200
+        self.contentBG = UIView()
         self.addSubview(self.contentBG)
+        self.contentBG.bm.addConstraints([.w(w), .h(h), .center_X(0), .center_Y(-15)])
         
         let imgH = CGFloat(150)
-        self.contentImgView = UIImageView.init(frame: CGRect(x: 0, y: 0, width: w, height: imgH))
+        self.contentImgView = UIImageView()
         self.contentImgView.contentMode = .bottom
         self.contentBG.addSubview(self.contentImgView)
+        contentImgView.bm.addConstraints([.left(0), .top(0), .w(w), .h(imgH)])
         
         requestBtn = UIButton(type: .system)
-        requestBtn.frame = CGRect(x: 0, y: imgH+10, width: 85, height: 34)
-        requestBtn.x = (self.contentBG.w - requestBtn.w)/2
         requestBtn.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         requestBtn.setTitle("点击刷新", for: .normal)
         requestBtn.setTitleColor(.KTextLightGray, for: .normal)
@@ -88,16 +89,17 @@ class BMIndicatorView: UIView {
         requestBtn.layer.masksToBounds = true
         requestBtn.layer.borderColor = UIColor.KTextLightGray.cgColor
         self.contentBG.addSubview(requestBtn)
+        requestBtn.bm.addConstraints([.center_X(0), .under(contentImgView, 10), .w(85), .h(34)])
         
         self.contentLab = UILabel()
-        self.contentLab.frame = CGRect(x: 0, y: imgH+10, width: w, height: 48)
         self.contentLab.text = "暂无数据\n"
         self.contentLab.numberOfLines = 0
         self.contentLab.textAlignment = .center
         self.contentLab.font = UIFont.systemFont(ofSize: 16)
         self.contentLab.textColor = .KTextLightGray
         self.contentBG.addSubview(self.contentLab)
-        
+        contentLab.bm.addConstraints([.left(0), .under(contentImgView, 10), .w(w), .h(48)])
+
         
         requestImageName = "wuwangluo"
         self.activityIndicatorView.alpha = 1

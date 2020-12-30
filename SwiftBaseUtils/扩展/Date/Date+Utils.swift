@@ -86,4 +86,27 @@ extension Date {
         let t = self.timeIntervalSince1970 + time
         return Date.init(timeIntervalSince1970: t)
     }
+    func getweekDay() ->String{
+        let interval = Int(self.timeIntervalSince1970) + NSTimeZone.local.secondsFromGMT()
+        let days = Int(interval/86400) // 24*60*60
+        let weekday = ((days + 4)%7+7)%7
+        let comps = weekday == 0 ? 7 : weekday
+        var str = ""
+        if comps == 1 {
+            str = "周一"
+        }else if comps == 2 {
+            str = "周二"
+        }else if comps == 3 {
+            str =  "周三"
+        }else if comps == 4 {
+            str =  "周四"
+        }else if comps == 5 {
+            str =  "周五"
+        }else if comps == 6 {
+            str =  "周六"
+        }else if comps == 7 {
+            str =  "周日"
+        }
+        return str
+    }
 }

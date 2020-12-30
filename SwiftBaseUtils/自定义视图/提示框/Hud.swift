@@ -16,7 +16,7 @@ class Hud: NSObject {
     static var dismissTime = 1.5
 
     /// 显示文字
-    static func showText(_ text:String?,in view:UIView! = UIApplication.shared.keyWindow!){
+    static func showText(_ text:String?,in view:UIView! = UIApplication.shared.windows.filter({$0.isKeyWindow}).first!){
         if text == nil{
             return
         }
@@ -39,7 +39,7 @@ class Hud: NSObject {
     }
     
     /// 显示等待
-    static func showWait(in view:UIView! = UIApplication.shared.keyWindow){
+    static func showWait(in view:UIView! = UIApplication.shared.windows.filter({$0.isKeyWindow}).first!){
         if view == nil{
             return
         }
@@ -74,7 +74,7 @@ class Hud: NSObject {
         }
     }
     
-    private static func showHudInView(view:UIView! = UIApplication.shared.keyWindow) {
+    private static func showHudInView(view:UIView! = UIApplication.shared.windows.filter({$0.isKeyWindow}).first!) {
         if view == nil{
             return
         }

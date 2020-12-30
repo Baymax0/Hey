@@ -46,10 +46,12 @@ class BMPicker: NSObject {
         return picker
     }
     
+    /// 带长期 按钮（营业执照中使用）
     static func datePickerWithInfinit(currentTime:Date?=nil,startTime:Date?=nil,endTime:Date?=nil,selected:@escaping (_ time:Date?) -> () ) -> BMDatePicker{
         let picker = BMDatePicker(selected)
         picker.datePickMode = .ymd
         picker.showInfinit = true
+        picker.infinitText = "永 久"
         if currentTime != nil {
             picker.date = currentTime!
         }else{

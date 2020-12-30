@@ -8,8 +8,6 @@
 
 
 import UIKit
-@_exported import HandyJSON
-@_exported import Kingfisher
 
 let YES = true
 let NO = false
@@ -19,8 +17,12 @@ let KReloadIntervalTime:Double = 600
 
 func judgeScream() -> Bool {
     if #available(iOS 11.0, *) {
-        let a = UIApplication.shared.keyWindow!.safeAreaInsets.bottom
-        return a != 0 ? true:false
+        // 有时候会莫名其妙 keyWindow = nil
+        if let a = UIApplication.shared.windows.filter({$0.isKeyWindow}).first?.safeAreaInsets.bottom{
+            return a != 0 ? true:false
+        }else{
+            return true
+        }
     } else {
         return false
     }

@@ -11,6 +11,8 @@ import UIKit
 enum BMDatePickerMode:UInt8 {
     /// 时分秒
     case hms        = 0b000111
+    /// 时分
+    case hm        = 0b000110
     /// 年月日
     case ymd        = 0b111000
     /// 年月日时分
@@ -33,10 +35,9 @@ enum BMDatePickerMode:UInt8 {
 
 
 class BMDatePicker: BMBasePicker {
-    var componentsArray:Array<Array<String>> = Array()
-    var dateFormateArr:Array<String> = Array()
-    var selectedIndexArr:Array<Int> = Array()
     var showInfinit : Bool = false
+    var infinitText = "永 久"
+    
     var infinitBtn : UIButton?
     //当前时间
     var date:Date{
@@ -65,7 +66,6 @@ class BMDatePicker: BMBasePicker {
         }
     }
     
-
     //默认 .ymd
     var datePickMode:BMDatePickerMode = .ymd{
         didSet {
@@ -113,6 +113,13 @@ class BMDatePicker: BMBasePicker {
     }
 
     var selected: ((_:Date?)->())
+    
+    
+    private var componentsArray:Array<Array<String>> = Array()
+    
+    private var dateFormateArr:Array<String> = Array()
+    
+    private var selectedIndexArr:Array<Int> = Array()
 
     init(_ selected:@escaping (_ time:Date?) -> () ) {
         self.datePickMode = .ymd
@@ -148,17 +155,21 @@ extension BMDatePicker{
     
     /// 显示
     override func show(){
-        let w = UIApplication.shared.keyWindow
+        let w = UIApplication.shared.windows.filter({$0.isKeyWindow}).first
         w?.addSubview(self)
         
         bgMaskView.alpha = 0
         self.contentView.alpha = 0
         contentView.frame.origin.y = contentViewY! + 130
-        
+        if #available(iOS 14.0, *){
+            if let v = pickerView.subviews.bm_object(1){
+                v.backgroundColor = .clear
+            }
+        }
         if showInfinit == true {
             self.infinitBtn = UIButton()
             self.infinitBtn?.frame = CGRect(x: contentView.frame.origin.x, y: contentView.frame.origin.y - 44 - 12, width: contentView.frame.width, height: 44)
-            self.infinitBtn?.setTitle("永 久", for: .normal)
+            self.infinitBtn?.setTitle(infinitText, for: .normal)
             self.infinitBtn?.layer.cornerRadius = 10
             self.infinitBtn?.layer.masksToBounds = true
             self.infinitBtn?.backgroundColor = .white
@@ -191,9 +202,11 @@ extension BMDatePicker{
         }
         return rows
     }
+    
     override func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
         return rowH
     }
+    
     override func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         let arr = componentsArray[component]
         if arr.count == 24{
@@ -213,6 +226,7 @@ extension BMDatePicker{
         }
         return "\(arr[row])日"
     }
+    
     func pickerView(_ pickerView: UIPickerView, widthForComponent component: Int) -> CGFloat {
         var unitCount = componentsArray.count * 3
         if datePickMode.contain(.year) {
@@ -276,8 +290,6 @@ extension Date {
             return temp[month-1]
         }
     }
-
-
 }
 
 

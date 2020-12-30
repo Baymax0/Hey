@@ -37,6 +37,7 @@ class Utils: NSObject {
         return UIDevice.current.identifierForVendor?.uuidString
     }()
 
-    
 }
+
+
 

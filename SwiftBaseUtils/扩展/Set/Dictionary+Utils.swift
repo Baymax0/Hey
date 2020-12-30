@@ -47,7 +47,6 @@ extension Dictionary {
             log = "\(log)\t\(key):\(valStr)\n"
         }
         log = log + "}\n"
-        
         return log
     }
     

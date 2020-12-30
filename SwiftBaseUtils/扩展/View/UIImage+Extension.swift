@@ -10,11 +10,13 @@ import Foundation
 import UIKit
 
 extension UIImage{
-//    
-//    convenience init(_ symbolName:String, font:UIImage.SymbolWeight) {
-//        let config = UIImage.SymbolConfiguration(weight: font)
-////        self.init(systemName: symbolName, withConfiguration(config))!
-//    }
+
+    // 选择图片的时候，直接用.name("")
+    // 例如 imgView.image = .name("123")
+    open class func name(_ name:String) -> UIImage? {
+        return UIImage(named: name)
+    }
+    
     
     func circleImage() -> UIImage {
         //取最短边长

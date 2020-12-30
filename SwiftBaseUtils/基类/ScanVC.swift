@@ -61,7 +61,7 @@ class ScanVC: BaseVC {
     //扫码遮挡试图
     var blackView:UIView = {
         let v = UIView(frame: CGRect(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight))
-        v.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        v.backgroundColor = UIColor.maskView
         return v
     }()
     var slideBGView :UIImageView = {

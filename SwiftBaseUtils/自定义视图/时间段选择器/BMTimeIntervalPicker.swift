@@ -18,7 +18,7 @@ import UIKit
 
 class BMTimeIntervalPicker: UIView {
 
-    // MARK: -  ---------------------- publick ------------------------
+    // MARK: -  ---------------------- public ------------------------
 
     var startTime: Date!
     var endTime: Date!
@@ -170,7 +170,7 @@ class BMTimeIntervalPicker: UIView {
     func show() {
         self.chooseDateAction(_startBtn)
         self.alpha = 0
-        UIApplication.shared.keyWindow?.addSubview(self)
+        UIApplication.shared.windows.filter({$0.isKeyWindow}).first?.addSubview(self)
         _whiteView.y = KScreenHeight
         
         self.setStartTime(startTime)
@@ -299,8 +299,10 @@ extension BMTimeIntervalPicker :UIPickerViewDelegate , UIPickerViewDataSource{
         let choose = self.getDate(result, formate)
         if (currentBtnTag == 1){
             self.startTime = choose
+            _startTimeLab.text = choose.toString("yyyy-MM-dd")
         }else{
             self.endTime = choose
+            _endTimeLab.text = choose.toString("yyyy-MM-dd")
         }
     }
 
