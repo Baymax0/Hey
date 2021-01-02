@@ -128,5 +128,16 @@ class Realm_Github_Api: RealmManager {
         }
     }
     
+    public func saveAll(_ models:Array<GitHub_CachePost>!){
+        try! RealmManager.db.write{
+            if let arr = getPostList(){
+                RealmManager.db.delete(arr)
+            }
+            for m in models{
+                RealmManager.db.add(m, update: .all)
+            }
+        }
+    }
+    
 }
 

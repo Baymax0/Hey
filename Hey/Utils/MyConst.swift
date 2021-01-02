@@ -13,3 +13,11 @@ let stiffness:CGFloat = 230
 let damping:CGFloat = 23
 var oemInstitutionNo:String! = nil
 
+
+
+extension UIColor {
+    
+    open class var githubTheme: UIColor    { return UIColor(named: "githubTheme")!}
+    
+}
+

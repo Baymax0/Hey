@@ -11,10 +11,12 @@ import Foundation
 extension String{
     /// "yyyy-MM-dd HH:mm:ss"  ->   Date()  字符串转时间
     func toDate(_ dateFormat:String = "yyyy-MM-dd HH:mm:ss") -> Date!{
+        let str:String = self
         let formatter = DateFormatter()
-        formatter.locale = Locale.init(identifier: "zh_CN")
         formatter.dateFormat = dateFormat
-        let date = formatter.date(from: self)
+        formatter.timeZone = TimeZone.init(identifier: "UTC")
+        formatter.locale = Locale.init(identifier: "zh_CN")
+        let date = formatter.date(from: str)
         return date!
     }
     
@@ -36,12 +38,12 @@ extension String{
         return d
     }
     
+    
     /// 转变日期字符串的样式
     func changeDateStrFormate(fromFormate:String = "yyyy-MM-dd HH:mm:ss",toFormate:String = "yyyy-MM-dd") -> String{
         if self.count == 0 {
             return ""
         }
-        
         let timeZone = TimeZone.init(identifier: "UTC")
         let formatter = DateFormatter()
         formatter.timeZone = timeZone
@@ -51,6 +53,8 @@ extension String{
         let s = date?.toString(toFormate)
         return s!
     }
+    
+    
 }
 
 
