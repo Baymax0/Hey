@@ -39,7 +39,7 @@ public class BMCacheKey<ValueType>: BMDefaultsKeys {
 
 public class BMCache{
     
-    fileprivate let Defaults = UserDefaults.standard
+    let Defaults = UserDefaults.standard
     
     // String?
     public subscript(key: BMCacheKey<String?>) -> String? {

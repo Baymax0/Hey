@@ -13,9 +13,16 @@ import MJRefresh
 class ListModel: HandyJSON {
     required init() {}
 }
-
+@objc public protocol MyTableViewGestureDelegate {
+    func myTableViewGestureRecognizer() -> Bool
+}
 class MyTableView: UITableView ,UIGestureRecognizerDelegate{
+    ///不想让手势透传可以用代理
+    weak var gestureDelegate: MyTableViewGestureDelegate?
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if let delegate = gestureDelegate{
+            return delegate.myTableViewGestureRecognizer()
+        }
         return YES
     }
 }
@@ -45,18 +52,11 @@ class BaseTableVC: BaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-    lazy var foot: MJRefreshAutoNormalFooter = {
-        let foot = MJRefreshAutoNormalFooter()
-        foot.setRefreshingTarget(self, refreshingAction: #selector(BaseTableVC.loadMoreData))
-        foot.triggerAutomaticallyRefreshPercent = -9
-        foot.stateLabel?.textColor = .KTextLightGray
-        foot.setTitle("", for: .idle)
-        foot.setTitle(footNoDataText, for: .noMoreData)
-        return foot
-    }()
     
     func initTableView(rect:CGRect ,_ style:UITableView.Style = .plain) -> Void {
         tableview = MyTableView.init(frame: rect, style: style)
+        let cons:[EasyConstraint] = [.top(rect.origin.y), .left(0), .right(0), .h(rect.height)]
+        tableview?.bm.addConstraints(cons)
         tableview?.separatorStyle = .none
         tableview?.backgroundColor = .white
         
@@ -65,11 +65,11 @@ class BaseTableVC: BaseVC {
         tableview?.estimatedRowHeight = 0
         tableview?.estimatedSectionHeaderHeight = 0
         tableview?.estimatedSectionFooterHeight = 0
-        self.view.addSubview(tableview!)
-        self.ignoreAutoAdjustScrollViewInsets(tableview)
+        view.addSubview(tableview!)
+        ignoreAutoAdjustScrollViewInsets(tableview)
         
         indicatorView = BMIndicatorView.showInView(view, frame: rect)
-        indicatorView.bm.addConstraints([.fill])
+        indicatorView?.bm.addConstraints(cons)
     }
     
     func initMJHeadView() -> Void {
@@ -79,6 +79,12 @@ class BaseTableVC: BaseVC {
         header.stateLabel?.isHidden = YES
         tableview?.mj_header = header
         
+        let foot = MJRefreshAutoNormalFooter()
+        foot.setRefreshingTarget(self, refreshingAction: #selector(BaseTableVC.loadMoreData))
+        foot.triggerAutomaticallyRefreshPercent = -9
+        foot.stateLabel?.textColor = .KTextLightGray
+        foot.setTitle("", for: .idle)
+        foot.setTitle(footNoDataText, for: .noMoreData)
         tableview?.mj_footer = foot
     }
     
@@ -95,7 +101,7 @@ class BaseTableVC: BaseVC {
     }
     
     @objc func loadMoreData() -> Void {
-        if self.tableview?.mj_footer != nil && self.tableview?.mj_footer?.state != .noMoreData{
+        if tableview?.mj_footer != nil && tableview?.mj_footer?.state != .noMoreData{
             loadData(pageNo+1)
         }
     }
@@ -110,14 +116,12 @@ class BaseTableVC: BaseVC {
         param["pageNumber"] = page
         param["pageNo"] = page
         param["pageSize"] = PageSize
-        
         let count = self.dataArr.count
-        
         return network[key].request(params: param) { (resp) in
             self.listRequestCode = resp!.code
             if resp?.code == 1{
                 self.pageNo = page
-                
+
                 let temp = resp!.data
                 if page == 1{
                     self.dataArr = temp ?? []
@@ -148,42 +152,35 @@ class BaseTableVC: BaseVC {
     }
     
     func finishLoadDate(_ code:Int) -> Void {
-        if self.tableview?.mj_header != nil {
-            self.tableview?.mj_header?.endRefreshing()
-            if code == -1 || self.dataArr.count % PageSize != 0{
-                self.tableview?.mj_footer?.endRefreshingWithNoMoreData()
+        if tableview?.mj_header != nil {
+            tableview?.mj_header?.endRefreshing()
+            if code == -1 || dataArr.count % PageSize != 0{
+                tableview?.mj_footer?.endRefreshingWithNoMoreData()
             }else{
-                self.tableview?.mj_footer?.endRefreshing()
+                tableview?.mj_footer?.endRefreshing()
             }
             
-            if self.dataArr.count == 0{
-                self.tableview?.mj_footer?.endRefreshingWithNoMoreData()
-            }else{
-                if tableview?.mj_footer == nil{
-                    if self.dataArr.count % PageSize != 0{
-                        foot.endRefreshingWithNoMoreData()
-                    }
-                    tableview?.mj_footer = foot
-                }
+            if dataArr.count == 0{
+                tableview?.mj_footer?.endRefreshingWithNoMoreData()
             }
         }
     }
     
     func showLoadingView() -> Void {
-        self.tableview?.isHidden = true
+        tableview?.isHidden = true
         indicatorView.showWait()
     }
     
     //刷新数据
     func reloadData(_ code:Int = 1) -> Void {
-        if self.dataArr.count == 0 && code == -1{
-            self.tableview?.isHidden = true
+        if dataArr.count == 0 && code == -1{
+            tableview?.isHidden = true
             indicatorView.showNoData()
         }else{
             indicatorView.hide()
-            self.tableview?.isHidden = false
+            tableview?.isHidden = false
         }
-        self.tableview?.reloadData()
+        tableview?.reloadData()
         
     }
 }

@@ -78,13 +78,11 @@ class OneInfoCell: UICollectionViewCell {
             }else{
                 imgH.constant = 2333.0 / 3499.0 * (KScreenWidth - 18 - 18)
             }
-            imgView.layoutIfNeeded()
             
             imgAuth.text = "摄影｜" + (obj.pic_author ?? "")
             authLab.text = obj.words_author
 
             let str = obj.forward ?? ""
-//            let str = "本书于网络选购，收到书后，看到书中满满作者旅游照片时，觉得自己上当了，有些不悦。心情平复后听了随书赠送的CD，这才懂得这本书中眭澔平的文字只是CD的附属品，遥远的孤独的灵魂越拉越近，宛如最后一封信般凄冷。后看到网络上多有对本书的谴责，特为本书说些公道话。"
 
             let attributeStr = NSMutableAttributedString(string: str)
             let paragraph = NSMutableParagraphStyle()
@@ -145,9 +143,7 @@ class OneInfoCell: UICollectionViewCell {
                             contentDetail = (contentDetail ?? "") + "\n" + detail
                         }
                     }
-                    
                     lab_detail?.text = contentDetail
-                    
                     realIndex += 1
                 }
             }

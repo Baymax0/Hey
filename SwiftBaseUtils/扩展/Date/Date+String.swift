@@ -14,7 +14,7 @@ extension String{
         let str:String = self
         let formatter = DateFormatter()
         formatter.dateFormat = dateFormat
-        formatter.timeZone = TimeZone.init(identifier: "UTC")
+        formatter.timeZone = TimeZone.init(identifier: "Asia/Shanghai")
         formatter.locale = Locale.init(identifier: "zh_CN")
         let date = formatter.date(from: str)
         return date!
@@ -44,12 +44,7 @@ extension String{
         if self.count == 0 {
             return ""
         }
-        let timeZone = TimeZone.init(identifier: "UTC")
-        let formatter = DateFormatter()
-        formatter.timeZone = timeZone
-        formatter.locale = Locale.init(identifier: "zh_CN")
-        formatter.dateFormat = fromFormate
-        let date = formatter.date(from: self)
+        let date = self.toDate(fromFormate)
         let s = date?.toString(toFormate)
         return s!
     }

@@ -10,109 +10,72 @@ import UIKit
 
 enum PopViewType:Int {
     ///渐变
-    case FadeInOut      = 0
+    case fade      = 0
     ///缩放
-    case ZoomInOut      = 1
-    ///往上
-    case Upward         = 2
-    ///往下
-    case Downward       = 3
-    ///往左
-    case Leftward       = 4
-    ///往右
-    case Rightward      = 5
+    case zoom      = 1
+    ///下往上
+    case up        = 2
+    ///上往下
+    case down      = 3
+    ///右往左
+    case left      = 4
+    ///左往右
+    case right     = 5
+    ///弹性动画
+    case spring    = 6
+    ///从左上角到中间，再到右下角
+    case custom    = 7
 }
 class PopViewManager: NSObject {
-    
+    var backgroundStyle = JXPopupViewBackgroundStyle.solidColor
+    var backgroundColor = UIColor.black.withAlphaComponent(0.3)
+    var backgroundEffectStyle = UIBlurEffect.Style.light
     /// 弹出框
     /// - Parameters:
     ///   - contentView: 弹出框的内容
     ///   - containerView: 弹出框的背景
     ///   - animatorType: 弹出框的类型
     ///   - layout: 弹出框的位置
-    static func show(contentView:UIView,containerView:UIView = UIApplication.shared.keyWindow!,animatorType:PopViewType = .FadeInOut,layout:BaseAnimator.Layout = .center(.init()))  {
-        var animator: PopupViewAnimator?
-        switch animatorType.rawValue {
-        case 1:
-            animator = ZoomInOutAnimator(layout: layout)
-        case 2:
-            animator = UpwardAnimator(layout: layout)
-        case 3:
-            animator = DownwardAnimator(layout: layout)
-        case 4:
-            animator = LeftwardAnimator(layout: layout)
-        case 5:
-            animator = RightwardAnimator(layout: layout)
-        default:
-            animator = FadeInOutAnimator(layout: layout)
+    static func show(contentView:UIView,containerView:UIView = UIApplication.shared.windows.filter({$0.isKeyWindow}).first!,animatorType:PopViewType = .fade)  {
+        display(contentView: contentView, containerView: containerView, animatorType: animatorType)
+    }
+    /// 弹出框
+    /// - Parameters:
+    ///   - contentView: 弹出框的内容
+    ///   - containerView: 弹出框的背景
+    ///   - animatorType: 弹出框的类型
+    ///   - style: 是否是毛玻璃效果
+    static func display(contentView:UIView,containerView:UIView = UIApplication.shared.windows.filter({$0.isKeyWindow}).first!,animatorType:PopViewType = .fade,style:JXPopupViewBackgroundStyle = .solidColor) {
+        var animator: JXPopupViewAnimationProtocol?
+        switch animatorType {
+        case .fade:
+            animator = JXPopupViewFadeInOutAnimator()
+        case .zoom:
+            animator = JXPopupViewZoomInOutAnimator()
+        case .up:
+            animator = JXPopupViewUpwardAnimator()
+        case .down:
+            animator = JXPopupViewDownwardAnimator()
+        case .left:
+            animator = JXPopupViewLeftwardAnimator()
+        case .right:
+            animator = JXPopupViewRightwardAnimator()
+        case .spring:
+            animator = JXPopupViewSpringDownwardAnimator()
+        case .custom:
+            animator = JXPopupViewCustomAnimator()
         }
-        let popupView = PopupView(containerView: containerView, contentView: contentView, animator: animator!)
+        let popupView = JXPopupView(containerView: containerView, contentView: contentView, animator: animator!)
         //配置交互
         popupView.isDismissible = true
         popupView.isInteractive = true
         //可以设置为false，再点击弹框中的button试试？
         //        popupView.isInteractive = false
         popupView.isPenetrable = false
+        if style == .blur {
+            popupView.backgroundView.style = style
+            popupView.backgroundView.blurEffectStyle = UIBlurEffect.Style.light
+        }
         popupView.display(animated: true, completion: nil)
     }
 }
-/**
-     func displayPopupView() {
-         contentView = Bundle.main.loadNibNamed("TestAlertView", owner: nil, options: nil)?.first as? TestAlertView
-         //- 确定动画效果及其布局
-         var layout: BaseAnimator.Layout?
-         switch layoutIndex {
-         case 0:
-             layout = .center(.init())
-         case 1:
-             layout = .top(.init(topMargin: 100))
-         case 2:
-             layout = .bottom(.init(bottomMargin: 34))
-         case 3:
-             layout = .leading(.init(leadingMargin: 20))
-         case 4:
-             layout = .trailing(.init(trailingMargin: 20))
-         case 5:
-             layout = .frame(CGRect(x: 100, y: 300, width: 200, height: 200))
-         default: break
-         }
-         var animator: PopupViewAnimator?
-         switch animationIndex {
-         case 0:
-             animator = FadeInOutAnimator(layout: layout!)
-         case 1:
-             animator = ZoomInOutAnimator(layout: layout!)
-         case 2:
-             animator = UpwardAnimator(layout: layout!)
-         case 3:
-             animator = DownwardAnimator(layout: layout!)
-         case 4:
-             animator = LeftwardAnimator(layout: layout!)
-         case 5:
-             animator = RightwardAnimator(layout: layout!)
-         case 6:
-             let spring = DownwardAnimator(layout: layout!)
-             spring.displayDuration = 0.5
-             spring.displaySpringDampingRatio = 0.7
-             spring.displaySpringVelocity = 0.5
-             animator = spring
-         case 7:
-             animator = CustomAnimator(layout: layout!)
-         default:
-             break
-         }
-         let popupView = PopupView(containerView: containerView, contentView: contentView, animator: animator!)
-         //配置交互
-         popupView.isDismissible = true
-         popupView.isInteractive = true
-         //可以设置为false，再点击弹框中的button试试？
- //        popupView.isInteractive = false
-         popupView.isPenetrable = false
-         //- 配置背景
-         popupView.backgroundView.style = self.backgroundStyle
-         popupView.backgroundView.blurEffectStyle = self.backgroundEffectStyle
-         popupView.backgroundView.color = self.backgroundColor
-         popupView.display(animated: true, completion: nil)
-     }
- 
- */

@@ -163,7 +163,7 @@ extension CaseColorVC : AVCapturePhotoCaptureDelegate{
         imageView.image = scaledImage
         
         scaledImage?.getColors({ (colors) in
-            let color = colors?.background
+//            let color = colors?.background
             self.changeColorAnimation(colors?.background)
             self.touchUpACtion(btn: nil)
             

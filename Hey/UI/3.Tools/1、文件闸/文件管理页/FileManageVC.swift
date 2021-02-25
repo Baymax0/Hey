@@ -38,6 +38,9 @@ class FileManageVC: BaseVC {
     @IBOutlet weak var tagChooseSC: UIScrollView!
     @IBOutlet weak var tagChooseBGH: NSLayoutConstraint!
     
+    var tagCollect:CollectionView!
+    
+    
     var showListOrReview:FileShowType = .list
     var showImgType:FileShowType = .fill
     var sortType:FileShowType = .sortByName
@@ -68,7 +71,6 @@ class FileManageVC: BaseVC {
         collectionView.backgroundColor = .KBGGray
         collectionView.register(UINib(nibName: "CustomCell", bundle: nil), forCellWithReuseIdentifier: "Cell")
         collectionView.delaysContentTouches = false
-        collectionView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 110, right: 0)
         
         KingfisherManager.shared.cache.diskStorage.config.sizeLimit        =  500 * 1024 * 1024
         KingfisherManager.shared.cache.memoryStorage.config.totalCostLimit = 1024 * 1024 * 1024
@@ -86,6 +88,17 @@ class FileManageVC: BaseVC {
         super.viewWillAppear(animated)
         tagDic = (cache[.imageTagsDic] as? Dictionary<String, String>) ?? Dictionary<String, String>()
     }
+    
+    // 方向改变回调
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        self.coculate(size: size);
+        self.collectionView.reloadData()
+    }
+    
+    // 分屏大小改变回调
+    override func viewDidLayoutSubviews() {
+        self.coculate(size: self.view.mj_size);
+    }
 
     /// 返回上一级
     @IBAction func backAction(_ sender: Any) {
@@ -102,16 +115,17 @@ class FileManageVC: BaseVC {
         if tagChooseBG.isHidden == true{//显示
             tagChooseBG.isHidden = false
             sender.tintColor = UIColor.red
+            self.tagChooseBGH.constant = 120
+            tagChooseBG.alpha = 0
             UIView.animate(withDuration: 0.15) {
-                self.tagChooseBGH.constant = 50
-                self.view.layoutIfNeeded()
+                self.tagChooseBG.alpha = 1
             } completion: { (_) in }
             
         }else{//隐藏
             sender.tintColor = .KTextBlack
+            self.tagChooseBG.alpha = 1
             UIView.animate(withDuration: 0.2) {
-                self.tagChooseBGH.constant = 0
-                self.view.layoutIfNeeded()
+                self.tagChooseBG.alpha = 0
             } completion: { (_) in
                 self.tagChooseBG.isHidden = true
             }
@@ -132,8 +146,8 @@ class FileManageVC: BaseVC {
             btn.layer.borderColor = perple.cgColor
             lastTagBtn = btn
             self.loadSubFile()
+            locLab.text = tagSortArr[lastTagBtn!.tag]
         }
-        
     }
     
     /// 列表展示还是图文展示
@@ -148,7 +162,11 @@ class FileManageVC: BaseVC {
         }
         self.loadSubFile()
     }
-
+    
+    @IBAction func rewriteTag(_ sender: Any) {
+        
+    }
+    
     
     @IBAction func reloadAction(_ sender: Any) {
         self.loadSubFile()
@@ -249,12 +267,7 @@ extension FileManageVC{
     }
     
     func loadTagChooseView() {
-        let blank:CGFloat = 15
-        let h   :CGFloat  = 35
-        let y   :CGFloat  = (50 - h) / 2
         let fontSize:CGFloat = 14
-        var x   :CGFloat    = blank
-
         var set = Set<String>()
         for (_,str) in tagDic{
             set.insert(str)
@@ -263,32 +276,41 @@ extension FileManageVC{
         tagSortArr.insert(allTag, at: 0)
         tagSortArr.append(kongTag)
 
-        for i in 0..<tagSortArr.count {
-            let str = tagSortArr[i]
-            var w = str.stringWidth(fontSize)+30
-            w = w < (KScreenWidth-blank*2) ? w : KScreenWidth-blank*2-1
-            
-            let btn = UIButton.init(frame: CGRect(x: x, y: y, width: w, height: h))
-            x = x + blank
-            x = x + w
-            btn.tag = i
-            btn.backgroundColor = .white
-            btn.layer.cornerRadius = 6
-            btn.layer.masksToBounds = YES
-            btn.layer.borderWidth = 1
-            
-            btn.layer.borderColor = UIColor.lightGray.cgColor
-            btn.setTitleColor(UIColor.lightGray, for: .normal)
-
-            btn.setTitle(str, for: .normal)
-            btn.titleLabel?.font = UIFont.systemFont(ofSize: fontSize)
-            btn.titleLabel?.lineBreakMode = .byTruncatingTail
-            btn.addTarget(self, action: #selector(chooseTagBtn(_:)), for: .touchUpInside)
-            tagChooseSC.addSubview(btn)
-            
-        }
-        tagChooseSC.contentSize = CGSize(width: x, height: 50)
+        tagCollect = CollectionView(frame: .init(x: 0, y: 0, width: KScreenWidth, height: 80))
+        tagChooseBG.addSubview(tagCollect)
+        tagCollect.bm.addConstraints([.fill])
         
+        
+        // 数据数组
+        let dataSource = ArrayDataSource(data: tagSortArr)
+        // cell内容
+        let viewSource = ClosureViewSource(viewUpdater: { (view: UIButton, data: String, index: Int) in
+            view.tag = index
+            view.backgroundColor = .white
+            view.layer.cornerRadius = 12
+            view.layer.masksToBounds = YES
+            view.layer.borderWidth = 1
+            
+            view.layer.borderColor = UIColor.lightGray.cgColor
+            view.setTitleColor(UIColor.lightGray, for: .normal)
+
+            view.setTitle(data, for: .normal)
+            view.titleLabel?.font = UIFont.systemFont(ofSize: fontSize)
+            view.titleLabel?.lineBreakMode = .byTruncatingTail
+            view.addTarget(self, action: #selector(self.chooseTagBtn(_:)), for: .touchUpInside)
+        })
+        
+        // cell尺寸
+        let sizeSource = { (index: Int, data: String, collectionSize: CGSize) -> CGSize in
+            let w = data.stringWidth(fontSize)+30
+            return CGSize(width: w, height: 35)
+        }
+        let provider = BasicProvider(dataSource: dataSource, viewSource: viewSource, sizeSource: sizeSource)
+        let layout = FlowLayout(lineSpacing: 8, interitemSpacing: 12, justifyContent: .center, alignItems: .center, alignContent: .start)
+        // 布局
+        provider.layout = layout
+        tagCollect.provider = provider
+        tagCollect.contentInset = UIEdgeInsets.init(top: 10, left: 0, bottom: 12, right: 0)
     }
     
 }
@@ -296,16 +318,7 @@ extension FileManageVC{
 
 extension FileManageVC:UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
     
-    // 方向改变回调
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        self.coculate(size: size);
-        self.collectionView.reloadData()
-    }
     
-    // 分屏大小改变回调
-    override func viewDidLayoutSubviews() {
-        self.coculate(size: self.view.mj_size);
-    }
     
     func coculate(size: CGSize) {
         let n = Int(size.width / 100)
@@ -361,16 +374,24 @@ extension FileManageVC:UICollectionViewDelegate,UICollectionViewDataSource,UICol
             if Utils.isDirectory(path) {
                 cell.fileNameLab.text = " 📁 " + name
             }
-        }else if Utils.isDirectory(path) {// 文件夹
-            cell.setType(2) 
+            if Utils.isVideoFile(path) {
+                cell.fileNameLab.text = "  🎞️ " + name
+            }
+            if Utils.isImageFile(path) {
+                cell.fileNameLab.text = "  🌉 " + name
+            }
+        }
+        else if Utils.isDirectory(path) {// 文件夹
+            cell.setType(2)
         } else if Utils.isVideoFile(path){// 视频
             cell.setType(3)
-            cell.fileImg.image = getFrameImg(path)
-        }else{// 图片
+            self.getVideoImg(view: cell.fileImg, path: path)
+            
+        } else if Utils.isImageFile(path){// 图片
             cell.setType(4)
             let url = URL(fileURLWithPath: path)
             cell.fileImg.kf.setImage(with: LocalFileImageDataProvider(fileURL: url), placeholder: nil, options: [KingfisherOptionsInfoItem.forceRefresh, .transition(.fade(0.1)), .onlyLoadFirstFrame], progressBlock: nil, completionHandler: nil)
-            
+
             if showImgType == .fill{
                 cell.fileImg.contentMode = .scaleAspectFill
             }else{
@@ -385,9 +406,25 @@ extension FileManageVC:UICollectionViewDelegate,UICollectionViewDataSource,UICol
                     cell.titleLabH.constant = 34
                 }
             }
+        }else{// 其他
+            cell.setType(5)
         }
         cell.backgroundColor = .KBGGray
         return cell
+    }
+    
+    func getVideoImg(view:UIImageView, path:String){
+        view.image = nil
+        view.alpha = 0
+        DispatchQueue.global().async {
+            let img = self.getFrameImg(path)
+            DispatchQueue.main.async {
+                view.image = img
+                UIView.animate(withDuration: 0.2) {
+                    view.alpha = 1
+                }
+            }
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -415,13 +452,16 @@ extension FileManageVC:UICollectionViewDelegate,UICollectionViewDataSource,UICol
         }else if Utils.isDirectory(path) {
             self.directArr.append(name)
             self.loadSubFile()
-        }else{
+        }else if Utils.isImageFile(path){// 图片
             // 预览
             let vc = ReviewVC.fromStoryboard() as! ReviewVC
             vc.directPath = self.directPath
             vc.subFiles = self.subFiles
             vc.imageIndex = indexPath.item
+            vc.view.frame = CGRect.init(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight)
             self.present(vc, animated: true, completion: nil)
+        }else{
+            
         }
     }
     
@@ -437,7 +477,6 @@ extension FileManageVC:UICollectionViewDelegate,UICollectionViewDataSource,UICol
         let img = UIImage(cgImage: imageRef)
         return img
     }
-    
 }
 
 
@@ -506,3 +545,5 @@ extension FileManageVC:UIDropInteractionDelegate{
     }
 
 }
+
+

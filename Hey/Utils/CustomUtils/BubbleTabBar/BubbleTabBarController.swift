@@ -92,11 +92,11 @@ open class BubbleTabBarController: UITabBarController {
     }
 
     open override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        guard let idx = tabBar.items?.index(of: item) else {
+        guard let idx = tabBar.items?.firstIndex(of: item) else {
             return
         }
         if let willShowVC = viewControllers?[idx] {
-            if let willHideVC = viewControllers?[selectedIndex] {
+            if (viewControllers?[selectedIndex]) != nil {
                 
                 
             }

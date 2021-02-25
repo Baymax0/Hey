@@ -272,7 +272,7 @@ extension BMDatePicker{
 //            pickerLabel!.backgroundColor = .blue
             pickerLabel!.font = UIFont.systemFont(ofSize: 19*KRatio375)
         }
-        pickerLabel!.text=self.pickerView(pickerView, titleForRow: row, forComponent: component)
+        pickerLabel!.text = self.pickerView(pickerView, titleForRow: row, forComponent: component)
         return pickerLabel!
     }
 }

@@ -28,7 +28,11 @@ extension BMDefaultsKeys{
 
     // github 博客名称 Baymax0.github.io 存储 Baymax0
     static let myGithubName = BMCacheKey<String?>("myGithubName")
+    static let myGithubToken = BMCacheKey<String?>("myGithubToken")
 
-
+    static let allPostTags = BMCacheKey<Array<String>?>("allPostTags")
+    
 }
+
+
 

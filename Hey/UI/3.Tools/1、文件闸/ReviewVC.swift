@@ -45,16 +45,6 @@ class ReviewVC: BaseVC {
     
     var sc:BMScrollView!
     
-    //编辑用
-//    @IBOutlet weak var tempImgView: UIImageView!
-
-//    var tempImgView: UIImageView = {
-//        let v = UIImageView(frame: CGRect(x: 0, y: 64, width: KScreenWidth, height: KScreenHeight-64-80))
-//        v.contentMode = .scaleAspectFit
-//        v.backgroundColor = .black
-//        return v
-//    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideNav = true
@@ -66,12 +56,7 @@ class ReviewVC: BaseVC {
         })
         tagDic = (cache[.imageTagsDic] as? Dictionary<String, String>) ?? Dictionary<String, String>()
         loadTag()
-        
-//        tempImgView.contentMode = .scaleAspectFit
-//        tempImgView.backgroundColor = .black
-        
-//        self.view.addSubview(tempImgView)
-//        self.view.bringSubviewToFront(tempImgView)
+
     }
     
     override func viewWillLayoutSubviews() {
@@ -88,7 +73,6 @@ class ReviewVC: BaseVC {
         
         UIView.animate(withDuration: 0.5) {
             self.sc.alpha = 1
-//            self.tempImgView.alpha = 0
         }
         if appearTimes != 1{
             self.sc.loadImage(self.sc.centerImageView, index: imageIndex)
@@ -106,7 +90,7 @@ class ReviewVC: BaseVC {
     
     @IBAction func changeTagAction(_ sender: Any) {
         self.view.addSubview(blurMask)
-        blurMask.bm.addConstraints([.fill])
+        blurMask.addTarget(self, action: #selector(hideMaskView), for: .touchUpInside)
         
         self.view.bringSubviewToFront(addTagView)
         addTagView.isHidden = false
@@ -175,7 +159,7 @@ class ReviewVC: BaseVC {
     }
     
     override func hideMaskView() {
-        self.maskView.removeFromSuperview()
+        blurMask.removeFromSuperview()
         addTagView.isHidden = true
     }
     

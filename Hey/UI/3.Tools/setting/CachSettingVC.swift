@@ -7,22 +7,17 @@
 //
 
 import UIKit
+import LTMorphingLabel
 
 class BMCacheBackUp {
     
     class BackUpModel: HandyJSON {
-        
         var timeStamp   : TimeInterval!
         var data        :Dictionary<String, Any>!
         required init(){}
     }
     
-//    let `default` = BMCacheBackUp()
-    
-//    let kvoStore = NSUbiquitousKeyValueStore.default
-    
     static let ICloudKey = "Hey_ICloudKey"
-        
     static let cachePath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .allDomainsMask, true)[0] as NSString).appendingPathComponent("Cache_BackUp.json")
     
     static func isIcloudAvailable() -> Bool {
@@ -75,6 +70,8 @@ class BMCacheBackUp {
         if let data = try? Data(contentsOf: URL(fileURLWithPath: cachePath)){
             jsonStr = String(data: data, encoding: .utf8) ?? ""
             print("加载本地成功")
+        }else{
+            return nil
         }
         let model = BackUpModel.deserialize(from: jsonStr)
         return model
@@ -91,6 +88,7 @@ class BMCacheBackUp {
             print("icloud 读取成功")
         }else{
             print("icloud 读取失败")
+            return nil
         }
         let model = BackUpModel.deserialize(from: jsonStr)
         return model
@@ -103,13 +101,28 @@ class CachSettingVC: BaseVC {
     var keyStore:NSUbiquitousKeyValueStore!
 
     @IBOutlet weak var fileSaveTimeLab: UILabel!
+    @IBOutlet weak var fileSizeLab: UILabel!
+    
     @IBOutlet weak var icloudSaveTimeLab: UILabel!
+    @IBOutlet weak var icloudSizeLab: UILabel!
+
+    @IBOutlet weak var contentStack: UIStackView!
     
     var fileBackUpModel:BMCacheBackUp.BackUpModel?
     var icloudBackUpModel:BMCacheBackUp.BackUpModel?
-
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        get{ return .lightContent}}
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hideNav = true
+        
+        var delay:TimeInterval = 0
+        for v in contentStack.arrangedSubviews{
+            v.hero.modifiers = [.translate(x: 0, y: 70, z: 0), .delay(delay)]
+            delay += 0.1
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -118,21 +131,36 @@ class CachSettingVC: BaseVC {
     }
     
     func loadData() {
-        Hud.showWait()
-        
         fileBackUpModel = BMCacheBackUp.getCacheFile()
         icloudBackUpModel = BMCacheBackUp.getICloudFile()
         self.reloadTimeLab()
-        Hud.hide()
+    }
+    
+    
+    @IBAction func backAction(_ sender: Any) {
+        self.back()
     }
     
     @IBAction func uploadAction(_ sender: UIButton) {
         if sender.tag == 0{
-            // file
-            fileBackUpModel = BMCacheBackUp.saveToFile()
+            if let data = fileBackUpModel?.data{
+                cache.clearCache()
+                // file
+                for (k,v) in data{
+                    cache.Defaults.setValue(v, forKey: k)
+                }
+                Hud.showText("读取成功")
+            }
         }else{
             // icloud
-            icloudBackUpModel = BMCacheBackUp.saveToICloud()
+            if let data = icloudBackUpModel?.data{
+                // file
+                for (k,v) in data{
+                    cache.clearCache()
+                    cache.Defaults.setValue(v, forKey: k)
+                }
+                Hud.showText("读取成功")
+            }
         }
         self.reloadTimeLab()
     }
@@ -140,36 +168,41 @@ class CachSettingVC: BaseVC {
     func reloadTimeLab() {
         if fileBackUpModel != nil{
             let date = Date(timeIntervalSince1970: fileBackUpModel!.timeStamp)
-            fileSaveTimeLab.text = date.toString("MM/dd HH:mm")
+            fileSaveTimeLab.text = date.toString("yyyy/MM/dd HH:mm")
+            fileSizeLab.text = fileBackUpModel?.data.getJsonStr()?.count.toString()
         }else{
             fileSaveTimeLab.text = "未归档"
+            fileSizeLab.text = ""
         }
         if icloudBackUpModel != nil{
             let date = Date(timeIntervalSince1970: icloudBackUpModel!.timeStamp)
-            icloudSaveTimeLab.text = date.toString("MM/dd HH:mm")
+            icloudSaveTimeLab.text = date.toString("yyyy/MM/dd HH:mm")
+            icloudSizeLab.text = icloudBackUpModel?.data.getJsonStr()?.count.toString()
         }else{
-            fileSaveTimeLab.text = "未归档"
+            icloudSaveTimeLab.text = "未归档"
+            icloudSizeLab.text = ""
+
         }
     }
 
-    @IBAction func downLoadAction(_ sender: UIButton) {
+    @IBAction func saveAction(_ sender: UIButton) {
         if sender.tag == 0{
-            if fileBackUpModel?.data == nil{ return }
             // file
             showComfirm("提醒", "确认覆盖当前存档吗") {
-                
             } complish: {
                 Hud.showWait()
-                
+                self.fileBackUpModel = BMCacheBackUp.saveToFile()
+                self.reloadTimeLab()
+                Hud.hide()
             }
         }else{
-            if icloudBackUpModel?.data == nil{ return }
             // icloud
             showComfirm("提醒", "确认覆盖当前存档吗") {
-                
             } complish: {
                 Hud.showWait()
-                
+                self.icloudBackUpModel = BMCacheBackUp.saveToICloud()
+                self.reloadTimeLab()
+                Hud.hide()
             }
         }
     }

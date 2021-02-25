@@ -116,34 +116,22 @@ extension Utils{
     }
     
     static func isImageFile(_ path:String) -> Bool {
-        if path.contains(".jpg") {
+        if path.contains(".jpg") || path.contains(".JPG") {
             return true
         }
-        if path.contains(".JPG") {
+        if path.contains(".jpeg") || path.contains(".JPEG") {
             return true
         }
-        if path.contains(".jpeg") {
+        if path.contains(".png") || path.contains(".PNG") {
             return true
         }
-        if path.contains(".JPEG") {
+        if path.contains(".bmp") || path.contains(".BMP") {
             return true
         }
-        if path.contains(".png") {
+        if path.contains(".gif") || path.contains(".GIF") {
             return true
         }
-        if path.contains(".PNG") {
-            return true
-        }
-        if path.contains(".bmp") {
-            return true
-        }
-        if path.contains(".BMP") {
-            return true
-        }
-        if path.contains(".gif") {
-            return true
-        }
-        if path.contains(".GIF") {
+        if path.contains(".webp") {
             return true
         }
         return false

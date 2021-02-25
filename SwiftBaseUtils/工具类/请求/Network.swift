@@ -47,8 +47,6 @@ enum RequestError : Int{
     }
 }
 
-var defaultParam = ["pfDevice":"iPhone",
-                    "pfAppVersion":Utils.appCurVersion]
 
 ///     配置示例：
 ///
@@ -93,6 +91,10 @@ public class BMApiTemplete<ValueType> : BMApiSet{
         return self.host + self.url
     }
     
+    var defaultParam:Dictionary<String, Any> {
+        return ["pfDevice":"iPhone","pfAppVersion":Utils.appCurVersion]
+    }
+    
     public init(_ url: String) {
         self.url = url
         super.init()
@@ -114,18 +116,7 @@ public class BMNetwork{
     static var imgUplodeApi = "https://img.163.gg/YmUpload_image"
     
     
-    func request(_ url:String, finish: @escaping (_ imgUrl:String?)->()) {
-        BMNetwork.sessionManager.request(url, method: .get, parameters: nil).responseString { (response) in
-            switch response.result{
-                case .success(let jsonStr):
-                    finish(jsonStr)
-                case  .failure(let error):
-                    print(" ***** 请求失败： ***** ")
-                    print("\(error)")
-                    finish(nil)
-            }
-        }
-    }
+    
     
     
     func upload(_ img:UIImage, uploading:((_ progress:Double) -> ())?, finish: @escaping (_ imgUrl:String?)->()){
@@ -250,9 +241,6 @@ public class BMRequester{
     @discardableResult
     func requestJson(_ url:String, method:HTTPMethod, params:[String:Any], finish: @escaping (_ code:Int, _ resp:String?)->())  -> DataRequest{
         var dic = params
-        for key in defaultParam{
-            dic[key.key] = key.value
-        }
         if let session = cache[.sessionId]{
             dic["sessionId"] = session
             dic["userId"] = cache[.userId]
@@ -276,23 +264,23 @@ public class BMRequester{
     }
     
     
-    private static func bundleError(_ err:NSError) -> RequestError{
+    static func bundleError(_ err:NSError) -> RequestError{
         switch err.code{
         case -999:
-            return RequestError.cancel
+            return .cancel
         case -1001:
-            return RequestError.timeOut
+            return .timeOut
         case -1002:
-            return RequestError.requestFalid
+            return .requestFalid
         case -1003:
-            return RequestError.serverConnectFalid
+            return .serverConnectFalid
         case -1009:
-            return RequestError.noMsg
+            return .noMsg
         case 4:
-            return RequestError.responsDeserializeFalid
+            return .responsDeserializeFalid
         default:
             print("未处理的 error code:\(err.code)\n \(err)")
-            return RequestError.unknow
+            return .unknow
 
         }
     }
@@ -307,6 +295,7 @@ public class BMRequester_Model<T:HandyJSON>: BMRequester{
     public init(_ api:BMApiTemplete<T?>) {
         self.api = api
     }
+    
     /// 返回 HandyJSON 对象
     /// - Parameters:
     ///   - params: 参数
@@ -314,7 +303,12 @@ public class BMRequester_Model<T:HandyJSON>: BMRequester{
     @discardableResult
     func request(params:[String:Any]? = nil, finish: @escaping (_ resp:ZBJsonModel<T>?)->()) -> DataRequest{
         let url = api.host + api.url
-        return self.requestJson(url, method: api.method, params: params ?? [:] ) { (code,jsonStr) in
+        var withDefault = params ?? [:]
+        for (key,value) in api.defaultParam{
+            withDefault[key] = value
+        }
+        
+        return self.requestJson(url, method: api.method, params: withDefault) { (code,jsonStr) in
             if jsonStr == nil{
                 let err = ZBJsonModel<T>()
                 err.code = code
@@ -337,7 +331,7 @@ public class BMRequester_Model<T:HandyJSON>: BMRequester{
                     print("解析失败")
                 }
                 let err = ZBJsonModel<T>()
-                err.code = RequestError.responsDeserializeFalid.rawValue;
+                err.code = RequestError.responsDeserializeFalid.rawValue
                 err.msg = "网络异常，请求失败"
                 finish(err)
             }
@@ -361,7 +355,11 @@ public class BMRequester_ModelList<T:HandyJSON> : BMRequester{
     @discardableResult
     func request(params:[String:Any]? = nil, finish: @escaping (_ resp:ZBJsonArrayModel<T>?)->()) -> DataRequest{
         let url = api.host + api.url
-        return self.requestJson(url, method: api.method, params: params ?? [:] ) { (code,jsonStr) in
+        var withDefault = params ?? [:]
+        for (key,value) in api.defaultParam{
+            withDefault[key] = value
+        }
+        return self.requestJson(url, method: api.method, params: withDefault) { (code,jsonStr) in
             if jsonStr == nil{
                 let err = ZBJsonArrayModel<T>()
                 err.code = code
@@ -393,7 +391,7 @@ public class BMRequester_ModelList<T:HandyJSON> : BMRequester{
                     print("请求失败")
                 }
                 let err = ZBJsonArrayModel<T>()
-                err.code = RequestError.responsDeserializeFalid.rawValue;
+                err.code = RequestError.responsDeserializeFalid.rawValue
                 err.msg = "网络异常，请求失败"
                 finish(err)
             }
@@ -415,7 +413,11 @@ public class BMRequester_Int : BMRequester{
     @discardableResult
     func request(params:[String:Any]? = nil, finish: @escaping (_ resp:ZBJsonInt?)->()) -> DataRequest{
         let url = api.host + api.url
-        return self.requestJson(url, method: api.method, params: params ?? [:] ) { (code,jsonStr) in
+        var withDefault = params ?? [:]
+        for (key,value) in api.defaultParam{
+            withDefault[key] = value
+        }
+        return self.requestJson(url, method: api.method, params: withDefault) { (code,jsonStr) in
             let mod = JSONDeserializer<ZBJsonInt>.deserializeFrom(json: jsonStr)
             if mod != nil{
                 print("code:\(mod!.code ?? -99)")
@@ -431,7 +433,7 @@ public class BMRequester_Int : BMRequester{
                     print("请求失败")
                 }
                 let err = ZBJsonInt()
-                err.code = RequestError.responsDeserializeFalid.rawValue;
+                err.code = RequestError.responsDeserializeFalid.rawValue
                 err.msg = "网络异常，请求失败"
                 finish(err)
             }
@@ -452,7 +454,11 @@ public class BMRequester_String : BMRequester{
     @discardableResult
     func request(params:[String:Any]? = nil, finish: @escaping (_ resp:ZBJsonString?)->()) -> DataRequest{
         let url = api.host + api.url
-        return self.requestJson(url, method: api.method, params: params ?? [:] ) { (code,jsonStr) in
+        var withDefault = params ?? [:]
+        for (key,value) in api.defaultParam{
+            withDefault[key] = value
+        }
+        return self.requestJson(url, method: api.method, params: withDefault) { (code,jsonStr) in
             let mod = JSONDeserializer<ZBJsonString>.deserializeFrom(json: jsonStr)
             if mod != nil{
                 print("code:\(mod!.code ?? -99)")
@@ -468,7 +474,7 @@ public class BMRequester_String : BMRequester{
                     print("请求失败")
                 }
                 let err = ZBJsonString()
-                err.code = RequestError.responsDeserializeFalid.rawValue;
+                err.code = RequestError.responsDeserializeFalid.rawValue
                 err.msg = "网络异常，请求失败"
                 finish(err)
             }
@@ -491,7 +497,11 @@ public class BMRequester_Dic : BMRequester{
     @discardableResult
     func request(params:[String:Any]? = nil, finish: @escaping (_ resp:ZBJsonDic?)->()) -> DataRequest{
         let url = api.host + api.url
-        return self.requestJson(url, method: api.method, params: params ?? [:] ) { (code,jsonStr) in
+        var withDefault = params ?? [:]
+        for (key,value) in api.defaultParam{
+            withDefault[key] = value
+        }
+        return self.requestJson(url, method: api.method, params: withDefault) { (code,jsonStr) in
             let mod = JSONDeserializer<ZBJsonDic>.deserializeFrom(json: jsonStr)
             if mod != nil{
                 print("code:\(mod!.code ?? -99)")
@@ -507,7 +517,7 @@ public class BMRequester_Dic : BMRequester{
                     print("请求失败")
                 }
                 let err = ZBJsonDic()
-                err.code = RequestError.responsDeserializeFalid.rawValue;
+                err.code = RequestError.responsDeserializeFalid.rawValue
                 err.msg = "网络异常，请求失败"
                 finish(err)
             }
@@ -525,7 +535,11 @@ public class BMRequester_Json : BMRequester{
     @discardableResult
     func requestJson(params:[String:Any]? = nil, finish: @escaping (_ json:String?)->()) -> DataRequest {
         let url = api.host + api.url
-        return self.requestJson(url, method: api.method, params: params ?? [:] )  { (code,jsonStr) in
+        var withDefault = params ?? [:]
+        for (key,value) in api.defaultParam{
+            withDefault[key] = value
+        }
+        return self.requestJson(url, method: api.method, params: withDefault)  { (code,jsonStr) in
             finish(jsonStr)
         }
     }

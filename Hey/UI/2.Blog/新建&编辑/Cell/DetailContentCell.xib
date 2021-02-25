@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="iN0-l3-epB" customClass="DetailContentCell" customModule="Hey" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="212"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BMg-kE-yQo">
+                    <rect key="frame" x="0.0" y="0.0" width="40" height="212"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="40" id="AZX-PU-Cg9"/>
+                    </constraints>
+                </view>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2HJ-CT-pfN" customClass="MyTextField" customModule="Hey" customModuleProvider="target">
+                    <rect key="frame" x="40" y="0.0" width="295" height="212"/>
+                    <color key="tintColor" name="d_title"/>
+                    <attributedString key="attributedText">
+                        <fragment content=" ">
+                            <attributes>
+                                <color key="NSColor" red="0.4601481541450777" green="0.4601481541450777" blue="0.4601481541450777" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <font key="NSFont" metaFont="system" size="15"/>
+                                <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineSpacing="4" tighteningFactorForTruncation="0.0"/>
+                            </attributes>
+                        </fragment>
+                    </attributedString>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="2HJ-CT-pfN" firstAttribute="leading" secondItem="BMg-kE-yQo" secondAttribute="trailing" id="1Kt-H2-bpW"/>
+                <constraint firstItem="2HJ-CT-pfN" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="6WA-gH-q01"/>
+                <constraint firstAttribute="bottom" secondItem="BMg-kE-yQo" secondAttribute="bottom" id="DRM-DG-toC"/>
+                <constraint firstItem="BMg-kE-yQo" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="L2I-fl-M1x"/>
+                <constraint firstAttribute="bottom" secondItem="2HJ-CT-pfN" secondAttribute="bottom" id="drz-d8-9nY"/>
+                <constraint firstItem="2HJ-CT-pfN" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="kCu-Lw-Elb"/>
+                <constraint firstItem="BMg-kE-yQo" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="nd8-XC-BNj"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="contentTF" destination="2HJ-CT-pfN" id="jwA-u0-zOh"/>
+                <outlet property="leftView" destination="BMg-kE-yQo" id="1ll-GG-cof"/>
+            </connections>
+            <point key="canvasLocation" x="63.04347826086957" y="-58.258928571428569"/>
+        </view>
+    </objects>
+    <resources>
+        <namedColor name="d_title">
+            <color red="0.14000000059604645" green="0.082999996840953827" blue="0.34900000691413879" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+        </namedColor>
+    </resources>
+</document>

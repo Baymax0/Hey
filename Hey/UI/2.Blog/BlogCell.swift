@@ -21,6 +21,9 @@ class BlogCell: UIView {
     var model:GitHub_CachePost!
     
     var tags:Set<String> = []
+    
+    var btn:UIButton!
+    
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -30,6 +33,7 @@ class BlogCell: UIView {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     func initUI() {
+        self.backgroundColor = .white
         //----
         bg1 = UIView()
         self.addSubview(bg1)
@@ -59,9 +63,13 @@ class BlogCell: UIView {
         subtitleLab.bm.addConstraints([.under(titleLab, 0), .left(2), .right(0), .h(24)]);
         
         let line = UIView()
-        line.backgroundColor = .KBGGrayLine
+        line.backgroundColor = .KBGGray
         bg2.addSubview(line)
         line.bm.addConstraints([.left(0), .bottom(0), .right(0), .h(1)])
+        
+        btn = UIButton()
+        self.addSubview(btn)
+        btn.bm.addConstraints([.fill])
     }
     
 }

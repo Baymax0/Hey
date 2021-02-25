@@ -24,6 +24,9 @@ extension String{
         if self.count == 0{
             return nil
         }
+        guard self.contains("http") else {
+            return nil
+        }
         return ImageResource(downloadURL: URL(string: self)!)
     }
 }

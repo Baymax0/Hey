@@ -41,7 +41,11 @@ enum EasyConstraint {
     case center_Y(CGFloat)
     
     /// 在其他view竖直下边
+    case above(UIView,CGFloat)
+    /// 在其他view竖直下边
     case under(UIView,CGFloat)
+    /// 在其他view水平右边
+    case before(UIView,CGFloat)
     /// 在其他view水平右边
     case after(UIView,CGFloat)
     
@@ -115,11 +119,21 @@ extension Baymax where Base: UIView{
             case let .center_Y(value):
                 result.append( align(to: sup, attribute: .centerY, constant: value))
 
+            case let .above(view, value):
+                let c = self.addCons(to: view, att: .bottom, by: .equal, att: .top, multiplier: 1, constant: value)
+                sup.addConstraint(c)
+                result.append(c)
+                
             case let .under(view, value):
                 let c = self.addCons(to: view, att: .top, by: .equal, att: .bottom, multiplier: 1, constant: value)
                 sup.addConstraint(c)
                 result.append(c)
-            
+                
+            case let .before(view, value):
+                let c = self.addCons(to: view, att: .right, by: .equal, att: .left, multiplier: 1, constant: value)
+                sup.addConstraint(c)
+                result.append(c)
+                
             case let .after(view, value):
                 let c = self.addCons(to: view, att: .left, by: .equal, att: .right, multiplier: 1, constant: value)
                 sup.addConstraint(c)

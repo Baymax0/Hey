@@ -14,7 +14,8 @@ class CustomCell: UICollectionViewCell {
     @IBOutlet weak var fileNameLab: UILabel!
     @IBOutlet weak var gifLab: UILabel!
     @IBOutlet weak var titleLabH: NSLayoutConstraint!
-    
+    @IBOutlet weak var videoPlayImg: UIImageView!
+
     func setType(_ type:Int){
         if self.tag == type{
             return
@@ -22,6 +23,8 @@ class CustomCell: UICollectionViewCell {
         self.tag = type
         
         titleLabH.constant = 34
+        fileNameLab.lineBreakMode = .byTruncatingMiddle
+        videoPlayImg.isHidden = true
         if (type == 1){// 文字列表
             fileImg.isHidden = true
             gifLab.isHidden = true
@@ -43,6 +46,7 @@ class CustomCell: UICollectionViewCell {
             fileNameLab.textAlignment = .center
             fileNameLab.font = UIFont.systemFont(ofSize: 15)
             fileImg.contentMode = .scaleAspectFit
+            videoPlayImg.isHidden = false
         }else if (type == 4){
             fileImg.isHidden = false
             gifLab.isHidden = true
@@ -50,7 +54,14 @@ class CustomCell: UICollectionViewCell {
             fileNameLab.textColor = .KTextBlack
             fileNameLab.textAlignment = .center
             fileNameLab.font = UIFont.systemFont(ofSize: 15)
-
+        }else{
+            fileImg.isHidden = false
+            gifLab.isHidden = true
+            fileImg.image = UIImage(named: "未知文件")
+            fileNameLab.textColor = .KTextBlack
+            fileNameLab.textAlignment = .center
+            fileNameLab.font = UIFont.systemFont(ofSize: 15)
+            fileImg.contentMode = .scaleAspectFit
         }
     }
     

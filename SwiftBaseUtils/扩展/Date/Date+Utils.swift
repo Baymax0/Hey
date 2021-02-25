@@ -73,7 +73,7 @@ extension Date {
     }
 
     static func date(from string:String, formate:String) -> Date?{
-        let timeZone = TimeZone.init(identifier: "UTC")
+        let timeZone = TimeZone.init(identifier: "Asia/Shanghai")
         let formatter = DateFormatter()
         formatter.timeZone = timeZone
         formatter.locale = Locale.init(identifier: "zh_CN")
@@ -86,6 +86,7 @@ extension Date {
         let t = self.timeIntervalSince1970 + time
         return Date.init(timeIntervalSince1970: t)
     }
+    ///返回星期几
     func getweekDay() ->String{
         let interval = Int(self.timeIntervalSince1970) + NSTimeZone.local.secondsFromGMT()
         let days = Int(interval/86400) // 24*60*60
@@ -109,4 +110,29 @@ extension Date {
         }
         return str
     }
+    ///返回第几周
+    func getWeek() -> Int{
+        guard let calendar = NSCalendar(identifier: NSCalendar.Identifier.gregorian) else {
+            return 1
+        }
+        let components = calendar.components([.weekOfYear,.weekOfMonth,.weekday,.weekdayOrdinal], from: self)
+        //今年的第几周
+        var weekOfYear = components.weekOfYear!
+        
+        //这个月第几周
+        let weekOfMonth = components.weekOfMonth!
+        //周几
+        let weekday = components.weekday!
+        //这个月第几周
+        let weekdayOrdinal = components.weekdayOrdinal!
+        print(weekOfYear)
+        print(weekOfMonth)
+        print(weekday)
+        print(weekdayOrdinal)
+        if weekOfYear == 1 && weekOfMonth != 1 {
+            weekOfYear = 53
+        }
+        return weekOfYear
+    }
+    
 }

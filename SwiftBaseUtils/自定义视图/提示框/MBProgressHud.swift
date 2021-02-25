@@ -264,13 +264,13 @@ class MBProgressHUD: UIView {
         self.showStarted = Date()
         //Fade in
         if animated {
-            UIView.beginAnimations(nil, context:nil)
-            UIView.setAnimationDuration(0.30)
-            self.alpha = 1.0
-            if animationType == .zoomIn || animationType == .zoomOut {
-                self.transform = rotationTransform
+            UIView.animate(withDuration: 0.30) {
+                self.alpha = 1.0
+                if self.animationType == .zoomIn || self.animationType == .zoomOut {
+                    self.transform = self.rotationTransform
+                }
+            } completion: { (_) in
             }
-            UIView.commitAnimations()
         } else {
             self.alpha = 1.0
         }
@@ -279,29 +279,22 @@ class MBProgressHUD: UIView {
     fileprivate func hideUsingAnimation(_ animated: Bool) {
         // Fade out
         if animated && showStarted != nil {
-            UIView.beginAnimations(nil, context: nil)
-            UIView.setAnimationDuration(0.30)
-            UIView.setAnimationDelegate(self)
-            UIView.setAnimationDidStop(#selector(animationFinished(_:finished:context:)))
-            // 0.02 prevents the hud from passing through touches during the animation the hud will get completely hidden
-            // in the done method
-            if animationType == .zoomIn {
-                self.transform = rotationTransform.concatenating(CGAffineTransform(scaleX: 1.5, y: 1.5))
-            } else if animationType == .zoomOut {
-                self.transform = rotationTransform.concatenating(CGAffineTransform(scaleX: 0.5, y: 0.5))
-            }
             
-            self.alpha = 0.02
-            UIView.commitAnimations()
+            UIView.animate(withDuration: 0.30) {
+                if self.animationType == .zoomIn {
+                    self.transform = self.rotationTransform.concatenating(CGAffineTransform(scaleX: 1.5, y: 1.5))
+                } else if self.animationType == .zoomOut {
+                    self.transform = self.rotationTransform.concatenating(CGAffineTransform(scaleX: 0.5, y: 0.5))
+                }
+                self.alpha = 0.02
+            } completion: { (_) in
+                self.done()
+            }
         } else {
             self.alpha = 0.0
             self.done()
         }
         self.showStarted = nil
-    }
-    
-    @objc func animationFinished(_ animationID: String?, finished: Bool, context: UnsafeMutableRawPointer) {
-        self.done()
     }
     
     fileprivate func done() {
@@ -404,7 +397,17 @@ class MBProgressHUD: UIView {
         
         switch self.mode {
         case .indeterminate:
-            let activityIndicator = isActivityIndicator ? (self.indicator as! UIActivityIndicatorView) : UIActivityIndicatorView(style: UIActivityIndicatorView.Style.whiteLarge)
+            
+            var activityIndicator:UIActivityIndicatorView
+            if isActivityIndicator == false{
+                if #available(iOS 13.0, *) {
+                    activityIndicator = UIActivityIndicatorView(style: .large)
+                } else {
+                    activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
+                }
+            }else{
+                activityIndicator = self.indicator as! UIActivityIndicatorView
+            }
             
             if !isActivityIndicator {
                 self.indicator?.removeFromSuperview()

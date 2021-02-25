@@ -174,7 +174,7 @@ class ScanVC: BaseVC {
             let output = AVCaptureMetadataOutput()
             captureSession?.addOutput(output)
             output.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-            output.metadataObjectTypes = [AVMetadataObject.ObjectType.qr]
+            output.metadataObjectTypes = [.qr,.ean13,.code128]
             
             previewLayer = AVCaptureVideoPreviewLayer(session: captureSession!)
             previewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
@@ -215,7 +215,7 @@ extension ScanVC:AVCaptureMetadataOutputObjectsDelegate{
         
         // 取出第一个metadata
         let metadataObj = metadataObjects[0] as! AVMetadataMachineReadableCodeObject
-        if metadataObj.type == AVMetadataObject.ObjectType.qr {
+        if metadataObj.type == .qr || metadataObj.type == .ean13 || metadataObj.type == .code128 {
             if metadataObj.stringValue != nil {
                 self.receiveScanCode(metadataObj.stringValue)
             }

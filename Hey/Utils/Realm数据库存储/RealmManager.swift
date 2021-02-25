@@ -18,7 +18,7 @@ class RealmManager {
     /// 配置数据库
     static func configRealm() {
         /// 如果要存储的数据模型属性发生变化,需要配置当前版本号比之前大
-        let dbVersion : UInt64 = 8
+        let dbVersion : UInt64 = 12
         let config = Realm.Configuration(fileURL: URL.init(string: dbPath), inMemoryIdentifier: nil, syncConfiguration: nil, encryptionKey: nil, readOnly: false, schemaVersion: dbVersion, migrationBlock: { (migration, oldSchemaVersion) in
         }, deleteRealmIfMigrationNeeded: false, shouldCompactOnLaunch: nil, objectTypes: nil)
         
@@ -117,7 +117,7 @@ class Realm_Github_Api: RealmManager {
     }
     
     public func getPostList()->Array<GitHub_CachePost>?{
-        let list = RealmManager.db.objects(GitHub_CachePost.self).sorted(byKeyPath: "time", ascending: false)
+        let list = RealmManager.db.objects(GitHub_CachePost.self).sorted(byKeyPath: "date", ascending: false)
         let result = Array<GitHub_CachePost>(list)
         return result
     }
@@ -130,11 +130,17 @@ class Realm_Github_Api: RealmManager {
     
     public func saveAll(_ models:Array<GitHub_CachePost>!){
         try! RealmManager.db.write{
-            if let arr = getPostList(){
-                RealmManager.db.delete(arr)
-            }
+//            if let arr = getPostList(){
+//                for m in arr{
+//                    if m.name != nil{
+//                        RealmManager.db.delete(m)
+//                    }
+//                }
+//            }
             for m in models{
-                RealmManager.db.add(m, update: .all)
+                if m.name != nil{
+                    RealmManager.db.add(m, update: .all)                    
+                }
             }
         }
     }

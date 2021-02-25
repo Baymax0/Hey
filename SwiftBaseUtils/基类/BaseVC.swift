@@ -48,7 +48,7 @@ class BaseVC: UIViewController {
     var maskView = UIView()
     // 弹出框使用的 灰色背景遮照
     var blurMask: UIButton = {
-        let btn = UIButton()
+        let btn = UIButton(frame: .init(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight))
         btn.backgroundColor = UIColor.maskView
         return btn
     }()
@@ -110,6 +110,7 @@ class BaseVC: UIViewController {
         }
         
         IQKeyboardManager.shared.shouldResignOnTouchOutside = self.autoHideKeyboard
+        
         if let b = self.hideNavBottonLine, b == true{
             self.findHairlineImageViewUnder(sView: self.navigationController?.navigationBar)?.isHidden = true
         }
@@ -302,6 +303,15 @@ extension BaseVC {
     func pushViewController(_ vc:UIViewController, _ animation:Bool = true) {
         if let n = self.navigationController{
             n.pushViewController(vc, animated: animation)
+            self.dismissType = .push
+        }
+    }
+    
+    func pushViewControllerWithHero(_ vc:BaseVC) {
+        if let n = self.navigationController{
+            n.hero.isEnabled = true
+            n.pushViewController(vc, animated: true)
+            vc.hero.isEnabled = true
             self.dismissType = .push
         }
     }

@@ -8,9 +8,17 @@
 
 import UIKit
 import NVActivityIndicatorView
-
+// 指示器状态
+enum IndicatorViewState {
+    case none    //
+    case loading //加载中
+    case noData  //没有数据
+    case request //重新请求
+    case hide    //隐藏
+}
 class BMIndicatorView: UIView {
-    
+    var state = IndicatorViewState.none
+
     var myMaskView:UIView!
     
     var activityIndicatorView:NVActivityIndicatorView!
@@ -121,7 +129,7 @@ class BMIndicatorView: UIView {
     /// 显示等待
     func showWait(){
         self.alpha = 1
-        
+        state = .loading
         self.activityIndicatorView.startAnimating()
         UIView.animate(withDuration: 0.15, animations: {
             self.activityIndicatorView.alpha = 1
@@ -137,7 +145,7 @@ class BMIndicatorView: UIView {
     /// 显示无数据
     func showNoData(){
         self.alpha = 1
-        
+        state = .noData
         var imageAlpha:CGFloat = 0
         if noDataImageName != nil{
             self.contentImgView?.image = UIImage(named: self.noDataImageName!)
@@ -164,6 +172,7 @@ class BMIndicatorView: UIView {
     /// 显示重新请求
     func showRequest(){
         self.alpha = 1
+        state = .request
         var imageAlpha:CGFloat = 0
         if requestImageName != nil  && self.h > 240{
             self.contentImgView?.image = UIImage(named: self.requestImageName!)
@@ -188,6 +197,7 @@ class BMIndicatorView: UIView {
     
     /// 隐藏
     func hide(){
+        state = .hide
         UIView.animate(withDuration: 0.2, animations: {
             self.alpha = 0
         }) { (_) in

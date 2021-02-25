@@ -13,6 +13,7 @@ enum NumberFormateType:String{
     case float_0    // 整数
     case float_1    // 小数点后1位
     case float_2    // 小数点后2位
+    case float_3    // 小数点后3位
 
     // 格式化
     case comma // 大数字 用逗号： 77,335,444
@@ -70,19 +71,27 @@ extension Double : BMNumberFormate{
             if t == .float_2{
                 result = String(format: "%0.2f", fl)
             }
+            if t == .float_3{
+                result = String(format: "%0.3f", fl)
+            }
         }
-        
+        if result.count == 0{
+            //默认是两个精度，其他自己传
+            result = String(format: "%0.2f", fl)
+        }
         for t in formates{
             if t == .hideDot{
-                // 小数点后全为0时 才隐藏 变为整数
-                if result.hasSuffix(".00"){
-                    result = String(format: "%0.0f", fl)
-                }
-                if result.hasSuffix(".0"){ //3.01不会出发此后缀条件
-                    result = String(format: "%0.0f", fl)
+                if result.contains(".") {
+                    let arr = result.components(separatedBy: ".")
+                    var s1 = arr.bm_object(1) ?? ""
+                    let s0 = arr.bm_object(0) ?? ""
+                    while s1.count > 0 && s1.hasSuffix("0"){
+                        s1 = s1[..<(-1)]
+                    }
+                    s1 = s1.count == 0 ? "":("." + s1)
+                    result = s0 + s1
                 }
             }
-            
             if t == .comma{
                 // 根据整数位的长度 加 ","
                 let length = String(format: "%0.0f", fl).count
@@ -93,7 +102,6 @@ extension Double : BMNumberFormate{
                 }
             }
         }
-        
         result = result + suffix
         return result
     }

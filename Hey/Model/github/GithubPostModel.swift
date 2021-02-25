@@ -14,6 +14,8 @@ class GithubPostModel: HandyJSON {
     //哈希值 用于区分是否更新
     var sha : String!       // "bc803518118f3bbfd34eac39033835c694d13229",
     var git_url : String!    // "https://api.github.com/repos/Baymax0/Baymax0.github.io/git/blobs/bc803518118f3bbfd34eac39033835c694d13229",
+    var url : String! 
+    
     
     required init() {}
 }

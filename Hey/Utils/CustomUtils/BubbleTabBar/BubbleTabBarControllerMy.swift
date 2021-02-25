@@ -16,15 +16,16 @@ class BubbleTabBarControllerMy: BubbleTabBarController {
         super.viewDidLoad()
         
         self.tabBar.tintColor = #colorLiteral(red: 0.1579992771, green: 0.1818160117, blue: 0.5072338581, alpha: 1)
+//        self.tabBar.backgroundColor = .clear
         self.tabBar.backgroundColor = .KBGGray
+        self.tabBar.isTranslucent = true
         
-        
+        self.view.h = KScreenHeight
+
         let one = OneVC()
         one.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-news"), selectedImage: nil, color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1))
         
-//        let two = TwoVC()
-//        two.tabBarItem = self.getItem(title: "Clock", image: #imageLiteral(resourceName: "tabbar-clock"), selectedImage: nil, color: #colorLiteral(red: 0.3647058904, green: 0.06666667014, blue: 0.9686274529, alpha: 1))
-//
+
         let three = ThreeVC()
         three.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-smile"), selectedImage: nil, color: #colorLiteral(red: 0.236158222, green: 0.5290616751, blue: 0.6408655047, alpha: 1))
 
@@ -36,35 +37,20 @@ class BubbleTabBarControllerMy: BubbleTabBarController {
             BaseNavigationVC(rootViewController: three),
             BaseNavigationVC(rootViewController: four)
         ]
-        
-//        launchView = UIView()
-//        launchView.frame = CGRect(x: 0, y: 0, width: KScreenWidth, height: KScreenHeight)
-//        launchView.backgroundColor = #colorLiteral(red: 0.2086526453, green: 0.2038630247, blue: 0.195168227, alpha: 1)
-//        self.view.addSubview(launchView)
-//
-//        let tempView = UIView()
-//        tempView.frame = CGRect(x: 0, y: KScreenHeight/2, width: KScreenWidth, height: KScreenHeight/2)
-//        tempView.backgroundColor = .white
-//        launchView.addSubview(tempView)
-//
-//        let imgView = UIImageView()
-//        imgView.frame = CGRect(x: (KScreenWidth-620)/2, y: 0, width: 620, height: KScreenHeight)
-//        imgView.image = UIImage(named: "launch")
-//        imgView.contentMode = .scaleAspectFit
-//        launchView.addSubview(imgView)
-//
-//        // 延迟调用
-//        UIView.animate(withDuration: 0.7, delay: 1, options: [.curveEaseOut,]) {
-//            tempView.y -= KScreenHeight
-//            tempView.h += KScreenHeight
-//            imgView.y = -KScreenHeight
-//        } completion: { (_) in
-//            UIView.animate(withDuration: 0.3, delay: 0, options: []) {
-//                self.launchView.alpha = 0
-//            } completion: { (_) in
-//                self.launchView.removeFromSuperview()
-//            }
-//        }
+    }
+    
+    func hideTabbar() {
+        print(self.tabBar.frame)
+        UIView.animate(withDuration: 0.3) {
+            self.tabBar.y = KScreenHeight
+        }
+    }
+    
+    func showTabbar() {
+        print(self.tabBar.frame)
+        UIView.animate(withDuration: 0.3) {
+            self.tabBar.y = KScreenHeight - self.tabBar.h
+        }
     }
     
     func getItem(title: String?, image: UIImage?, selectedImage: UIImage?,color:UIColor?) -> CBTabBarItem {

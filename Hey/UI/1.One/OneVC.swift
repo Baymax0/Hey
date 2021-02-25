@@ -135,12 +135,21 @@ extension OneVC : UICollectionViewDataSource , UICollectionViewDelegate,UICollec
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell : OneInfoCell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! OneInfoCell
+        print("--------")
+        var date1 = Date()
+        var date2 = Date()
+        var date3 = Date()
+        print(date2.toTimeInterval() - date1.toTimeInterval())
         if let feed = self.oneAppInfoArr.bm_object(indexPath.item){
             cell.imgView.kf.setImage(with: feed.cover.resource, placeholder: UIImage(named: "placeholder"), options:  [.transition(.fade(0.45))])
             cell.vc = self
                     
             if let m = RealmManager.ONE.getfeedDetail(feed.date){
+                date2 = Date()
+                print("realm  :\(date2.toTimeInterval() - date1.toTimeInterval())")
                 cell.setData(m)
+                date3 = Date()
+                print("setData:\(date3.toTimeInterval() - date2.toTimeInterval())")
             }else{
                 cell.setData(nil)
                 self.requestOne_Day_Info(feed.date, indexPath)
@@ -149,7 +158,8 @@ extension OneVC : UICollectionViewDataSource , UICollectionViewDelegate,UICollec
             cell.imgViewButton.tag = indexPath.item
             cell.imgViewButton.addTarget(self, action: #selector(imgViewClickAction(_:)), for: .touchUpInside)
         }
-        
+        let date4 = Date()
+        print("all    :\(date4.toTimeInterval() - date1.toTimeInterval())")
         //获得详细资料
         return cell
     }
