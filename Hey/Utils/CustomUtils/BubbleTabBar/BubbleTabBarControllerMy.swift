@@ -23,14 +23,14 @@ class BubbleTabBarControllerMy: BubbleTabBarController {
         self.view.h = KScreenHeight
 
         let one = OneVC()
-        one.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-news"), selectedImage: nil, color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1))
+        one.tabBarItem = self.getItem(title: "One", image: #imageLiteral(resourceName: "tabbar-news"), selectedImage: nil, color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1))
         
 
         let three = ThreeVC()
-        three.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-smile"), selectedImage: nil, color: #colorLiteral(red: 0.236158222, green: 0.5290616751, blue: 0.6408655047, alpha: 1))
+        three.tabBarItem = self.getItem(title: "Blog", image: #imageLiteral(resourceName: "tabbar-smile"), selectedImage: nil, color: #colorLiteral(red: 0.236158222, green: 0.5290616751, blue: 0.6408655047, alpha: 1))
 
         let four = FourVC()
-        four.tabBarItem = self.getItem(title: "Events", image: #imageLiteral(resourceName: "tabbar-Home"), selectedImage: nil, color: #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1))
+        four.tabBarItem = self.getItem(title: "FunnyApp", image: #imageLiteral(resourceName: "tabbar-Home"), selectedImage: nil, color: #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1))
         self.viewControllers = [
             BaseNavigationVC(rootViewController: one),
 //            BaseNavigationVC(rootViewController: two),
