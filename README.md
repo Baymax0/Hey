@@ -21,14 +21,10 @@ My funny app。集成各种有意思功能的小App，自己手绘一些图标�
 ## Blog
 手机端浏览基于jekyll模版的github-page个人仓库。自动解析jekyll模版下post路径下的文章内容。支持手机端修改并提交，不需要编写mark，以可视化的形式修改或预览.markdown文件。  
 
-token输入界面：    
-<img src="https://raw.githubusercontent.com/Baymax0/Hey/master/resource/review-2.png" width="203"/>
-文章列表：    
-<img src="https://raw.githubusercontent.com/Baymax0/Hey/master/resource/review-3.png" width="203"/>
-文章详情：    
-<img src="https://raw.githubusercontent.com/Baymax0/Hey/master/resource/review-4.png" width="203"/>
-文章编辑：    
-<img src="https://raw.githubusercontent.com/Baymax0/Hey/master/resource/review-5.png" width="203"/>
+<img src="https://raw.githubusercontent.com/Baymax0/Hey/master/resource/review-2.png" width="200"/>   
+<img src="https://raw.githubusercontent.com/Baymax0/Hey/master/resource/review-3.png" width="200"/>    
+<img src="https://raw.githubusercontent.com/Baymax0/Hey/master/resource/review-4.png" width="200"/>  
+<img src="https://raw.githubusercontent.com/Baymax0/Hey/master/resource/review-5.png" width="200"/>
 
 ## FunnyApp
 #### 光能永动手电
