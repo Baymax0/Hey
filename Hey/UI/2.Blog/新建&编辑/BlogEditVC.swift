@@ -62,6 +62,9 @@ class BlogEditVC: BaseVC {
         
         self.initUI()
         
+        if self.model == nil{
+            self.model = GitHub_CachePost()
+        }
         if self.model.sha != nil{
             self.loadModel()
         }
@@ -76,7 +79,6 @@ class BlogEditVC: BaseVC {
     func initUI() {
         keyboardToolView.frame = CGRect(x: 0, y: KScreenHeight, width: KScreenWidth, height: 40)
         self.view.addSubview(keyboardToolView)
-        
         h1Btn.titleLabel?.font = MarkdownLineStyle.h1.font
         h1Btn.tintColor = MarkdownLineStyle.h1.textTineColor
         
