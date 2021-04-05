@@ -354,7 +354,7 @@
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZHA-kS-E5s">
                                             <rect key="frame" x="0.0" y="0.0" width="105" height="120"/>
                                             <subviews>
-                                                <button opaque="NO" tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XX5-Dd-DIi">
+                                                <button opaque="NO" tag="7" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XX5-Dd-DIi">
                                                     <rect key="frame" x="0.0" y="0.0" width="105" height="99"/>
                                                     <connections>
                                                         <action selector="fileManagAction:" destination="-1" eventType="touchUpInside" id="NXq-P2-Xdu"/>

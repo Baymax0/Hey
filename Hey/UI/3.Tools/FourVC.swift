@@ -96,6 +96,13 @@ class FourVC: BaseVC {
             self.pushViewController(vc)
         }
         
+        if sender.tag == 7{
+            let vc = YSLMajiangVC()
+            self.pushViewController(vc)
+        }
+        
+        
+        
     }
     
 

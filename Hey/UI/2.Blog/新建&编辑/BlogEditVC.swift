@@ -71,7 +71,7 @@ class BlogEditVC: BaseVC {
         self.reloadContent()
         
         self.autoHideKeyboard = false
-        
+                
         noti.addObserver(self, selector: #selector(keyboardWillChangeFrame(noti:)), name: UIView.keyboardWillChangeFrameNotification, object: nil)
         noti.addObserver(self, selector: #selector(handelCellNoti(noti:)), name: .daily_Cell_Action, object: nil)
     }
