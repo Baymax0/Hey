@@ -3,6 +3,5 @@
 .svn
 /.build
 /Packages
-/*.xcodeproj
 xcuserdata/
 
