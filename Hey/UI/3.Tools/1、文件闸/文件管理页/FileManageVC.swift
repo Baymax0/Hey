@@ -172,6 +172,10 @@ class FileManageVC: BaseVC {
         self.loadSubFile()
     }
     
+    @IBAction func sortAction(_ sender: Any) {
+        self.loadSubFile()
+    }
+    
 }
 
 

@@ -1031,7 +1031,6 @@
 		2D74845323711A180001EB40 /* 1.One */ = {
 			isa = PBXGroup;
 			children = (
-				9B48374B2599B53B006EBAFC /* 图片预览 */,
 				9BC8BDB6253944CF00F1F4DC /* 详情 */,
 				9B189385253188E300712A91 /* view */,
 				2D74845423711A410001EB40 /* OneVC.swift */,
@@ -1829,13 +1828,6 @@
 				9B48360325999016006EBAFC /* BaseNavigationVC.swift */,
 			);
 			path = "基类";
-			sourceTree = "<group>";
-		};
-		9B48374B2599B53B006EBAFC /* 图片预览 */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "图片预览";
 			sourceTree = "<group>";
 		};
 		9B483760259AD457006EBAFC /* github */ = {
@@ -2728,14 +2720,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Hey/Hey.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 34BD4U8K6Y;
+				DEVELOPMENT_TEAM = C9B92QLF39;
 				INFOPLIST_FILE = "$(SRCROOT)/Hey/Supports/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yimi.Lee;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yushu.lee2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Hey/Supports/LisApp-Brdging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -2751,14 +2743,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Hey/Hey.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 34BD4U8K6Y;
+				DEVELOPMENT_TEAM = C9B92QLF39;
 				INFOPLIST_FILE = "$(SRCROOT)/Hey/Supports/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yimi.Lee;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yushu.lee2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Hey/Supports/LisApp-Brdging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -2773,7 +2765,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 34BD4U8K6Y;
+				DEVELOPMENT_TEAM = C9B92QLF39;
 				INFOPLIST_FILE = LeesWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2781,7 +2773,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yimi.Lee.LeesWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yushu.lee2.LeesWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2796,7 +2788,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 34BD4U8K6Y;
+				DEVELOPMENT_TEAM = C9B92QLF39;
 				INFOPLIST_FILE = LeesWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2804,7 +2796,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yimi.Lee.LeesWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yushu.lee2.LeesWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;

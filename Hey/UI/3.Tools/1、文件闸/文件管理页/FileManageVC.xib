@@ -126,6 +126,9 @@
                                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
                                                             <color key="tintColor" red="0.1602931591" green="0.147313956" blue="0.147313956" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                             <state key="normal" title="Tag"/>
+                                                            <connections>
+                                                                <action selector="sortAction:" destination="-1" eventType="touchUpInside" id="Opv-Yw-wq3"/>
+                                                            </connections>
                                                         </button>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jTh-fH-imp">
                                                             <rect key="frame" x="0.0" y="12" width="1" height="34"/>
@@ -318,7 +321,7 @@
         </view>
     </objects>
     <resources>
-        <image name="access-left" width="12" height="20.5"/>
+        <image name="access-left" width="8" height="13.666666984558105"/>
         <image name="photo.on.rectangle.angled" catalog="system" width="128" height="101"/>
         <image name="tag" catalog="system" width="128" height="119"/>
         <systemColor name="labelColor">
