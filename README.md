@@ -1,4 +1,4 @@
-# Hey
+# Hey （大改版中～）
 My funny app。集成各种有意思功能的小App，自己手绘一些图标。部分缓存功能使用了realm数据库。githubpage预览页暂只支持基于jekyll模版的仓库，需填写仓库名（如Baymax.github.io填写Baymax）及github账号的persional token。
 
 
