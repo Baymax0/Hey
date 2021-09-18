@@ -31,7 +31,6 @@ class FourVC: BaseVC {
         self.ignoreAutoAdjustScrollViewInsets(sc)
         sc.backgroundColor = .KBGGray
         sc.bm.addConstraints([.top(0), .left(0), .right(0), .h(KScreenHeight)])
-
     }
     
     @IBAction func cacheSettingAction(_ sender: UIButton) {
